@@ -10,8 +10,8 @@ public class CheckerBoard extends JPanel{
 	private JPanel[] blocks = new JPanel[64];		//	----> panels to store Jlabel diskHolder
 	private JLabel[] diskHolder = new JLabel[32];	//	----> array of stone placements
 	
-	private Icon white_chip = new ImageIcon(getClass().getResource("white.png"));	//	---> the white stone image
-	private Icon black_chip = new ImageIcon(getClass().getResource("black.png"));	//	---> the black stone image
+	private Icon white_chip = new ImageIcon(getClass().getResource("/white.png"));	//	---> the white stone image
+	private Icon black_chip = new ImageIcon(getClass().getResource("/black.png"));	//	---> the black stone image
 		
 	
 	private int tog = 0;			//	---> used when setting board colors
