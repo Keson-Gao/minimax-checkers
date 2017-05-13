@@ -1,3 +1,5 @@
+package app.modules.gui;
+
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.event.*;
@@ -28,7 +30,7 @@ public class CheckerFrame extends JFrame{
 	
 	private JPanel menu;
 	
-	CheckerFrame()
+	public CheckerFrame()
 	{
 		super("Checker");		
 		setContentPane(new JLabel(new ImageIcon("backdrop00.jpg")));				
@@ -266,13 +268,5 @@ public class CheckerFrame extends JFrame{
 		menu.add(quit1);
 		
 		add(menu);		
-	}
-	
-	public static void main(String[] args)
-	{
-		CheckerFrame frame = new CheckerFrame();		
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
-		frame.setResizable(false);
 	}
 }

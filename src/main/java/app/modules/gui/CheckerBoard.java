@@ -1,16 +1,7 @@
-/**
-	Checker Game Program Source code
-	Filename:		CheckerBoard.java
-	Date Created:	2016/05/08	10:23
-	Purpose:		Checker Game Program
-	Last Modified:	2016/09/12 20:44
-	
-**/
-
+package app.modules.gui;
 
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.event.*;
 import java.awt.event.*;
 
 public class CheckerBoard extends JPanel{
