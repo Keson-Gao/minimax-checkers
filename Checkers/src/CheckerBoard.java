@@ -26,8 +26,8 @@ public class CheckerBoard extends JPanel{
 	private static int[] white_moves = new int[5000];	//Previous paths of White. (must be changed)
 	private static int[] black_moves = new int[5000];	//Previous paths of Black.	
 	
-	private static int wMovesCount = 0;		//Total number of white's moves.
-	private static int bMovesCount = 0;		//Total number of black's moves.
+	private static int wMovesCount = 0;		//Total number of white's moves
+	private static int bMovesCount = 0;		//Total number of black's moves
 	
 	private static boolean n1 = false;
 	private static boolean n2 = false;	

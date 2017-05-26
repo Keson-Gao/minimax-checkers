@@ -4,8 +4,6 @@ import java.awt.event.*;
 import javax.swing.event.*;
 
 public class CheckerGamePanel extends JPanel{			
-	private static final long serialVersionUID = 1L;
-
 	public CheckerGamePanel(){		
 		setOpaque(false);	
 		setLayout(null);	

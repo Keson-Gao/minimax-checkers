@@ -238,7 +238,7 @@ public class CheckerFrame extends JFrame{
 				options1.setIcon(options1_icon1);
 			}
 			public void mouseClicked(MouseEvent e){
-				//code here
+				//code here.
 			}
 		});
 		
