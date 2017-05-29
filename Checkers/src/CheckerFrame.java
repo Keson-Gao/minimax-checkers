@@ -9,32 +9,66 @@ import javax.sound.sampled.*;
 public class CheckerFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	
-	private Icon play_icon1 = new ImageIcon(getClass().getResource("ClickHereToPlay1.jpg"));	
-	private Icon play_icon2 = new ImageIcon(getClass().getResource("ClickHereToPLay2.jpg"));
-	private Icon play_icon3 = new ImageIcon(getClass().getResource("ClickHereToPLay3.jpg"));		
-	private Icon options1_icon1 = new ImageIcon(getClass().getResource("OPTIONS_1.jpg"));		
-	private Icon quit1_icon1 = new ImageIcon(getClass().getResource("QUIT_1.jpg"));		
-	private Icon backToMain_icon = new ImageIcon(getClass().getResource("BACKTOMENU1.jpg"));
-	private Icon bg1 = new ImageIcon(getClass().getResource("backdrop00.jpg"));
+	private Icon play_icon1 = new ImageIcon(getClass().getResource("play.png"));	
+	private Icon play_icon2 = new ImageIcon(getClass().getResource("pLay2.png"));		
+	private Icon options1_icon1 = new ImageIcon(getClass().getResource("settings.png"));		
+	private Icon info_icon1 = new ImageIcon(getClass().getResource("help1.png"));				
+	private Icon titleIcon = new ImageIcon(getClass().getResource("dama.png"));
 	
-	private JLabel playGame;		
-	private JLabel backToMain;
-	private JLabel options1;
-	private JLabel options2;
-	private JLabel instructions;
-	private JLabel quit1;
-	private JLabel quit2;
-	private JLabel newGame;
+	private Icon selectModeIcon = new ImageIcon(getClass().getResource("selectMode.png"));
+	private Icon onePlayerIcon = new ImageIcon(getClass().getResource("1p.png"));
+	private Icon onePlayerIcon2 = new ImageIcon(getClass().getResource("1p_2.png"));
+	private Icon twoPlayerIcon = new ImageIcon(getClass().getResource("2p.png"));
+	private Icon twoPlayerIcon2 = new ImageIcon(getClass().getResource("2p_2.png"));
+	private Icon backToMainIcon = new ImageIcon(getClass().getResource("back1.png"));
+	private Icon backToMainIcon2 = new ImageIcon(getClass().getResource("back2.png"));		
+	private Icon gameMenuIcon = new ImageIcon(getClass().getResource("menu.png")); 
+	private Icon aiPlayerIcon = new ImageIcon(getClass().getResource("bot.png"));
+	private Icon humanPlayerIcon = new ImageIcon(getClass().getResource("human.png"));	
+	private Icon vsIcon = new ImageIcon(getClass().getResource("versus.png"));
+	private Icon blackTextIcon = new ImageIcon(getClass().getResource("blacktext.png"));
+	private Icon whiteTextIcon = new ImageIcon(getClass().getResource("whitetext.png"));
+	private Icon gamePlay2pIcon = new ImageIcon(getClass().getResource("go.png"));		
 	
+	private JLabel gameTitle, selectMode;
+	private JLabel playGame, onePlayer, twoPlayer, boardBorder, gameMenu;
+	private JLabel humanPlayer, aiPlayer, humanPlayer1, humanPlayer2, human1, human2, versus;
+	private JLabel backToMain, blackText, whiteText;
+	private JLabel gameBack2p, gamePlay2p, playerTurn;
+	private JLabel options1;		
+	private JLabel info;	
+			
+	GameAvatar avatar1 = new GameAvatar();
+	GameAvatar avatar2 = new GameAvatar();
 	
-	private JPanel menu;
+	private String[] imageNames = {"serialKiller2.png", "baymax2.png", "xCon2.png", "robot2.png", "alien2.png", 
+			 "chick2.png", "starwars2.png", "painter2.png", "thor2.png", "gunman12.png", "gunman22.png",
+			 "hulk2.png", "hero2.png", "luigi2.png", "greenman2.png", "death2.png", "ranger2.png", "wolverine2.png",
+			 "viking2.png", "smoker2.png"};
+	
+	private String[] imageNamesHover = {"serialKiller2_2.png", "baymax2_2.png", "xCon2_2.png", "robot2_2.png", "alien2_2.png", 
+			 "chick2_2.png", "starwars2_2.png", "painter2_2.png", "thor2_2.png", "gunman12_2.png", "gunman22_2.png",
+			 "hulk2_2.png", "hero2_2.png", "luigi2_2.png", "greenman2_2.png", "death2_2.png", "ranger2_2.png", "wolverine2_2.png",
+			 "viking2_2.png", "smoker2_2.png"};
+	
+	private String human1Icon, human1Icon_2, 
+				   human2Icon, human2Icon_2;
+	
+	private String whiteTurn ="whiteturn.png", blackTurn = "blackturn.png";
+	public String turnImage = whiteTurn;
+	private JTextField human1Name, human2Name;
+	
+	public static FixedGlassPane glass;
+	private GamePausedPanel gamePaused;
+	
+	private JPanel menu, mode, character;
 	
 	CheckerFrame()
 	{
-		super("Checker");		
-		setContentPane(new JLabel(new ImageIcon(getClass().getResource("backdrop00.jpg"))));				
+		super("Checker");
+		getContentPane().setBackground(Color.ORANGE);				
 		setLayout(null);		
-		setBounds(300, 100, bg1.getIconWidth(), bg1.getIconHeight());
+		setBounds(300, 100, 800, 600);
 		
 		//play background music
 		/*
@@ -64,13 +98,16 @@ public class CheckerFrame extends JFrame{
 		menu.setOpaque(false);
 		menu.setLayout(null);
 		
+		gameTitle = new JLabel(titleIcon);
+		gameTitle.setBounds(215, 160, titleIcon.getIconWidth(), titleIcon.getIconHeight());		
+		
 		playGame = new JLabel(play_icon1);
-		playGame.setBounds(220, 380, play_icon1.getIconWidth(), play_icon1.getIconHeight());
+		playGame.setBounds(325, 280, play_icon1.getIconWidth(), play_icon1.getIconHeight());
 		
 		playGame.addMouseListener(
 			new MouseListener(){
 				public void mousePressed(MouseEvent e){
-					playGame.setIcon(play_icon3);
+					playGame.setIcon(play_icon2);
 				}				
 				public void mouseEntered(MouseEvent e){
 					playGame.setIcon(play_icon2);
@@ -85,189 +122,433 @@ public class CheckerFrame extends JFrame{
 				}
 				public void mouseClicked(MouseEvent e)
 				{									
-					getContentPane().removeAll();
-					setContentPane(new JLabel(new ImageIcon(getClass().getResource("bkg4.jpg"))));			
+					getContentPane().removeAll();						
 						
-					//Add the game board to the frame.
-					CheckerGamePanel game = new CheckerGamePanel();					
-					add(game);
+					mode = new JPanel();
+					mode.setBounds(0, 0, 1000, 600);
+					mode.setOpaque(false);
+					mode.setLayout(null);
 					
-					repaint();
+					selectMode = new JLabel(selectModeIcon);
+					selectMode.setBounds(180, 40, selectModeIcon.getIconWidth(), selectModeIcon.getIconHeight());
 					
-					backToMain = new JLabel(backToMain_icon);
-					backToMain.setBounds(30, 45, 179, 29);
-					backToMain.addMouseListener(
-						new MouseListener(){
-							public void mouseEntered(MouseEvent e){
-								backToMain.setIcon(new ImageIcon(getClass().getResource("BACKTOMENU2.jpg")));
-							}
-							public void mousePressed(MouseEvent e){
-								backToMain.setIcon(new ImageIcon(getClass().getResource("BACKTOMENU3.jpg")));								
-							}
-							public void mouseExited(MouseEvent e){
-								backToMain.setIcon(new ImageIcon(getClass().getResource("BACKTOMENU1.jpg")));
-							}
-							public void mouseReleased(MouseEvent e){
-								backToMain.setIcon(new ImageIcon(getClass().getResource("BACKTOMENU1.jpg")));
-							}							
-							public void mouseClicked(MouseEvent e){
-								getContentPane().removeAll();
-								setContentPane(new JLabel(new ImageIcon(getClass().getResource("backdrop00.jpg"))));
-								add(menu);
-								repaint();
-								validate();
-							}
-					});
-					
-					newGame = new JLabel(new ImageIcon("NEWGAME1.jpg"));
-					newGame.setBounds(30, 90, 179, 29);
-					newGame.addMouseListener(new MouseListener(){
+					onePlayer = new JLabel(onePlayerIcon);
+					onePlayer.setBounds(150, 160, onePlayerIcon.getIconWidth(), onePlayerIcon.getIconHeight());
+					onePlayer.addMouseListener(new MouseAdapter(){
 						public void mouseEntered(MouseEvent e){
-							newGame.setIcon(new ImageIcon("NEWGAME2.jpg"));
+							onePlayer.setIcon(onePlayerIcon2);
+							onePlayer.setBounds(46, 160, onePlayerIcon2.getIconWidth(), onePlayerIcon2.getIconHeight());
 						}
+						
 						public void mouseExited(MouseEvent e){
-							newGame.setIcon(new ImageIcon("NEWGAME1.jpg"));
+							onePlayer.setIcon(onePlayerIcon);
+							onePlayer.setBounds(150, 160, onePlayerIcon.getIconWidth(), onePlayerIcon.getIconHeight());
 						}
-						public void mousePressed(MouseEvent e){
-							newGame.setIcon(new ImageIcon("NEWGAME3.jpg"));
-						}
-						public void mouseReleased(MouseEvent e){
-							newGame.setIcon(new ImageIcon("NEWGAME1.jpg"));
-						}
-						public void mouseClicked(MouseEvent	e){															
+						
+						public void mouseClicked(MouseEvent e){
 							getContentPane().removeAll();
-							CheckerBoard newBoard = new CheckerBoard();
-							add(newBoard);																
-							newBoard.turn = true;
 							
-							add(backToMain);
-							add(newGame);
-							add(instructions);
-							add(options2);
-							add(quit2);		
+							Icon icon = new ImageIcon(getClass().getResource("greenbg.png"));
+							JLabel bg = new JLabel(icon);
+							bg.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
+							
+							CheckerGamePanel game = new CheckerGamePanel();
+							
+							boardBorder = new JLabel(new ImageIcon(getClass().getResource("border.png")));
+							boardBorder.setBounds(147, 33, 497, 497);																											
+														
+							humanPlayer = new JLabel(humanPlayerIcon);							
+							aiPlayer = new JLabel(aiPlayerIcon);		
+							humanPlayer.setBounds(675, 440, humanPlayerIcon.getIconWidth(), humanPlayerIcon.getIconHeight());
+							aiPlayer.setBounds(30, 20, aiPlayerIcon.getIconWidth(), aiPlayerIcon.getIconHeight());
+							
+							gameMenu = new JLabel(gameMenuIcon);
+							gameMenu.setBounds(40, 470, gameMenuIcon.getIconWidth(), gameMenuIcon.getIconHeight());	
+							gameMenu.addMouseListener(new MouseAdapter(){
+								public void mouseClicked(MouseEvent e){
+									glass.setVisible(true);
+								}
+							});
+							
+							
+							add(humanPlayer);
+							add(aiPlayer);							
+							add(game);
+							add(boardBorder);
+							add(gameMenu);														
+							add(bg);
 							
 							repaint();
-							validate();
+							revalidate();
 						}
+						
 					});
 					
-					instructions = new JLabel(new ImageIcon("INSTRUCTIONS1.jpg"));
-					instructions.setBounds(30, 135, 179, 29);
-					instructions.addMouseListener(new MouseListener(){
+					twoPlayer = new JLabel(twoPlayerIcon);
+					twoPlayer.setBounds(160, 320, twoPlayerIcon.getIconWidth(), twoPlayerIcon.getIconHeight());
+					
+					twoPlayer.addMouseListener(new MouseAdapter(){
 						public void mouseEntered(MouseEvent e){
-							instructions.setIcon(new ImageIcon("INSTRUCTIONS2.jpg"));
+							twoPlayer.setIcon(twoPlayerIcon2);
+							twoPlayer.setBounds(160, 320, twoPlayerIcon2.getIconWidth(), twoPlayerIcon2.getIconHeight());
 						}
+						
 						public void mouseExited(MouseEvent e){
-							instructions.setIcon(new ImageIcon("INSTRUCTIONS1.jpg"));
+							twoPlayer.setIcon(twoPlayerIcon);
+							twoPlayer.setBounds(160, 320, twoPlayerIcon.getIconWidth(), twoPlayerIcon.getIconHeight());
 						}
-						public void mousePressed(MouseEvent e){
-							instructions.setIcon(new ImageIcon("INSTRUCTIONS3.jpg"));
+						
+						public void mouseClicked(MouseEvent e){
+							getContentPane().removeAll();
+							
+							human1Icon = "human12.png"; human1Icon_2 = "human12_2.png"; 
+							human2Icon = "human22.png"; human2Icon_2 = "human22_2.png";
+							
+							character = new JPanel();
+							character.setBounds(0, 0, 1000, 600);
+							character.setOpaque(false);
+							character.setLayout(null);
+							
+							human1 = new JLabel(new ImageIcon(getClass().getResource(human1Icon)));
+							human1.setBounds(170, 170, 177, 177);
+							human1.addMouseListener(new MouseAdapter(){
+								public void mouseEntered(MouseEvent e){
+									human1.setIcon(new ImageIcon(getClass().getResource(human1Icon_2)));
+								}
+								
+								public void mouseExited(MouseEvent e){
+									human1.setIcon(new ImageIcon(getClass().getResource(human1Icon)));
+								}
+								
+								public void mouseClicked(MouseEvent e){
+									getContentPane().removeAll();
+									getContentPane().setBackground(Color.ORANGE);
+																		
+									avatar1.setBounds(0, 0, 1000, 600);
+									AvatarHandler h = new AvatarHandler();
+
+									for(int i = 0; i < 20; i++){										
+										avatar1.labels[i].addMouseListener(h);										
+									}
+									
+									add(avatar1);
+									repaint();
+									revalidate();
+								}
+							});
+							
+							human2 = new JLabel(new ImageIcon(getClass().getResource(human2Icon)));
+							human2.setBounds(450, 170, 177, 177);
+							human2.addMouseListener(new MouseAdapter(){
+								public void mouseEntered(MouseEvent e){
+									human2.setIcon(new ImageIcon(getClass().getResource(human2Icon_2)));
+								}
+								
+								public void mouseExited(MouseEvent e){
+									human2.setIcon(new ImageIcon(getClass().getResource(human2Icon)));
+								}
+								
+								public void mouseClicked(MouseEvent e){
+									getContentPane().removeAll();
+									getContentPane().setBackground(Color.ORANGE);
+																		
+									avatar2.setBounds(0, 0, 1000, 600);
+									AvatarHandler h = new AvatarHandler();
+
+									for(int i = 0; i < 20; i++){										
+										avatar2.labels[i].addMouseListener(h);										
+									}
+									
+									add(avatar2);
+									repaint();
+									revalidate();
+								}
+							});
+							
+							versus = new JLabel(vsIcon);
+							versus.setBounds(350, 270, vsIcon.getIconWidth(), vsIcon.getIconHeight());		
+							
+							blackText = new JLabel(blackTextIcon);
+							blackText.setBounds(160, 120, blackTextIcon.getIconWidth(), blackTextIcon.getIconHeight());
+							
+							whiteText = new JLabel(whiteTextIcon);
+							whiteText.setBounds(430, 120, whiteTextIcon.getIconWidth(), whiteTextIcon.getIconHeight());							
+							
+							human1Name = new JTextField();
+							human1Name.setBounds(160, 370, 180, 50);
+							human1Name.setText(" Player Name");
+							human1Name.setFont(new Font("Consolas", Font.PLAIN, 16));
+							human1Name.addFocusListener(new FocusListener(){
+								public void focusGained(FocusEvent e){
+									if(human1Name.getText().trim().equals("Player Name"))
+										human1Name.setText(" ");
+								}
+								
+								public void focusLost(FocusEvent e){
+									if(human1Name.getText().trim().equals("")){
+										human1Name.setText(" Player Name");
+									}
+								}
+							});
+							
+							human2Name = new JTextField();
+							human2Name.setBounds(450, 370, 180, 50);
+							human2Name.setText(" Player Name");
+							human2Name.setFont(new Font("Consolas", Font.PLAIN, 16));
+							human2Name.addFocusListener(new FocusListener(){
+								public void focusGained(FocusEvent e){
+									if(human2Name.getText().trim().equals("Player Name"))
+										human2Name.setText(" ");
+								}
+								
+								public void focusLost(FocusEvent e){
+									if(human2Name.getText().trim().equals("")){
+										human2Name.setText(" Player Name");
+									}
+								}
+							});
+							
+							gameBack2p = new JLabel(backToMainIcon);
+							gameBack2p.setBounds(40, 480, backToMainIcon.getIconWidth(), backToMainIcon.getIconHeight());
+							gameBack2p.addMouseListener(new MouseAdapter(){
+								public void mouseEntered(MouseEvent e){
+									gameBack2p.setIcon(backToMainIcon2);
+								}
+								
+								public void mouseExited(MouseEvent e){
+									gameBack2p.setIcon(backToMainIcon);
+								}
+								
+								public void mouseClicked(MouseEvent e){
+									getContentPane().removeAll();									
+									add(mode);
+									repaint();
+									revalidate();
+								}
+							});
+							
+							gamePlay2p = new JLabel(gamePlay2pIcon);
+							gamePlay2p.setBounds(670, 480, gamePlay2pIcon.getIconWidth(), gamePlay2pIcon.getIconHeight());
+							gamePlay2p.addMouseListener(new MouseAdapter(){
+								public void mouseEntered(MouseEvent e){
+									gamePlay2p.setIcon(new ImageIcon(getClass().getResource("go_2.png")));
+								}
+								
+								public void mouseExited(MouseEvent e){
+									gamePlay2p.setIcon(gamePlay2pIcon);
+								}
+								
+								public void mouseClicked(MouseEvent e){
+									getContentPane().removeAll();
+									
+									Icon icon = new ImageIcon(getClass().getResource("greenbg.png"));
+									JLabel bg = new JLabel(icon);
+									bg.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
+									
+									CheckerGamePanel game = new CheckerGamePanel();
+									
+									boardBorder = new JLabel(new ImageIcon(getClass().getResource("border.png")));
+									boardBorder.setBounds(147, 33, 497, 497);																											
+																							
+									
+									String hum1 =  human1Icon.substring(0, human1Icon.length()-5) + "1.png";									
+									String hum2 = human2Icon.substring(0, human2Icon.length()-5) + "1.png";
+										
+									humanPlayer1 = new JLabel(new ImageIcon(getClass().getResource(hum1)));	
+									humanPlayer2 = new JLabel(new ImageIcon(getClass().getResource(hum2)));
+																																	
+									humanPlayer1.setBounds(30, 20, 80, 80);
+									humanPlayer2.setBounds(675, 440, 80, 80);
+									
+									gameMenu = new JLabel(gameMenuIcon);
+									gameMenu.setBounds(40, 470, gameMenuIcon.getIconWidth(), gameMenuIcon.getIconHeight());	
+									gameMenu.addMouseListener(new MouseAdapter(){
+										public void mouseEntered(MouseEvent e){
+											gameMenu.setIcon(new ImageIcon(getClass().getResource("menu_2.png")));
+										}
+										
+										public void mouseExited(MouseEvent e){
+											gameMenu.setIcon(gameMenuIcon);
+										}
+										
+										public void mouseClicked(MouseEvent e){
+											glass.setVisible(true);
+										}
+									});
+									
+									playerTurn = new JLabel(new ImageIcon(getClass().getResource(turnImage)));
+									playerTurn.setBounds(695, 30, 59, 69);							
+									
+									add(playerTurn);									
+									add(humanPlayer1);
+									add(humanPlayer2);							
+									add(game);
+									add(boardBorder);
+									add(gameMenu);														
+									add(bg);
+									
+									repaint();
+									revalidate();
+								}
+							});
+														
+							character.add(human1);
+							character.add(human2);
+							character.add(versus);
+							character.add(blackText);
+							character.add(whiteText);
+							character.add(human1Name);
+							character.add(human2Name);
+							character.add(gameBack2p);
+							character.add(gamePlay2p);
+							
+							add(character);
+							
+							repaint();
+							revalidate();
+							
 						}
-						public void mouseReleased(MouseEvent e){
-							instructions.setIcon(new ImageIcon("INSTRUCTIONS1.jpg"));
-						}
-						public void mouseClicked(MouseEvent	e){
-							//code here
-						}
+						
 					});
 					
-					options2 = new JLabel(new ImageIcon("OPTIONS1.jpg"));
-					options2.setBounds(30, 180, 179, 29);
-					options2.addMouseListener(new MouseListener(){
-						public void mouseEntered(MouseEvent e){
-							options2.setIcon(new ImageIcon("OPTIONS2.jpg"));
+					backToMain =  new JLabel(backToMainIcon);
+					backToMain.setBounds(680, 480, backToMainIcon.getIconWidth(), backToMainIcon.getIconHeight());
+					backToMain.addMouseListener(new MouseAdapter(){
+						public void mouseEntered(MouseEvent e){							
+							backToMain.setIcon(backToMainIcon2);
 						}
-						public void mouseExited(MouseEvent e){
-							options2.setIcon(new ImageIcon("OPTIONS1.jpg"));
+						
+						public void mouseExited(MouseEvent e){							
+							backToMain.setIcon(backToMainIcon);
 						}
-						public void mousePressed(MouseEvent e){
-							options2.setIcon(new ImageIcon("OPTIONS3.jpg"));
-						}
-						public void mouseReleased(MouseEvent e){
-							options2.setIcon(new ImageIcon("OPTIONS1.jpg"));
-						}
-						public void mouseClicked(MouseEvent	e){
-							//code here
-						}
-					});
-					
-					quit2 = new JLabel(new ImageIcon("QUIT1.jpg"));
-					quit2.setBounds(30, 230, 179, 29);
-					quit2.addMouseListener(new MouseListener(){
-						public void mouseEntered(MouseEvent e){
-							quit2.setIcon(new ImageIcon("QUIT2.jpg"));
-						}
-						public void mouseExited(MouseEvent e){
-							quit2.setIcon(new ImageIcon("QUIT1.jpg"));
-						}
-						public void mousePressed(MouseEvent e){
-							quit2.setIcon(new ImageIcon("QUIT3.jpg"));
-						}
-						public void mouseReleased(MouseEvent e){
-							quit2.setIcon(new ImageIcon("QUIT1.jpg"));
-						}
-						public void mouseClicked(MouseEvent	e){
-							//code here
+						
+						public void mouseClicked(MouseEvent e){
+							getContentPane().removeAll();
+							add(menu);
+							repaint();
+							revalidate();
 						}
 					});
+								
+					mode.add(selectMode);
+					mode.add(onePlayer);
+					mode.add(twoPlayer);
+					mode.add(backToMain);
+					add(mode);
 					
-					
-					game.add(backToMain);
-					game.add(newGame);
-					game.add(instructions);
-					game.add(options2);
-					game.add(quit2);					
-					validate();
+					repaint();
 				}				
 			}
 		);
 		
 		options1 = new JLabel(options1_icon1);
-		options1.setBounds(220, 433, options1_icon1.getIconWidth(), 48);
-		options1.addMouseListener(new MouseListener(){
+		options1.setBounds(200, 310, options1_icon1.getIconWidth(),options1_icon1.getIconHeight());
+		options1.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				options1.setIcon(new ImageIcon("OPTIONS_2.jpg"));
+				options1.setIcon(new ImageIcon(getClass().getResource("settings2.png")));
 			}
+			
 			public void mouseExited(MouseEvent e){
 				options1.setIcon(options1_icon1);
 			}
-			public void mousePressed(MouseEvent e){
-				options1.setIcon(new ImageIcon("OPTIONS_3.jpg"));
-			}
-			public void mouseReleased(MouseEvent e){
-				options1.setIcon(options1_icon1);
-			}
+			
 			public void mouseClicked(MouseEvent e){
 				//code here.
 			}
 		});
 		
-		quit1 = new JLabel(quit1_icon1);
-		quit1.setBounds(462, 433, quit1_icon1.getIconWidth(), 48);
-		quit1.addMouseListener(new MouseListener(){
+		info = new JLabel(info_icon1);
+		info.setBounds(500, 310, info_icon1.getIconWidth(), info_icon1.getIconHeight());
+		info.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				quit1.setIcon(new ImageIcon("QUIT_2.jpg"));
+				info.setIcon(new ImageIcon(getClass().getResource("help2.png")));
 			}
+			
 			public void mouseExited(MouseEvent e){
-				quit1.setIcon(quit1_icon1);
+				info.setIcon(info_icon1);
 			}
-			public void mousePressed(MouseEvent e){
-				quit1.setIcon(new ImageIcon("QUIT_3.jpg"));
-			}
-			public void mouseReleased(MouseEvent e){
-				quit1.setIcon(quit1_icon1);
-			}
+			
 			public void mouseClicked(MouseEvent e){
 				//code here
 			}
 		});
+				
+		gamePaused = new GamePausedPanel();
+		gamePaused.setBounds(145, 120, 500, 300);
 		
+		gamePaused.backToMain.addMouseListener(new MouseAdapter(){
+			public void mouseEntered(MouseEvent e){
+				gamePaused.backToMain.setIcon(new ImageIcon(getClass().getResource("gameback2.png")));				
+			}
+			
+			public void mouseExited(MouseEvent e){
+				gamePaused.backToMain.setIcon(gamePaused.backToMainIcon);
+			}
+			
+			public void mouseClicked(MouseEvent e){
+				getContentPane().removeAll();
+				getContentPane().setBackground(Color.ORANGE);
+				glass.setVisible(false);
+				
+				add(mode);
+				getContentPane().repaint();
+				revalidate();
+			}
+		});
+		
+		glass = new FixedGlassPane(getJMenuBar(), getContentPane());
+	    glass.setLayout(null);
+	    glass.setOpaque(false);
+	    glass.setBackground(Color.GRAY);
+	    glass.add(gamePaused);
+	     
+	    setGlassPane(glass);
+		
+		menu.add(gameTitle);
 		menu.add(playGame);
 		menu.add(options1);
-		menu.add(quit1);
+		menu.add(info);
 		
 		add(menu);		
 	}
+	
+	public class AvatarHandler extends MouseAdapter{
+		public void mouseClicked(MouseEvent e){
+			Object source = e.getSource();
+			getContentPane().removeAll();
+			
+			int i;
+			for(i = 0; i < 20; i++){
+				if(source == avatar2.labels[i]){
+										
+					human2Icon = imageNames[i];
+					human2Icon_2 = imageNamesHover[i];					
+					human2.setIcon(new ImageIcon(getClass().getResource(human2Icon)));
+					break;
+				}
+			}
+			
+			if(i == 20){
+				
+				for(int j = 0; j < 20; j++){
+					if(source == avatar1.labels[j]){
+											
+						human1Icon = imageNames[j];
+						human1Icon_2 = imageNamesHover[j];					
+						human1.setIcon(new ImageIcon(getClass().getResource(human1Icon)));
+						break;
+					}
+				}
+				
+			}			
+						
+			add(character);
+			repaint();
+			revalidate();
+			
+		}
+	}
+	
 	
 	public static void main(String[] args)
 	{
