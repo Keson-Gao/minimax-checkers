@@ -22,15 +22,15 @@ public class Board
             for (int col = 0; col < 8; col++) {
                 if (row == 1) {
                     if (col % 2 == 0) {
-                        addPieceToPieces(blackPieces, row, col, PieceColor.BLACK);
+                        addPieceToPieces(blackPieces, row, col);
                     } else {
-                        addPieceToPieces(whitePieces, row, col, PieceColor.WHITE);
+                        addPieceToPieces(whitePieces, row, col);
                     }
                 } else {
                     if (col % 2 == 0) {
-                        addPieceToPieces(whitePieces, row, col, PieceColor.WHITE);
+                        addPieceToPieces(whitePieces, row, col);
                     } else {
-                        addPieceToPieces(blackPieces, row, col, PieceColor.BLACK);
+                        addPieceToPieces(blackPieces, row, col);
                     }
                 }
             }
@@ -47,7 +47,7 @@ public class Board
         return Arrays.stream(new ArrayList<>(whitePieces.keySet()).toArray()).toArray(Point[]::new);
     }
 
-    /*public boolean hasPieceAt(Point p)
+    public boolean hasPieceAt(Point p)
     {
         return (blackPieces.containsKey(p)) || (whitePieces.containsKey(p));
     }
@@ -63,18 +63,62 @@ public class Board
         return null;
     }
 
-    public void movePiece(Point p, Point newPoint)
+    public void removePieceAt(Point p)
     {
         if (blackPieces.containsKey(p)) {
-
+            blackPieces.remove(p);
         } else if (whitePieces.containsKey(p)) {
-
+            whitePieces.remove(p);
+        } else {
+            throw new NullPointerException("Piece does not exist at (" + p.x + ", " + p.y + ".");
         }
-    }*/
+    }
 
-    private void addPieceToPieces(HashMap<Point, Piece> pieces, int row, int col, PieceColor c)
+    public void movePieceTo(Point p, Point newPoint)
+    {
+        if (blackPieces.containsKey(p)) {
+            Piece piece = blackPieces.get(p);
+            piece.setPoint(newPoint);
+            blackPieces.remove(p);
+            blackPieces.put(newPoint, piece);
+        } else if (whitePieces.containsKey(p)) {
+            Piece piece = whitePieces.get(p);
+            piece.setPoint(newPoint);
+            whitePieces.remove(p);
+            whitePieces.put(newPoint, piece);
+        } else {
+            throw new NullPointerException("Piece does not exist at (" + p.x + ", " + p.y + ".");
+        }
+    }
+
+    public int getBoardValue(PieceColor color)
+    {
+        HashMap<Point, Piece> currentPieces;
+        if (color == PieceColor.BLACK) currentPieces = blackPieces;
+        else currentPieces = whitePieces;
+
+        int totalValue = 0;
+
+        // The value of each piece is determined by its distance from the center of the board with
+        // the center having a value of 1.
+        for (Point p : currentPieces.keySet()) {
+            // We get the distance of each coordinate to the nearest coordinate edge of a piece to help compute
+            // the value of each piece. The coordinate edge is where the board ends in a given coordinate. For
+            // example, the x-coordinate edge starts from the leftmost cell to the rightmost cell (disregarding
+            // the y-position). On the other hand, the y-coordinate edge starts from the uppermost cell to the
+            // bottommost cell (disregarding the x-position).
+            int xDistanceFromEdge = (p.x > 3) ? (4 - (p.x - 3)) : p.x;
+            int yDistanceFromEdge = (p.y > 3) ? (4 - (p.y - 3)) : p.y;
+            totalValue += 4 - Math.min(xDistanceFromEdge, yDistanceFromEdge);
+        }
+
+        return totalValue;
+    }
+
+    private void addPieceToPieces(HashMap<Point, Piece> pieces, int row, int col)
     {
         Point p = new Point(row, col);
-        pieces.put(p, new Piece(c, p));
+        if (pieces == blackPieces) pieces.put(p, new Piece(PieceColor.BLACK, p));
+        else if (pieces == whitePieces) pieces.put(p, new Piece(PieceColor.WHITE, p));
     }
 }
