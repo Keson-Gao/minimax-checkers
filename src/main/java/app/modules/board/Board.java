@@ -37,6 +37,12 @@ public class Board
         }
     }
 
+    private Board(HashMap<Point, Piece> blackPieces, HashMap<Point, Piece> whitePieces)
+    {
+        this.blackPieces = blackPieces;
+        this.whitePieces = whitePieces;
+    }
+
     public Point[] getBlackPieces()
     {
         return Arrays.stream(new ArrayList<>(blackPieces.keySet()).toArray()).toArray(Point[]::new);
@@ -113,6 +119,11 @@ public class Board
         }
 
         return totalValue;
+    }
+
+    public Board copy()
+    {
+        return new Board(blackPieces, whitePieces);
     }
 
     private void addPieceToPieces(HashMap<Point, Piece> pieces, int row, int col)
