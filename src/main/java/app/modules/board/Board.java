@@ -67,7 +67,7 @@ public class Board
         return null;
     }
 
-    public Piece setKingPieceAt(Point p)
+    public void setKingPieceAt(Point p)
     {
         if (blackPieces.containsKey(p)) {
             blackPieces.get(p).setKing();
