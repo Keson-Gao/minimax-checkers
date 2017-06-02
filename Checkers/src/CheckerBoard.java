@@ -103,10 +103,11 @@ public class CheckerBoard extends JPanel{
 					break;
 				}								
 			}
-						
-			//resetBoardColor();
+							
 			
 			if(i < 32){
+				
+				// ?? HUMAN TURN
 				if(turn == true){																												
 					
 					if(prevChip == true){							
@@ -186,7 +187,7 @@ public class CheckerBoard extends JPanel{
 					else if(greenSquares[i].getIcon() != null && 
 							prevChip == false){
 						
-						if(greenSquares[i].getIcon().toString().equals(humanPlayerPieceKing.toString())){
+						if(greenSquares[currSquareIndex].getIcon().toString().equals(humanPlayerPieceKing.toString())){
 						
 							System.out.println("YEEE");
 							newPieceClick(humanPlayerPieceKing, currSquareIndex, index);
@@ -200,6 +201,8 @@ public class CheckerBoard extends JPanel{
 						indexOfClickedPath.add(index);	
 					}														
 					
+					
+				// ?? AI TURN	
 				}else{
 											
 					if(aiprevChip == true){		
@@ -480,6 +483,7 @@ public class CheckerBoard extends JPanel{
 		
 		if(color.toString().equals(humanPlayerPieceKing.toString())){
 
+			System.out.println("inKing");
 			storePath(index);
 			
 			if(isRightEdge){
