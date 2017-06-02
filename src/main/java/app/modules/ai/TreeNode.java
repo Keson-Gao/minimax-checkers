@@ -1,6 +1,7 @@
 package app.modules.ai;
 
 import app.modules.board.Board;
+import app.utils.enums.PieceColor;
 
 import java.util.ArrayList;
 

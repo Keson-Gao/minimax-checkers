@@ -67,6 +67,15 @@ public class Board
         return null;
     }
 
+    public Piece setKingPieceAt(Point p)
+    {
+        if (blackPieces.containsKey(p)) {
+            blackPieces.get(p).setKing();
+        } else if (whitePieces.containsKey(p)) {
+            whitePieces.get(p).setKing();
+        }
+    }
+
     public void removePieceAt(Point p)
     {
         if (blackPieces.containsKey(p)) {
@@ -127,7 +136,22 @@ public class Board
 
     public Board copy()
     {
-        return new Board(blackPieces, whitePieces);
+        return new Board(deepCopyHashMap(blackPieces), deepCopyHashMap(whitePieces));
+    }
+
+    private HashMap<Point, Piece> deepCopyHashMap(HashMap<Point, Piece> source)
+    {
+        HashMap<Point, Piece> target = new HashMap<>();
+        Iterator it = source.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+
+            target.put((Point) pair.getKey(), (Piece) pair.getValue());
+
+            it.remove();
+        }
+
+        return target;
     }
 
     private void addPieceToPieces(HashMap<Point, Piece> pieces, int row, int col)
