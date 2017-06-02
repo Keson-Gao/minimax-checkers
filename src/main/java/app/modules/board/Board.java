@@ -1,8 +1,8 @@
 package app.modules.board;
 
 import app.utils.enums.PieceColor;
+import app.utils.helper.Point;
 
-import java.awt.*;
 import java.util.*;
 
 public class Board
@@ -132,7 +132,7 @@ public class Board
 
     private void addPieceToPieces(HashMap<Point, Piece> pieces, int row, int col)
     {
-        Point p = new Point(row, col);
+        Point p = new Point(col, row);
         if (pieces == blackPieces) pieces.put(p, new Piece(PieceColor.BLACK, p));
         else if (pieces == whitePieces) pieces.put(p, new Piece(PieceColor.WHITE, p));
     }

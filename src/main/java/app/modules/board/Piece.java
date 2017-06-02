@@ -1,8 +1,7 @@
 package app.modules.board;
 
 import app.utils.enums.PieceColor;
-
-import java.awt.*;
+import app.utils.helper.Point;
 
 public class Piece
 {

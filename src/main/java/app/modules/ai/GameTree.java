@@ -3,9 +3,9 @@ package app.modules.ai;
 import app.modules.board.Board;
 import app.modules.board.Piece;
 import app.utils.enums.PieceColor;
+import app.utils.helper.Point;
 
-import java.awt.*;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class GameTree
 {
@@ -23,10 +23,14 @@ public class GameTree
 
     private Board[] makeMoveForEating(Piece[] pieces, Board currentBoard)
     {
+        ArrayList<Board> boards = new ArrayList<>();
         for (Piece piece : pieces) {
             Point piecePoint = piece.getPoint();
             if (piece.getColor() == PieceColor.BLACK) {
-
+                if (currentBoard.hasPieceAt(new Point(piecePoint.x + 1, piecePoint.y + 1)) &&
+                    currentBoard.hasPieceAt(new Point(piecePoint.x + 2, piecePoint.y + 2))) {
+                    
+                }
             }
         }
     }

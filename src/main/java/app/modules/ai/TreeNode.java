@@ -3,7 +3,6 @@ package app.modules.ai;
 import app.modules.board.Board;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class TreeNode
 {
