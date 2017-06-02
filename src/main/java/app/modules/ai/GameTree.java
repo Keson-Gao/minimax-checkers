@@ -3,6 +3,7 @@ package app.modules.ai;
 import app.modules.board.Board;
 import app.modules.board.Piece;
 import app.utils.enums.PieceColor;
+import app.utils.helper.Pair;
 import app.utils.helper.Point;
 
 import java.util.ArrayList;
@@ -11,7 +12,20 @@ public class GameTree
 {
     private TreeNode root;
 
-    public void generateTree(Board board, PieceColor startingColor)
+    public Board getMove(Board board, PieceColor maxColor)
+    {
+        generateTree(board, maxColor);
+        return alphaBeta(
+                root,
+                2,
+                new Pair(null, -32000),
+                new Pair(null, 32000),
+                true,
+                maxColor
+        ).board;
+    }
+
+    private void generateTree(Board board, PieceColor startingColor)
     {
         root = new TreeNode(board);
 
@@ -47,7 +61,50 @@ public class GameTree
         }
     }
 
-    public Board alphaBeta(); // Implement alpha-beta pruning.
+    private Pair alphaBeta(TreeNode node, int depth, Pair alpha, Pair beta, boolean isMaxPlayer, PieceColor maxColor)
+    {
+        if (depth == 0) {
+            return new Pair(node.getBoard(), node.getBoard().getBoardValue(maxColor));
+        }
+
+        if (isMaxPlayer) {
+            Pair v = new Pair(null, -32000);
+            for (TreeNode child : node.getChildren()) {
+                Pair ab = alphaBeta(child, depth - 1, alpha, beta, false, maxColor);
+                if (ab.score > v.score) {
+                    v = ab;
+                }
+
+                if (ab.score > alpha.score) {
+                    alpha = ab;
+                }
+
+                if (beta.score <= alpha.score) {
+                    break;
+                }
+            }
+
+            return v;
+        } else {
+            Pair v = new Pair(null, 32000);
+            for (TreeNode child : node.getChildren()) {
+                Pair ab = alphaBeta(child, depth - 1, alpha, beta, true, maxColor);
+                if (ab.score < v.score) {
+                    v = ab;
+                }
+
+                if (ab.score > v.score) {
+                    beta = ab;
+                }
+
+                if (beta.score < alpha.score) {
+                    break;
+                }
+            }
+
+            return v;
+        }
+    }
 
     private void assignKings(Board board)
     {

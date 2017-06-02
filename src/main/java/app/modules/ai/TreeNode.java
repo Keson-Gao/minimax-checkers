@@ -28,7 +28,6 @@ public class TreeNode
         return children.stream().toArray(TreeNode[]::new);
     }
     public Board getBoard() { return board; }
-    public TreeNode getParent() { return parent; }
 
     private void setParent(TreeNode parent) { this.parent = parent; }
 }

@@ -1,9 +1,14 @@
 package app.modules.ai;
 
 import app.modules.board.Board;
+import app.utils.enums.PieceColor;
 
 public class AI
 {
-    // Temporary AI class that will return the whole board while we're still working on the GUI.
-    public Board makeMove(Board board) { return board; }
+    private GameTree gameTree;
+
+    public Board makeMove(Board board, PieceColor aiColor)
+    {
+        return gameTree.getMove(board, aiColor);
+    }
 }
