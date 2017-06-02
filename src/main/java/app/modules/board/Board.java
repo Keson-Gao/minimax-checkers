@@ -53,7 +53,7 @@ public class Board
 
     public boolean hasPieceAt(Point p)
     {
-        return (blackPieces.containsKey(p)) || (whitePieces.containsKey(p));
+        return (blackPieces.containsKey(p)) || (whitePieces.containsKey(p)) && (p.x < 8 && p.y < 8);
     }
 
     public Piece getPieceAt(Point p)
