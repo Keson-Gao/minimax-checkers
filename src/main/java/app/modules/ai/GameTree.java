@@ -22,26 +22,26 @@ public class GameTree
         }
 
         if (boards != null) {
-            for (Board board : boards) {
-                assignKings(board);
-                root.addChild(new TreeNode(board));
+            for (Board board3 : boards) {
+                assignKings(board3);
+                root.addChild(new TreeNode(board3));
             }
         } else {
             return;
         }
 
         for (TreeNode node : root.getChildren()) {
-            Board board = node.getBoard();
-            Piece[] pieces = (startingColor == PieceColor.BLACK) ? board.getWhitePieces() : board.getBlackPieces();
-            Board[] boards = makeMoveForEating(pieces, board);
-            if (boards == null) {
-                boards = makeMove(pieces, board);
+            Board board2 = node.getBoard();
+            Piece[] pieces1 = (startingColor == PieceColor.BLACK) ? board2.getWhitePieces() : board2.getBlackPieces();
+            Board[] boards1 = makeMoveForEating(pieces1, board2);
+            if (boards1 == null) {
+                boards1 = makeMove(pieces1, board2);
             }
 
-            if (boards != null) {
-                for (Board board : boards) {
-                    assignKings(board);
-                    node.addChild(new TreeNode(board));
+            if (boards1 != null) {
+                for (Board board1 : boards1) {
+                    assignKings(board1);
+                    node.addChild(new TreeNode(board1));
                 }
             }
         }
@@ -73,25 +73,25 @@ public class GameTree
             Point piecePoint = piece.getPoint();
             if (piece.getColor() == PieceColor.BLACK) {
                 Point adjacentPoint1 = new Point(piecePoint.x + 1, piecePoint.y + 1);
-                if (!currentBoard.hasPieceAt(adjacentPoint1))) {
+                if (!currentBoard.hasPieceAt(adjacentPoint1)) {
                     Board newBoard = movePiece(piecePoint, adjacentPoint1, currentBoard);
                     boards.add(newBoard);
                 }
 
                 Point adjacentPoint2 = new Point(piecePoint.x - 1, piecePoint.y + 1);
-                if (!currentBoard.hasPieceAt(adjacentPoint2))) {
+                if (!currentBoard.hasPieceAt(adjacentPoint2)) {
                     Board newBoard = movePiece(piecePoint, adjacentPoint2, currentBoard);
                     boards.add(newBoard);
                 }
             } else if (piece.getColor() == PieceColor.WHITE) {
                 Point adjacentPoint1 = new Point(piecePoint.x + 1, piecePoint.y - 1);
-                if (!currentBoard.hasPieceAt(adjacentPoint1))) {
+                if (!currentBoard.hasPieceAt(adjacentPoint1)) {
                     Board newBoard = movePiece(piecePoint, adjacentPoint1, currentBoard);
                     boards.add(newBoard);
                 }
 
                 Point adjacentPoint2 = new Point(piecePoint.x - 1, piecePoint.y - 1);
-                if (!currentBoard.hasPieceAt(adjacentPoint2))) {
+                if (!currentBoard.hasPieceAt(adjacentPoint2)) {
                     Board newBoard = movePiece(piecePoint, adjacentPoint2, currentBoard);
                     boards.add(newBoard);
                 }
