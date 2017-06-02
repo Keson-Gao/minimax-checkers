@@ -377,6 +377,13 @@ public class CheckerFrame extends JFrame{
 	    glass.setBackground(Color.GRAY);
 	    glass.add(gamePaused);
 	     
+	    /*
+		glass1 = new FixedGlassPane(getJMenuBar(), getContentPane());
+	    glass1.setLayout(null);
+	    glass1.setOpaque(false);
+	    glass1.setBackground(Color.GRAY);
+	    glass1.add(gamePaused);*/
+	    
 	    setGlassPane(glass);
 		
 		menu.add(gameTitle);
