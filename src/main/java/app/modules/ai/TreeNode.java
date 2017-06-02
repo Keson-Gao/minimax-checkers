@@ -8,6 +8,7 @@ import java.util.Arrays;
 public class TreeNode
 {
     private Board board;
+    private TreeNode parent;
     private ArrayList<TreeNode> children;
 
     public TreeNode(Board board)
@@ -18,6 +19,7 @@ public class TreeNode
 
     public void addChild(TreeNode child)
     {
+        child.setParent(this);
         children.add(child);
     }
 
@@ -25,4 +27,8 @@ public class TreeNode
     {
         return children.stream().toArray(TreeNode[]::new);
     }
+    public Board getBoard() { return board; }
+    public TreeNode getParent() { return parent; }
+
+    private void setParent(TreeNode parent) { this.parent = parent; }
 }

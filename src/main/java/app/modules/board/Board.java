@@ -22,11 +22,11 @@ public class Board
                     if (col % 2 == 0) {
                         addPieceToPieces(blackPieces, row, col);
                     } else {
-                        addPieceToPieces(whitePieces, row, col);
+                        addPieceToPieces(whitePieces, 7 - row, col);
                     }
                 } else {
                     if (col % 2 == 0) {
-                        addPieceToPieces(whitePieces, row, col);
+                        addPieceToPieces(whitePieces, 7 - row, col);
                     } else {
                         addPieceToPieces(blackPieces, row, col);
                     }
@@ -41,14 +41,14 @@ public class Board
         this.whitePieces = whitePieces;
     }
 
-    public Point[] getBlackPieces()
+    public Piece[] getBlackPieces()
     {
-        return Arrays.stream(new ArrayList<>(blackPieces.keySet()).toArray()).toArray(Point[]::new);
+        return blackPieces.values().toArray(new Piece[0]);
     }
 
-    public Point[] getWhitePieces()
+    public Piece[] getWhitePieces()
     {
-        return Arrays.stream(new ArrayList<>(whitePieces.keySet()).toArray()).toArray(Point[]::new);
+        return whitePieces.values().toArray(new Piece[0]);
     }
 
     public boolean hasPieceAt(Point p)
@@ -106,7 +106,7 @@ public class Board
         // The value of each piece is determined by its distance from the center of the board with
         // the center having a value of 1.
         Iterator it = currentPieces.entrySet().iterator();
-        while (it.hasNext())) {
+        while (it.hasNext()) {
             // We get the distance of each coordinate to the nearest coordinate edge of a piece to help compute
             // the value of each piece. The coordinate edge is where the board ends in a given coordinate. For
             // example, the x-coordinate edge starts from the leftmost cell to the rightmost cell (disregarding
