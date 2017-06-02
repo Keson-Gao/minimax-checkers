@@ -3,9 +3,7 @@ package app.modules.board;
 import app.utils.enums.PieceColor;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 
 public class Board
 {
@@ -107,15 +105,21 @@ public class Board
 
         // The value of each piece is determined by its distance from the center of the board with
         // the center having a value of 1.
-        for (Point p : currentPieces.keySet()) {
+        Iterator it = currentPieces.entrySet().iterator();
+        while (it.hasNext())) {
             // We get the distance of each coordinate to the nearest coordinate edge of a piece to help compute
             // the value of each piece. The coordinate edge is where the board ends in a given coordinate. For
             // example, the x-coordinate edge starts from the leftmost cell to the rightmost cell (disregarding
             // the y-position). On the other hand, the y-coordinate edge starts from the uppermost cell to the
             // bottommost cell (disregarding the x-position).
+            Map.Entry piece = (Map.Entry) it.next();
+            Point p = (Point) piece.getKey();
             int xDistanceFromEdge = (p.x > 3) ? (4 - (p.x - 3)) : p.x;
             int yDistanceFromEdge = (p.y > 3) ? (4 - (p.y - 3)) : p.y;
-            totalValue += 4 - Math.min(xDistanceFromEdge, yDistanceFromEdge);
+            int multiplier = (((Piece) piece.getValue()).isKing()) ? 2 : 1;
+
+            totalValue += (4 - Math.min(xDistanceFromEdge, yDistanceFromEdge)) * multiplier;
+            it.remove();
         }
 
         return totalValue;
