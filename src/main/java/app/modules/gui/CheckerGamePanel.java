@@ -5,8 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 
-public class CheckerGamePanel extends JPanel
-{		
+public class CheckerGamePanel extends JPanel{	
 	
 	public CheckerGamePanel(){		
 		setOpaque(false);	

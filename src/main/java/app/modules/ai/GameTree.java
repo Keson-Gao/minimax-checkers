@@ -3,6 +3,7 @@ package app.modules.ai;
 import app.modules.board.Board;
 import app.modules.board.Piece;
 import app.utils.enums.PieceColor;
+import app.utils.helper.Direction;
 import app.utils.helper.Pair;
 import app.utils.helper.Point;
 
@@ -25,40 +26,81 @@ public class GameTree
         ).board;
     }
 
-    private void generateTree(Board board, PieceColor startingColor)
+    private void generatePieceMoveTree(Piece piece, int depth, PieceColor color, Board board)
     {
-        root = new TreeNode(board);
+        if (depth == 1 || board.hasPieceAt(new Point(piece.getPoint().x, piece.getPoint().y))) {
 
-        Piece[] pieces = (startingColor == PieceColor.BLACK) ? board.getBlackPieces() : board.getWhitePieces();
-        Board[] boards = makeMoveForEating(pieces, board);
-        if (boards == null) {
-            boards = makeMove(pieces, board);
         }
+    }
 
-        if (boards != null) {
-            for (Board board3 : boards) {
-                assignKings(board3);
-                root.addChild(new TreeNode(board3));
+    private boolean canStillMoveAt(Piece piece, int depth, Board board)
+    {
+        if (depth == 0) {
+            if (piece.getColor() == PieceColor.WHITE) { // Moves up first.
+
             }
-        } else {
-            return;
         }
+    }
 
-        for (TreeNode node : root.getChildren()) {
-            Board board2 = node.getBoard();
-            Piece[] pieces1 = (startingColor == PieceColor.BLACK) ? board2.getWhitePieces() : board2.getBlackPieces();
-            Board[] boards1 = makeMoveForEating(pieces1, board2);
-            if (boards1 == null) {
-                boards1 = makeMove(pieces1, board2);
-            }
-
-            if (boards1 != null) {
-                for (Board board1 : boards1) {
-                    assignKings(board1);
-                    node.addChild(new TreeNode(board1));
+    private boolean canMove(Piece piece, int depth, Board board, Point[] points)
+    {
+        for (Point point : points) {
+            if (isPointInBoard(point)) {
+                if (!board.hasPieceAt(point) && depth == 0) {
+                    return true;
+                } else if (board.getPieceAt(point).getColor() != piece.getColor()) {
+                    Direction direction = getNextPosDirection(piece.getPoint(), point);
+                    return canJump(board, piece.getPoint(), point);
                 }
             }
         }
+
+        return false;
+    }
+
+    private boolean canJump(Board board, Point source, Point target)
+    {
+        Direction direction = getNextPosDirection(source, target);
+        return (direction == Direction.TOP_LEFT && isCellOccupiable(board, new Point(target.x - 1, target.y - 1))) ||
+               (direction == Direction.TOP_RIGHT && isCellOccupiable(board, new Point(target.x + 1, target.y - 1))) ||
+               (direction == Direction.BOTTOM_LEFT && isCellOccupiable(board, new Point(target.x - 1, target.y + 1))) ||
+               (direction == Direction.BOTTOM_RIGHT && isCellOccupiable(board, new Point(target.x + 1, target.y + 1)));
+    }
+
+    private boolean isCellOccupiable(Board board, Point cellPoint)
+    {
+        return !board.hasPieceAt(cellPoint) && isPointInBoard(cellPoint);
+    }
+
+    private boolean canMoveTop(Piece piece, Board board)
+    {
+        Point piecePos = piece.getPoint();
+        Point topLeftPoint = new Point(piecePos.x - 1, piecePos.y - 1);
+        Point topRightPoint = new Point(piecePos.x + 1, piecePos.y - 1);
+
+        if (isPointInBoard(topLeftPoint)) {
+
+        }
+    }
+
+    private Direction getNextPosDirection(Point source, Point target)
+    {
+        if (source.x > target.x && source.y > target.y) {
+            return Direction.TOP_LEFT;
+        } else if (source.x < target.x && source.y > target.y) {
+            return Direction.TOP_RIGHT;
+        } else if (source.x > target.x && source.y < target.y) {
+            return Direction.BOTTOM_LEFT;
+        } else if (source.x < target.x && source.y < target.y) {
+            return Direction.BOTTOM_RIGHT;
+        }
+
+        return Direction.NONE;
+    }
+
+    private boolean isPointInBoard(Point pos)
+    {
+        return (pos.x > 0 && pos.x < 8) && (pos.y > 0 && pos.y < 8);
     }
 
     private Pair alphaBeta(TreeNode node, int depth, Pair alpha, Pair beta, boolean isMaxPlayer, PieceColor maxColor)
@@ -104,181 +146,5 @@ public class GameTree
 
             return v;
         }
-    }
-
-    private void assignKings(Board board)
-    {
-        for (int i = 0; i < 8; i++) {
-            Point piecePoint = new Point(i, 0);
-            if (board.hasPieceAt(piecePoint)) {
-                board.setKingPieceAt(piecePoint);
-            }
-
-            piecePoint.x = 7 - piecePoint.x;
-            if (board.hasPieceAt(piecePoint)) {
-                board.setKingPieceAt(piecePoint);
-            }
-        }
-    }
-
-    // TODO: Modify makeMove() and makeMoveForEating() to move kings.
-
-    private Board[] makeMove(Piece[] pieces, Board currentBoard)
-    {
-        ArrayList<Board> boards = new ArrayList<>();
-        for (Piece piece : pieces) {
-            Point piecePoint = piece.getPoint();
-            if (piece.getColor() == PieceColor.BLACK) {
-                Point adjacentPoint1 = new Point(piecePoint.x + 1, piecePoint.y + 1);
-                if (!currentBoard.hasPieceAt(adjacentPoint1)) {
-                    Board newBoard = movePiece(piecePoint, adjacentPoint1, currentBoard);
-                    boards.add(newBoard);
-                }
-
-                Point adjacentPoint2 = new Point(piecePoint.x - 1, piecePoint.y + 1);
-                if (!currentBoard.hasPieceAt(adjacentPoint2)) {
-                    Board newBoard = movePiece(piecePoint, adjacentPoint2, currentBoard);
-                    boards.add(newBoard);
-                }
-
-                if (piece.isKing()) {
-                    Point adjacentPoint3 = new Point(piecePoint.x + 1, piecePoint.y - 1);
-                    if (!currentBoard.hasPieceAt(adjacentPoint3)) {
-                        Board newBoard = movePiece(piecePoint, adjacentPoint3, currentBoard);
-                        boards.add(newBoard);
-                    }
-
-                    Point adjacentPoint4 = new Point(piecePoint.x - 1, piecePoint.y - 1);
-                    if (!currentBoard.hasPieceAt(adjacentPoint4)) {
-                        Board newBoard = movePiece(piecePoint, adjacentPoint4, currentBoard);
-                        boards.add(newBoard);
-                    }
-                }
-            } else if (piece.getColor() == PieceColor.WHITE) {
-                Point adjacentPoint1 = new Point(piecePoint.x + 1, piecePoint.y - 1);
-                if (!currentBoard.hasPieceAt(adjacentPoint1)) {
-                    Board newBoard = movePiece(piecePoint, adjacentPoint1, currentBoard);
-                    boards.add(newBoard);
-                }
-
-                Point adjacentPoint2 = new Point(piecePoint.x - 1, piecePoint.y - 1);
-                if (!currentBoard.hasPieceAt(adjacentPoint2)) {
-                    Board newBoard = movePiece(piecePoint, adjacentPoint2, currentBoard);
-                    boards.add(newBoard);
-                }
-
-                if (piece.isKing()) {
-                    Point adjacentPoint3 = new Point(piecePoint.x + 1, piecePoint.y + 1);
-                    if (!currentBoard.hasPieceAt(adjacentPoint3)) {
-                        Board newBoard = movePiece(piecePoint, adjacentPoint3, currentBoard);
-                        boards.add(newBoard);
-                    }
-
-                    Point adjacentPoint4 = new Point(piecePoint.x - 1, piecePoint.y + 1);
-                    if (!currentBoard.hasPieceAt(adjacentPoint4)) {
-                        Board newBoard = movePiece(piecePoint, adjacentPoint4, currentBoard);
-                        boards.add(newBoard);
-                    }
-                }
-            }
-        }
-
-        if (boards.isEmpty()) {
-            return null;
-        }
-
-        return boards.toArray(new Board[0]);
-    }
-
-    private Board movePiece(Point currentPiecePoint, Point adjacentPoint, Board currentBoard)
-    {
-        Board board = currentBoard.copy();
-        board.movePieceTo(currentPiecePoint, adjacentPoint);
-
-        return board;
-    }
-
-    private Board[] makeMoveForEating(Piece[] pieces, Board currentBoard)
-    {
-        ArrayList<Board> boards = new ArrayList<>();
-        for (Piece piece : pieces) {
-            Point piecePoint = piece.getPoint();
-            if (piece.getColor() == PieceColor.BLACK) {
-                Point adjacentPoint1 = new Point(piecePoint.x + 1, piecePoint.y + 1);
-                Point newPoint1 = new Point(piecePoint.x + 2, piecePoint.y + 2);
-                if (currentBoard.hasPieceAt(adjacentPoint1) && !currentBoard.hasPieceAt(newPoint1)) {
-                    Board newBoard = movePieceToEat(piecePoint, adjacentPoint1, newPoint1, currentBoard);
-                    boards.add(newBoard);
-                }
-
-                Point adjacentPoint2 = new Point(piecePoint.x - 1, piecePoint.y + 1);
-                Point newPoint2 = new Point(piecePoint.x - 2, piecePoint.y + 2);
-                if (currentBoard.hasPieceAt(adjacentPoint2) && !currentBoard.hasPieceAt(newPoint2)) {
-                    Board newBoard = movePieceToEat(piecePoint, adjacentPoint2, newPoint2, currentBoard);
-                    boards.add(newBoard);
-                }
-
-                if (piece.isKing()) {
-                    Point adjacentPoint3 = new Point(piecePoint.x + 1, piecePoint.y - 1);
-                    Point newPoint3 = new Point(piecePoint.x + 2, piecePoint.y - 2);
-                    if (currentBoard.hasPieceAt(adjacentPoint3) && !currentBoard.hasPieceAt(newPoint3)) {
-                        Board newBoard = movePieceToEat(piecePoint, adjacentPoint3, newPoint3, currentBoard);
-                        boards.add(newBoard);
-                    }
-
-                    Point adjacentPoint4 = new Point(piecePoint.x - 1, piecePoint.y - 1);
-                    Point newPoint4 = new Point(piecePoint.x - 2, piecePoint.y - 2);
-                    if (currentBoard.hasPieceAt(adjacentPoint4) && !currentBoard.hasPieceAt(newPoint4)) {
-                        Board newBoard = movePieceToEat(piecePoint, adjacentPoint4, newPoint4, currentBoard);
-                        boards.add(newBoard);
-                    }
-                }
-            } else if (piece.getColor() == PieceColor.WHITE) {
-                Point adjacentPoint1 = new Point(piecePoint.x + 1, piecePoint.y - 1);
-                Point newPoint1 = new Point(piecePoint.x + 2, piecePoint.y - 2);
-                if (currentBoard.hasPieceAt(adjacentPoint1) && !currentBoard.hasPieceAt(newPoint1)) {
-                    Board newBoard = movePieceToEat(piecePoint, adjacentPoint1, newPoint1, currentBoard);
-                    boards.add(newBoard);
-                }
-
-                Point adjacentPoint2 = new Point(piecePoint.x - 1, piecePoint.y - 1);
-                Point newPoint2 = new Point(piecePoint.x - 2, piecePoint.y - 2);
-                if (currentBoard.hasPieceAt(adjacentPoint2) && !currentBoard.hasPieceAt(newPoint2)) {
-                    Board newBoard = movePieceToEat(piecePoint, adjacentPoint2, newPoint2, currentBoard);
-                    boards.add(newBoard);
-                }
-
-                if (piece.isKing()) {
-                    Point adjacentPoint3 = new Point(piecePoint.x + 1, piecePoint.y + 1);
-                    Point newPoint3 = new Point(piecePoint.x + 2, piecePoint.y + 2);
-                    if (currentBoard.hasPieceAt(adjacentPoint3) && !currentBoard.hasPieceAt(newPoint3)) {
-                        Board newBoard = movePieceToEat(piecePoint, adjacentPoint3, newPoint3, currentBoard);
-                        boards.add(newBoard);
-                    }
-
-                    Point adjacentPoint4 = new Point(piecePoint.x - 1, piecePoint.y - 1);
-                    Point newPoint4 = new Point(piecePoint.x - 2, piecePoint.y + 2);
-                    if (currentBoard.hasPieceAt(adjacentPoint4) && !currentBoard.hasPieceAt(newPoint4)) {
-                        Board newBoard = movePieceToEat(piecePoint, adjacentPoint4, newPoint4, currentBoard);
-                        boards.add(newBoard);
-                    }
-                }
-            }
-        }
-
-        if (boards.isEmpty()) {
-            return null;
-        }
-
-        return boards.toArray(new Board[0]);
-    }
-
-    private Board movePieceToEat(Point currentPiecePoint, Point adjacentPoint, Point newPoint, Board currentBoard)
-    {
-        Board board = currentBoard.copy();
-        board.movePieceTo(currentPiecePoint, newPoint);
-        board.removePieceAt(adjacentPoint);
-
-        return board;
     }
 }

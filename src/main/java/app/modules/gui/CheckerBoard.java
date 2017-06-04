@@ -1,27 +1,34 @@
 package app.modules.gui;
 
+/**
+	Filename:		CheckerBoard.java	
+	Purpose:		Board functions: path glow, move, 2 players	
+	
+**/
+
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public class CheckerBoard extends JPanel{
+	private static final long serialVersionUID = 1L;
 	
 	private JPanel board = new JPanel(new GridLayout(8, 8, 2, 2));
-	private JPanel[] blocks = new JPanel[64];		//	----> panels to store Jlabel diskHolder
-	private JLabel[] diskHolder = new JLabel[32];	//	----> array of stone placements
+	private JPanel[] blocks = new JPanel[64];		//	----> panels to store squares
+	private JLabel[] squares = new JLabel[32];	//	----> stone placements
 	
-	private Icon white_chip = new ImageIcon(getClass().getResource("/white.png"));	//	---> the white stone image
-	private Icon black_chip = new ImageIcon(getClass().getResource("/black.png"));	//	---> the black stone image
-		
+	private Icon white_chip = new ImageIcon(getClass().getResource("/white.png"));
+	private Icon black_chip = new ImageIcon(getClass().getResource("/black.png"));
 	
-	private int tog = 0;			//	---> used when setting board colors
-	private static int disk_index;	//	---> the current index of the stone
-	protected static boolean turn = true; 	//	for alternating turns of player, 'true' for white's turn 'false' for black's turn
-	private static int[] white_moves = new int[5000];	//	---> stores the indeces of where the stones have been (must be changed)
-	private static int[] black_moves = new int[5000];	//	---> same above			
+	private int tog = 0;			//Used intializing board colors.
+	private static int disk_index;	//Turrent index of the stone.
+	protected static boolean turn = true; 	//Alternating turns: 'true' == white,'false': black.
+	private static int[] white_moves = new int[5000];	//Previous paths of White. (must be changed)
+	private static int[] black_moves = new int[5000];	//Previous paths of Black.	
 	
-	private static int wMovesCount = 0;		//	---> counts the number of moves
-	private static int bMovesCount = 0;		
+	private static int wMovesCount = 0;		//Total number of white's moves
+	private static int bMovesCount = 0;		//Total number of black's moves
 	
 	private static boolean n1 = false;
 	private static boolean n2 = false;	
@@ -29,6 +36,7 @@ public class CheckerBoard extends JPanel{
 	//	Location of green blocks where chips can move
 	int[] k = {0, 2, 4, 6, 9, 11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31, 32, 34, 36, 38, 41, 	
 		43, 45, 47, 48, 50, 52, 54, 57, 59, 61, 63};		
+	
 	//	Edge of Boards
 	int[] left_edge = {0, 16, 32, 48}, right_edge = {15, 31, 47, 63};						
 	
@@ -72,16 +80,16 @@ public class CheckerBoard extends JPanel{
 		
 		for(int j = 0; j < 32; j++){
 			
-			diskHolder[j] =  new JLabel();				
-			blocks[k[j]].add(diskHolder[j], BorderLayout.CENTER);			
+			squares[j] =  new JLabel();				
+			blocks[k[j]].add(squares[j], BorderLayout.CENTER);			
 			
 			//	placement of Black Chips
 			if(k[j] >= 0 && k[j] <= 22)
-				diskHolder[j].setIcon(black_chip);
+				squares[j].setIcon(black_chip);
 			
 			//	placement of White Chips
 			if(k[j] >= 41 && k[j] <= 63)
-				diskHolder[j].setIcon(white_chip);			
+				squares[j].setIcon(white_chip);			
 		}			
 				
 		add(board);						
@@ -113,19 +121,19 @@ public class CheckerBoard extends JPanel{
 					//	@White's turn					
 					if(turn == true){												
 						if(n1 == true){		//	if user previously choosed a pawn
-							if(diskHolder[i].getIcon() == null){	// user clicked an empty block
+							if(squares[i].getIcon() == null){	// user clicked an empty block
 								
 								//	check if the empty block and the chosen chip is adjacent
 								if(index+9 == white_moves[wMovesCount-1]){
 									
 									//	@move the chip forward									
-									diskHolder[i].setIcon(white_chip);
+									squares[i].setIcon(white_chip);
 									white_moves[wMovesCount++] = index;
 
 									int temp = index+9;
 									for(int a = 0; a < 32; a++){
 										if(temp == k[a]){
-											diskHolder[a].setIcon(null);									
+											squares[a].setIcon(null);									
 										}
 									}																		
 									origColor();									
@@ -135,13 +143,13 @@ public class CheckerBoard extends JPanel{
 								}else if(index+7 == white_moves[wMovesCount-1]){
 									//	@move the chip forward
 									
-									diskHolder[i].setIcon(white_chip);
+									squares[i].setIcon(white_chip);
 									white_moves[wMovesCount++] = index;
 									
 									int temp = index+7;
 									for(int a = 0; a < 32; a++){
 										if(temp == k[a]){
-											diskHolder[a].setIcon(null);									
+											squares[a].setIcon(null);									
 										}
 									}					
 									origColor();									
@@ -152,9 +160,9 @@ public class CheckerBoard extends JPanel{
 									origColor();	//	change board colors back to green									
 								}
 								break;							
-							}else if(diskHolder[i].getIcon() == white_chip){
+							}else if(squares[i].getIcon() == white_chip){
 								n1 = false;	// the user chose another pawn
-							}else if(diskHolder[i].getIcon() == black_chip){
+							}else if(squares[i].getIcon() == black_chip){
 								origColor();	//	change board color back to green
 							}		
 							
@@ -162,7 +170,7 @@ public class CheckerBoard extends JPanel{
 						}
 						
 						if(n1 == false){
-							if(diskHolder[i].getIcon() == white_chip){	
+							if(squares[i].getIcon() == white_chip){	
 								
 								white_moves[wMovesCount++] = index;																
 								blocks[index].setBackground(Color.YELLOW);						
@@ -174,7 +182,7 @@ public class CheckerBoard extends JPanel{
 					}					
 					//	@BLACK'S turn
 					if(turn == false){
-						/*if(diskHolder[i].getIcon() == black_chip && turn == false)	
+						/*if(squares[i].getIcon() == black_chip && turn == false)	
 						{
 							//	code here					
 							blocks[index].setBackground(Color.YELLOW);
@@ -188,19 +196,19 @@ public class CheckerBoard extends JPanel{
 						}*/
 
 						if(n2 == true){		//	if user previously choosed a pawn
-							if(diskHolder[i].getIcon() == null){	// user clicked an empty block
+							if(squares[i].getIcon() == null){	// user clicked an empty block
 								
 								//	checks if the empty block and the chosen chip is adjacent to the right
 								if(index-9 == black_moves[bMovesCount-1]){
 									
 									//	@move the chip forward									
-									diskHolder[i].setIcon(black_chip);
+									squares[i].setIcon(black_chip);
 									black_moves[bMovesCount++] = index;
 
 									int temp = index-9;
 									for(int a = 0; a < 32; a++){
 										if(temp == k[a]){
-											diskHolder[a].setIcon(null);							
+											squares[a].setIcon(null);							
 											break;
 										}
 									}																		
@@ -212,13 +220,13 @@ public class CheckerBoard extends JPanel{
 								}else if(index-7 == black_moves[bMovesCount-1]){
 									
 									//	@move the chip forward									
-									diskHolder[i].setIcon(black_chip);									
+									squares[i].setIcon(black_chip);									
 									black_moves[bMovesCount++] = index;		// ---> store index of block
 																		
 									int temp = index-7;
 									for(int a = 0; a < 32; a++){
 										if(temp == k[a]){
-											diskHolder[a].setIcon(null);
+											squares[a].setIcon(null);
 											break;
 										}
 									}					
@@ -230,9 +238,9 @@ public class CheckerBoard extends JPanel{
 									origColor();	//	change board colors back to green									
 								}
 
-							}else if(diskHolder[i].getIcon() == black_chip){
+							}else if(squares[i].getIcon() == black_chip){
 								n2 = false;	// the user chose another pawn
-							}else if(diskHolder[i].getIcon() == black_chip){
+							}else if(squares[i].getIcon() == black_chip){
 								origColor();	//	change board color back to green
 							}		
 							
@@ -240,7 +248,7 @@ public class CheckerBoard extends JPanel{
 						}
 						
 						if(n2 == false){
-							if(diskHolder[i].getIcon() == black_chip){	
+							if(squares[i].getIcon() == black_chip){	
 								
 								black_moves[bMovesCount++] = index;
 								blocks[index].setBackground(Color.YELLOW);						
@@ -296,14 +304,14 @@ public class CheckerBoard extends JPanel{
 				
 				//	Checks if next is path is empty, occupied by opponent, 
 				//	or occupied by ally respectively				
-				if(diskHolder[disk_temp].getIcon() == null)		
+				if(squares[disk_temp].getIcon() == null)		
 				{								
 					blocks[temp].setBackground(Color.CYAN);														
 					break;
 					
-				}else if(diskHolder[disk_temp].getIcon() == black_chip){
+				}else if(squares[disk_temp].getIcon() == black_chip){
 					
-					if(diskHolder[disk_temp-1].getIcon() == black_chip)	//	added new code!
+					if(squares[disk_temp-1].getIcon() == black_chip)	//	added new code!
 						break;
 					
 					boolean edge = false;
@@ -318,11 +326,11 @@ public class CheckerBoard extends JPanel{
 					
 					//	The next immediate adjacent path glows
 					if(edge == false){
-						if(diskHolder[disk_temp+1].getIcon() != null)	// added new code!
+						if(squares[disk_temp+1].getIcon() != null)	// added new code!
 							blocks[temp].setBackground(Color.RED);							
 					}
 					
-				}else if(diskHolder[disk_temp].getIcon() == color)
+				}else if(squares[disk_temp].getIcon() == color)
 						break;	
 					
 				temp-=9;				
@@ -357,14 +365,14 @@ public class CheckerBoard extends JPanel{
 				
 				//	Checks if the next immediate path is empty,
 				//	occupied by opponent, or occupied by ally
-				if(diskHolder[disk_temp2].getIcon() == null)		//path is not occupied
+				if(squares[disk_temp2].getIcon() == null)		//path is not occupied
 				{											
 					blocks[temp2].setBackground(Color.CYAN);					
 					break;						
 					
-				}else if(diskHolder[disk_temp2].getIcon() == black_chip)	//path is occupied and of opponent's
+				}else if(squares[disk_temp2].getIcon() == black_chip)	//path is occupied and of opponent's
 				{	
-					if(diskHolder[disk_temp2-1].getIcon() == black_chip)	//	added new code!
+					if(squares[disk_temp2-1].getIcon() == black_chip)	//	added new code!
 						break;
 					
 					boolean edge2 = false;					
@@ -377,12 +385,12 @@ public class CheckerBoard extends JPanel{
 					}
 					
 					if(edge2 == false){
-						if(diskHolder[disk_temp2+1].getIcon() != null)	// added new code!
+						if(squares[disk_temp2+1].getIcon() != null)	// added new code!
 							blocks[temp2].setBackground(Color.RED);							
 					}
 						
 						
-				}else if(diskHolder[disk_temp2].getIcon() == color)
+				}else if(squares[disk_temp2].getIcon() == color)
 						break;	//	Loop breaks if next path is occupied by ally
 				
 				temp2-=7;
@@ -414,19 +422,19 @@ public class CheckerBoard extends JPanel{
 				if(toggle == true)
 					break;
 				
-				if(diskHolder[disk_temp].getIcon() == black_chip){
+				if(squares[disk_temp].getIcon() == black_chip){
 					blocks[temp].setBackground(Color.RED);	
 					//
 				}
 				
 				/*
-				if(diskHolder[disk_temp].getIcon() == null)		//path is not occupied
+				if(squares[disk_temp].getIcon() == null)		//path is not occupied
 				{								
 					blocks[temp].setBackground(Color.CYAN);														
 					break;
-				}else if(diskHolder[disk_temp].getIcon() != white_chip && diskHolder[disk_temp].getIcon() != null){					
+				}else if(squares[disk_temp].getIcon() != white_chip && squares[disk_temp].getIcon() != null){					
 						blocks[temp].setBackground(Color.RED);											
-				}else if(diskHolder[disk_temp].getIcon() == color)
+				}else if(squares[disk_temp].getIcon() == color)
 					break;	//	stop the search				
 				
 				
@@ -460,15 +468,15 @@ public class CheckerBoard extends JPanel{
 				if(toggle == true)				
 					break;				
 					
-				if(diskHolder[disk_temp].getIcon() == null)		//path is not occupied
+				if(squares[disk_temp].getIcon() == null)		//path is not occupied
 				{								
 					blocks[temp].setBackground(Color.CYAN);														
 					break;
-				}else if(diskHolder[disk_temp].getIcon() == white_chip)	//path is occupied and of opponent's
+				}else if(squares[disk_temp].getIcon() == white_chip)	//path is occupied and of opponent's
 				{
 					blocks[temp].setBackground(Color.RED);					
 					//	@@search further
-				}else if(diskHolder[disk_temp].getIcon() == color)
+				}else if(squares[disk_temp].getIcon() == color)
 					break;	//	stop the search
 					
 				temp+=9;				
@@ -496,15 +504,15 @@ public class CheckerBoard extends JPanel{
 				}
 				if(toggle2 == true)				
 					break;				
-				if(diskHolder[disk_temp2].getIcon() == null)		//path is not occupied
+				if(squares[disk_temp2].getIcon() == null)		//path is not occupied
 				{									
 					blocks[temp2].setBackground(Color.CYAN);					
 					break;						
-				}else if(diskHolder[disk_temp2].getIcon() == white_chip)	//path is occupied and of opponent's
+				}else if(squares[disk_temp2].getIcon() == white_chip)	//path is occupied and of opponent's
 				{							
 					blocks[temp2].setBackground(Color.RED);
 					//	search further
-				}else if(diskHolder[disk_temp2].getIcon() == color)
+				}else if(squares[disk_temp2].getIcon() == color)
 					break;	//	stop the search
 				
 				temp2+=7;
