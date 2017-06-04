@@ -23,7 +23,7 @@ public class CheckerBoard extends JPanel{
 	private static int humanNumberOfPieces = 12;
 	
 	private static int currSquareIndex;
-	protected static boolean turn = true; 
+	protected static boolean turn; 
 	
 	private static boolean prevChip = false;
 	private static boolean aiprevChip = false;
@@ -47,6 +47,8 @@ public class CheckerBoard extends JPanel{
 	private static Icon humanPlayerPiece, aiPiece, humanPlayerPieceKing;
 	
 	public CheckerBoard(){
+		
+		turn = true;
 		
 		setOpaque(false);
 		setLayout(null);

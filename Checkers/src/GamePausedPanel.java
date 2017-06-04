@@ -19,6 +19,7 @@ public class GamePausedPanel extends JPanel{
 	private Icon closeIcon = new ImageIcon(getClass().getResource("close.png"));
 	
 	public JLabel title, info, options, resign, backToMain, close;
+	int num = 0;
 	
 	public GamePausedPanel() {
 		
@@ -31,15 +32,8 @@ public class GamePausedPanel extends JPanel{
 		
 		info = new JLabel(infoIcon);
 		info.setBounds(90, 150, infoIcon.getIconWidth(), infoIcon.getIconHeight());
-		info.addMouseListener(new MouseAdapter(){
-			public void mouseEntered(MouseEvent e){
-				info.setIcon(new ImageIcon(getClass().getResource("gamehelp2.png")));
-			}
-			
-			public void mouseExited(MouseEvent e){
-				info.setIcon(infoIcon);
-			}
-		});
+		
+				
 		
 		options = new JLabel(optionsIcon);
 		options.setBounds(180, 150, optionsIcon.getIconWidth(), optionsIcon.getIconHeight());
