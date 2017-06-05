@@ -15,7 +15,7 @@ public class GameTree
 
     public Board getMove(Board board, PieceColor maxColor)
     {
-        generateTree(board, maxColor);
+        //generateTree(board, maxColor);
         return alphaBeta(
                 root,
                 2,
@@ -26,30 +26,77 @@ public class GameTree
         ).board;
     }
 
-    private void generatePieceMoveTree(Piece piece, int depth, PieceColor color, Board board)
+    private MoveNode generatePieceMoveTree(Board board, Piece piece, int depth, Point nodePos)
     {
-        if (depth == 1 || board.hasPieceAt(new Point(piece.getPoint().x, piece.getPoint().y))) {
-
+        if (!canStillMoveAt(board, piece, depth)) {
+            return new MoveNode(nodePos);
         }
-    }
 
-    private boolean canStillMoveAt(Piece piece, int depth, Board board)
-    {
-        if (depth == 0) {
-            if (piece.getColor() == PieceColor.WHITE) { // Moves up first.
+        MoveNode currentNode = new MoveNode(nodePos);
+        Point topLeft = new Point(piece.getPoint().x - 1, piece.getPoint().y - 1);
+        Point topRight = new Point(piece.getPoint().x + 1, piece.getPoint().y - 1);
+        Point bottomLeft = new Point(piece.getPoint().x - 1, piece.getPoint().y + 1);
+        Point bottomRight = new Point(piece.getPoint().x + 1, piece.getPoint().y + 1);
 
+        if (piece.getColor() == PieceColor.WHITE || piece.isKing()) {
+            if (canMove(board, piece, depth, new Point[] { topLeft }) && !piece.isKing()) {
+                Point newPoint = (board.hasPieceAt(topLeft)) ? new Point(topLeft.x - 1, topLeft.y - 1)
+                                                             : topLeft;
+                currentNode.setTopLeftChild(generatePieceMoveTree(board, piece, depth, newPoint));
+            }
+
+            if (canMove(board, piece, depth, new Point[] { topRight }) && !piece.isKing()) {
+                Point newPoint = (board.hasPieceAt(topRight)) ? new Point(topRight.x + 1, topRight.y - 1)
+                                                              : topRight;
+                currentNode.setTopRightChild(generatePieceMoveTree(board, piece, depth, newPoint));
             }
         }
+
+        if (piece.getColor() == PieceColor.BLACK || piece.isKing()) {
+            if (canMove(board, piece, depth, new Point[] { bottomLeft })) {
+                Point newPoint = (board.hasPieceAt(bottomLeft)) ? new Point(bottomLeft.x - 1, bottomRight.y + 1)
+                                                                : bottomLeft;
+                currentNode.setBottomLeftChild(generatePieceMoveTree(board, piece, depth, newPoint));
+            }
+
+            if (canMove(board, piece, depth, new Point[] { bottomRight })) {
+                Point newPoint = (board.hasPieceAt(bottomRight)) ? new Point(bottomRight.x + 1, bottomRight.y + 1)
+                                                                 : bottomRight;
+                currentNode.setBottomRightChild(generatePieceMoveTree(board, piece, depth, newPoint));
+            }
+        }
+
+        return currentNode;
     }
 
-    private boolean canMove(Piece piece, int depth, Board board, Point[] points)
+    private boolean canStillMoveAt(Board board, Piece piece, int depth)
+    {
+        return (piece.getColor() == PieceColor.WHITE && !piece.isKing()) ? canMoveTop(board, piece, depth) :
+               (piece.getColor() == PieceColor.BLACK && !piece.isKing()) ? canMoveBottom(board, piece, depth) :
+               canMoveTop(board, piece, depth) && canMoveBottom(board, piece, depth);
+    }
+
+    private boolean canMoveTop(Board board, Piece piece, int depth)
+    {
+        Point topLeft = new Point(piece.getPoint().x - 1, piece.getPoint().y - 1);
+        Point topRight = new Point(piece.getPoint().x + 1, piece.getPoint().y - 1);
+        return canMove(board, piece, depth, new Point[] { topLeft, topRight });
+    }
+
+    private boolean canMoveBottom(Board board, Piece piece, int depth)
+    {
+        Point bottomLeft = new Point(piece.getPoint().x - 1, piece.getPoint().y + 1);
+        Point bottomRight = new Point(piece.getPoint().x + 1, piece.getPoint().y + 1);
+        return canMove(board, piece, depth, new Point[] { bottomLeft, bottomRight });
+    }
+
+    private boolean canMove(Board board, Piece piece, int depth, Point[] points)
     {
         for (Point point : points) {
             if (isPointInBoard(point)) {
                 if (!board.hasPieceAt(point) && depth == 0) {
                     return true;
                 } else if (board.getPieceAt(point).getColor() != piece.getColor()) {
-                    Direction direction = getNextPosDirection(piece.getPoint(), point);
                     return canJump(board, piece.getPoint(), point);
                 }
             }
@@ -70,17 +117,6 @@ public class GameTree
     private boolean isCellOccupiable(Board board, Point cellPoint)
     {
         return !board.hasPieceAt(cellPoint) && isPointInBoard(cellPoint);
-    }
-
-    private boolean canMoveTop(Piece piece, Board board)
-    {
-        Point piecePos = piece.getPoint();
-        Point topLeftPoint = new Point(piecePos.x - 1, piecePos.y - 1);
-        Point topRightPoint = new Point(piecePos.x + 1, piecePos.y - 1);
-
-        if (isPointInBoard(topLeftPoint)) {
-
-        }
     }
 
     private Direction getNextPosDirection(Point source, Point target)

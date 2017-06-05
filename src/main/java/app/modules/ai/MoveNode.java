@@ -24,25 +24,43 @@ public class MoveNode
    public void setTopLeftChild(MoveNode child)
    {
        topLeftChild = child;
-       topLeftChild.setParent(this);
+
+       if (child != null) {
+           topLeftChild.setParent(this);
+       }
    }
 
    public void setTopRightChild(MoveNode child)
    {
        topRightChild = child;
-       topRightChild.setParent(this);
+
+       if (child != null) {
+           topRightChild.setParent(this);
+       }
    }
 
    public void setBottomLeftChild(MoveNode child)
    {
        bottomLeftChild = child;
-       bottomLeftChild.setParent(this);
+
+       if (child != null) {
+           bottomLeftChild.setParent(this);
+       }
    }
 
    public void setBottomRightChild(MoveNode child)
    {
        bottomRightChild = child;
-       bottomRightChild.setParent(this);
+
+       if (child != null) {
+           bottomRightChild.setParent(this);
+       }
+   }
+
+   public boolean hasChildren()
+   {
+       return (topLeftChild != null) || (topRightChild != null) ||
+              (bottomLeftChild != null) || (bottomRightChild != null);
    }
 
    public Point getPosition() { return nodePosition; }
