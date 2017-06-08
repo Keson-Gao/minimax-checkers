@@ -134,7 +134,7 @@ public class Board
         return totalValue;
     }
 
-    public Board copy()
+    @Override public Board clone()
     {
         return new Board(deepCopyHashMap(blackPieces), deepCopyHashMap(whitePieces));
     }

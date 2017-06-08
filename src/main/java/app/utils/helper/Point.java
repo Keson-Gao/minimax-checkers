@@ -11,6 +11,8 @@ public class Point
         this.y = y;
     }
 
+    @Override public Point clone() { return new Point(x, y); }
+
     @Override public int hashCode()
     {
         return 31 * x + y;

@@ -68,6 +68,7 @@ public class MoveNode
    public MoveNode getTopRightChild() { return topRightChild; }
    public MoveNode getBottomLeftChild() { return bottomLeftChild; }
    public MoveNode getBottomRightChild() { return bottomRightChild; }
+   public MoveNode getParent() { return parent; }
 
    private void setParent(MoveNode parent) { this.parent = parent; }
 }

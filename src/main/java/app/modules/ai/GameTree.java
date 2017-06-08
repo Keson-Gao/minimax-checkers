@@ -11,11 +11,12 @@ import java.util.ArrayList;
 
 public class GameTree
 {
-    private TreeNode root;
+    private GameNode root;
 
-    public Board getMove(Board board, PieceColor maxColor)
+    public Board getMove(Board board, PieceColor maxColor, int depth)
     {
-        //generateTree(board, maxColor);
+        root = new GameNode(board);
+        root = generateTree(board, root, maxColor, depth);
         return alphaBeta(
                 root,
                 2,
@@ -24,6 +25,60 @@ public class GameTree
                 true,
                 maxColor
         ).board;
+    }
+
+    private GameNode generateTree(Board board, GameNode node, PieceColor currColor, int depth)
+    {
+        if (depth < 0) {
+            return node;
+        }
+
+        Piece[] pieces = (currColor == PieceColor.BLACK) ? board.getBlackPieces() : board.getWhitePieces();
+        for (Piece piece : pieces) {
+            MoveNode pieceNode = generatePieceMoveTree(board, piece, 0, piece.getPoint());
+            ArrayList<ArrayList<Point>> movements = generateMovePoints(
+                pieceNode, new ArrayList<>(), new ArrayList<>()
+            );
+
+            for (ArrayList<Point> movement : movements) {
+                Board newBoard = board.clone();
+                GameNode newNode = new GameNode(newBoard);
+                newNode.setMovement(movement.toArray(new Point[0]));
+                node.addChild(newNode);
+            }
+        }
+
+        for (GameNode node : node.getChildren()) {
+            PieceColor nextColor = (currColor == PieceColor.BLACK) ? PieceColor.WHITE : PieceColor.BLACK;
+            generateTree(node.getBoard(), node, nextColor, depth - 1);
+        }
+
+        return node;
+    }
+
+    private ArrayList<ArrayList<Point>> generateMovePoints(MoveNode node, ArrayList<ArrayList<Point>> points, ArrayList<Point> path)
+    {
+        path.add(node.getPosition());
+
+        if (node.getTopLeftChild() != null && node.getParent() != node.getTopLeftChild()) {
+            generateMovePoints(node.getTopLeftChild(), points, deepCopyArrayList(path));
+        }
+
+        if (node.getTopRightChild() != null && node.getParent() != node.getTopRightChild()) {
+            generateMovePoints(node.getTopRightChild(), points, deepCopyArrayList(path));
+        }
+
+        if (node.getBottomLeftChild() != null && node.getParent() != node.getBottomLeftChild()) {
+            generateMovePoints(node.getBottomLeftChild(), points, deepCopyArrayList(path));
+        }
+
+        if (node.getBottomRightChild() != null && node.getParent() != node.getBottomRightChild()) {
+            generateMovePoints(node.getBottomRightChild(), points, deepCopyArrayList(path));
+        }
+
+        if (!node.hasChildren()) points.add(path);
+
+        return points;
     }
 
     private MoveNode generatePieceMoveTree(Board board, Piece piece, int depth, Point nodePos)
@@ -139,7 +194,17 @@ public class GameTree
         return (pos.x > 0 && pos.x < 8) && (pos.y > 0 && pos.y < 8);
     }
 
-    private Pair alphaBeta(TreeNode node, int depth, Pair alpha, Pair beta, boolean isMaxPlayer, PieceColor maxColor)
+    private ArrayList<Point> deepCopyArrayList(ArrayList<Point> source)
+    {
+        ArrayList<Point> target = new ArrayList<>();
+        for (Point point : source) {
+            target.add(point.clone());
+        }
+
+        return target;
+    }
+
+    private Pair alphaBeta(GameNode node, int depth, Pair alpha, Pair beta, boolean isMaxPlayer, PieceColor maxColor)
     {
         if (depth == 0) {
             return new Pair(node.getBoard(), node.getBoard().getBoardValue(maxColor));
@@ -147,7 +212,7 @@ public class GameTree
 
         if (isMaxPlayer) {
             Pair v = new Pair(null, -32000);
-            for (TreeNode child : node.getChildren()) {
+            for (GameNode child : node.getChildren()) {
                 Pair ab = alphaBeta(child, depth - 1, alpha, beta, false, maxColor);
                 if (ab.score > v.score) {
                     v = ab;
@@ -165,7 +230,7 @@ public class GameTree
             return v;
         } else {
             Pair v = new Pair(null, 32000);
-            for (TreeNode child : node.getChildren()) {
+            for (GameNode child : node.getChildren()) {
                 Pair ab = alphaBeta(child, depth - 1, alpha, beta, true, maxColor);
                 if (ab.score < v.score) {
                     v = ab;
