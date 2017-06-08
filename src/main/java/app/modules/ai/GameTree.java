@@ -44,13 +44,9 @@ public class GameTree
                 Board newBoard = board.clone();
                 GameNode newNode = new GameNode(newBoard);
                 newNode.setMovement(movement.toArray(new Point[0]));
-                node.addChild(newNode);
+                PieceColor nextColor = (currColor == PieceColor.BLACK) ? PieceColor.WHITE : PieceColor.BLACK;
+                node.addChild(generateTree(node.getBoard(), node, nextColor, depth - 1));
             }
-        }
-
-        for (GameNode node : node.getChildren()) {
-            PieceColor nextColor = (currColor == PieceColor.BLACK) ? PieceColor.WHITE : PieceColor.BLACK;
-            generateTree(node.getBoard(), node, nextColor, depth - 1);
         }
 
         return node;
@@ -60,20 +56,20 @@ public class GameTree
     {
         path.add(node.getPosition());
 
-        if (node.getTopLeftChild() != null && node.getParent() != node.getTopLeftChild()) {
-            generateMovePoints(node.getTopLeftChild(), points, deepCopyArrayList(path));
+        if (node.getTopLeftChild() != null) {
+            points = generateMovePoints(node.getTopLeftChild(), points, deepCopyArrayList(path));
         }
 
-        if (node.getTopRightChild() != null && node.getParent() != node.getTopRightChild()) {
-            generateMovePoints(node.getTopRightChild(), points, deepCopyArrayList(path));
+        if (node.getTopRightChild() != null) {
+            points = generateMovePoints(node.getTopRightChild(), points, deepCopyArrayList(path));
         }
 
-        if (node.getBottomLeftChild() != null && node.getParent() != node.getBottomLeftChild()) {
-            generateMovePoints(node.getBottomLeftChild(), points, deepCopyArrayList(path));
+        if (node.getBottomLeftChild() != null) {
+            points = generateMovePoints(node.getBottomLeftChild(), points, deepCopyArrayList(path));
         }
 
-        if (node.getBottomRightChild() != null && node.getParent() != node.getBottomRightChild()) {
-            generateMovePoints(node.getBottomRightChild(), points, deepCopyArrayList(path));
+        if (node.getBottomRightChild() != null) {
+            points = generateMovePoints(node.getBottomRightChild(), points, deepCopyArrayList(path));
         }
 
         if (!node.hasChildren()) points.add(path);
