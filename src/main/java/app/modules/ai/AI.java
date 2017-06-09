@@ -5,5 +5,8 @@ import app.utils.enums.PieceColor;
 
 public class AI
 {
-    private GameTree gameTree;
+    public Board getMove(Board board, PieceColor maxColor, int depth)
+    {
+        return new GameTree().getMove(board, maxColor, depth);
+    }
 }
