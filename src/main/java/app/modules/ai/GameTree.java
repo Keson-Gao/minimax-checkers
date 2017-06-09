@@ -45,7 +45,7 @@ public class GameTree
                 GameNode newNode = new GameNode(newBoard);
                 newNode.setMovement(movement.toArray(new Point[0]));
                 PieceColor nextColor = (currColor == PieceColor.BLACK) ? PieceColor.WHITE : PieceColor.BLACK;
-                node.addChild(generateTree(node.getBoard(), node, nextColor, depth - 1));
+                node.addChild(generateTree(newNode.getBoard(), newNode, nextColor, depth - 1));
             }
         }
 
