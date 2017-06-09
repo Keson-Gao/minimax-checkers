@@ -1,6 +1,7 @@
 package app.modules.ai;
 
 import app.modules.board.Board;
+import app.utils.enums.PieceColor;
 import app.utils.helper.Point;
 
 import java.util.ArrayList;
@@ -11,11 +12,21 @@ public class GameNode
     private GameNode parent;
     private ArrayList<GameNode> children;
     private Point[] movement;
+    private int whiteScore;
+    private int blackScore;
 
     public GameNode(Board board)
     {
         this.board = board;
+        whiteScore = board.getBoardValue(PieceColor.WHITE);
+        blackScore = board.getBoardValue(PieceColor.BLACK);
         children = new ArrayList<>();
+    }
+
+    public GameNode(int score)
+    {
+        whiteScore = score;
+        blackScore = score;
     }
 
     public void addChild(GameNode child)
@@ -30,11 +41,23 @@ public class GameNode
     {
         this.movement = movement;
         movePiece();
+        whiteScore = board.getBoardValue(PieceColor.WHITE);
+        blackScore = board.getBoardValue(PieceColor.BLACK);
+    }
+
+    public int getScore(PieceColor color)
+    {
+        if (color == PieceColor.WHITE) {
+            return whiteScore;
+        }
+
+        return blackScore;
     }
 
     public GameNode[] getChildren() { return children.toArray(new GameNode[0]); }
     public Board getBoard() { return board; }
     public Point[] getMovement() { return movement; }
+    public boolean hasChildren() { return children.size() != 0; }
 
     private void setParent(GameNode parent) { this.parent = parent; }
 

@@ -4,27 +4,21 @@ import app.modules.board.Board;
 import app.modules.board.Piece;
 import app.utils.enums.PieceColor;
 import app.utils.helper.Direction;
-import app.utils.helper.Pair;
 import app.utils.helper.Point;
 
 import java.util.ArrayList;
 
 public class GameTree
 {
-    private GameNode root;
-
     public Board getMove(Board board, PieceColor maxColor, int depth)
     {
-        root = new GameNode(board);
+        GameNode root = new GameNode(board);
         root = generateTree(board, root, maxColor, depth);
-        return alphaBeta(
-                root,
-                2,
-                new Pair(null, -32000),
-                new Pair(null, 32000),
-                true,
-                maxColor
-        ).board;
+        GameNode chosenBoard = alphaBeta(
+            root, new GameNode(Integer.MIN_VALUE), new GameNode(Integer.MAX_VALUE), maxColor, true
+        );
+
+        return chosenBoard.getBoard();
     }
 
     private GameNode generateTree(Board board, GameNode node, PieceColor currColor, int depth)
@@ -120,6 +114,32 @@ public class GameTree
         return currentNode;
     }
 
+    private GameNode alphaBeta(GameNode node, GameNode alpha, GameNode beta, PieceColor color, boolean isMaximizing)
+    {
+        GameNode bestMove;
+        if (!node.hasChildren()) {
+            bestMove = node;
+        } else if (isMaximizing) {
+            bestMove = alpha;
+
+            for (GameNode gameNode : node.getChildren()) {
+                GameNode childNode = alphaBeta(gameNode, bestMove, beta, color, false);
+                if (childNode.getScore(color) > bestMove.getScore(color)) bestMove = childNode;
+                if (beta.getScore(color) <= bestMove.getScore(color)) break;
+            }
+        } else /* if (!isMaximizing) */ {
+            bestMove = beta;
+
+            for (GameNode gameNode : node.getChildren()) {
+                GameNode childNode = alphaBeta(gameNode, alpha, bestMove, color, true);
+                if (childNode.getScore(color) < bestMove.getScore(color)) bestMove = childNode;
+                if (bestMove.getScore(color) <= alpha.getScore(color)) break;
+            }
+        }
+
+        return bestMove;
+    }
+
     private boolean canStillMoveAt(Board board, Piece piece, int depth)
     {
         return (piece.getColor() == PieceColor.WHITE && !piece.isKing()) ? canMoveTop(board, piece, depth) :
@@ -198,50 +218,5 @@ public class GameTree
         }
 
         return target;
-    }
-
-    private Pair alphaBeta(GameNode node, int depth, Pair alpha, Pair beta, boolean isMaxPlayer, PieceColor maxColor)
-    {
-        if (depth == 0) {
-            return new Pair(node.getBoard(), node.getBoard().getBoardValue(maxColor));
-        }
-
-        if (isMaxPlayer) {
-            Pair v = new Pair(null, -32000);
-            for (GameNode child : node.getChildren()) {
-                Pair ab = alphaBeta(child, depth - 1, alpha, beta, false, maxColor);
-                if (ab.score > v.score) {
-                    v = ab;
-                }
-
-                if (ab.score > alpha.score) {
-                    alpha = ab;
-                }
-
-                if (beta.score <= alpha.score) {
-                    break;
-                }
-            }
-
-            return v;
-        } else {
-            Pair v = new Pair(null, 32000);
-            for (GameNode child : node.getChildren()) {
-                Pair ab = alphaBeta(child, depth - 1, alpha, beta, true, maxColor);
-                if (ab.score < v.score) {
-                    v = ab;
-                }
-
-                if (ab.score > v.score) {
-                    beta = ab;
-                }
-
-                if (beta.score < alpha.score) {
-                    break;
-                }
-            }
-
-            return v;
-        }
     }
 }
