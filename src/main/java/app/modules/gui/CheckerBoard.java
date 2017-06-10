@@ -14,11 +14,11 @@ public class CheckerBoard extends JPanel{
 	private JPanel[] squarePanels = new JPanel[64];	
 	private JLabel[] greenSquares = new JLabel[32];				
 	
-	private Icon whiteChip = new ImageIcon(getClass().getResource("white.png"));
-	private Icon whiteKing = new ImageIcon(getClass().getResource("whiteKing.png"));	
-	private Icon blackChip = new ImageIcon(getClass().getResource("black.png"));
-	private Icon blackKing = new ImageIcon(getClass().getResource("blackKing.png"));	
-	private Icon dottedWhite = new ImageIcon(getClass().getResource("eatpathwhite.png"));		
+	private Icon whiteChip = new ImageIcon(getClass().getResource("/white.png"));
+	private Icon whiteKing = new ImageIcon(getClass().getResource("/whiteKing.png"));
+	private Icon blackChip = new ImageIcon(getClass().getResource("/black.png"));
+	private Icon blackKing = new ImageIcon(getClass().getResource("/blackKing.png"));
+	private Icon dottedWhite = new ImageIcon(getClass().getResource("/eatpathwhite.png"));
 	
 	//Number of Pieces left of the players.
 	private static int aiNumberOfPieces = 12;

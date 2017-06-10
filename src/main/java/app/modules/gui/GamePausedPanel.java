@@ -13,12 +13,12 @@ import javax.swing.JPanel;
 public class GamePausedPanel extends JPanel{
 	private static final long serialVersionUID = 1L;	
 	
-	private Icon titleIcon = new ImageIcon(getClass().getResource("gamePaused.png"));
-	private Icon infoIcon = new ImageIcon(getClass().getResource("gamehelp.png"));
-	private Icon optionsIcon = new ImageIcon(getClass().getResource("gameoptions.png"));
-	private Icon resignIcon = new ImageIcon(getClass().getResource("resign.png")); 
-	public Icon backToMainIcon = new ImageIcon(getClass().getResource("gameback.png"));
-	private Icon closeIcon = new ImageIcon(getClass().getResource("close.png"));
+	private Icon titleIcon = new ImageIcon(getClass().getResource("/gamePaused.png"));
+	private Icon infoIcon = new ImageIcon(getClass().getResource("/gamehelp.png"));
+	private Icon optionsIcon = new ImageIcon(getClass().getResource("/gameoptions.png"));
+	private Icon resignIcon = new ImageIcon(getClass().getResource("/resign.png"));
+	public Icon backToMainIcon = new ImageIcon(getClass().getResource("/gameback.png"));
+	private Icon closeIcon = new ImageIcon(getClass().getResource("/close.png"));
 	
 	public JLabel title, info, options, resign, backToMain, close;
 	int num = 0;
@@ -41,7 +41,7 @@ public class GamePausedPanel extends JPanel{
 		options.setBounds(180, 150, optionsIcon.getIconWidth(), optionsIcon.getIconHeight());
 		options.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				options.setIcon(new ImageIcon(getClass().getResource("gameoptions2.png")));
+				options.setIcon(new ImageIcon(getClass().getResource("/gameoptions2.png")));
 			}
 			
 			public void mouseExited(MouseEvent e){
@@ -53,7 +53,7 @@ public class GamePausedPanel extends JPanel{
 		resign.setBounds(270, 150, resignIcon.getIconWidth(), resignIcon.getIconHeight());
 		resign.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				resign.setIcon(new ImageIcon(getClass().getResource("resign2.png")));				
+				resign.setIcon(new ImageIcon(getClass().getResource("/resign2.png")));
 			}
 			
 			public void mouseExited(MouseEvent e){
@@ -69,7 +69,7 @@ public class GamePausedPanel extends JPanel{
 		close.setBounds(460, 15, closeIcon.getIconWidth(), closeIcon.getIconHeight());
 		close.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				close.setIcon(new ImageIcon(getClass().getResource("close2.png")));
+				close.setIcon(new ImageIcon(getClass().getResource("/close2.png")));
 			}
 			
 			public void mouseExited(MouseEvent e){

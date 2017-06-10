@@ -126,9 +126,9 @@ public class CheckerFrame extends JFrame{
 					
 					getContentPane().removeAll();
 					
-					humanBlack = "human12.png"; humanBlack_2 = "human12_2.png"; 
-					humanWhite = "human22.png"; humanWhite_2 = "human22_2.png";
-					humanIcon = "human21.png";
+					humanBlack = "/human12.png"; humanBlack_2 = "/human12_2.png";
+					humanWhite = "/human22.png"; humanWhite_2 = "/human22_2.png";
+					humanIcon = "/human21.png";
 					
 					humanBlackIcon = new ImageIcon(getClass().getResource(humanBlack));
 					humanBlackIcon_2 = new ImageIcon(getClass().getResource(humanBlack_2));
@@ -186,7 +186,7 @@ public class CheckerFrame extends JFrame{
 									human1.setIcon(humanBlackIcon);
 									icon1 = humanBlackIcon; 
 									icon2 = humanBlackIcon_2;
-									humanIcon = "human11.png";
+									humanIcon = "/human11.png";
 									
 								}
 								
@@ -200,7 +200,7 @@ public class CheckerFrame extends JFrame{
 									human1.setIcon(humanWhiteIcon);
 									icon1 = humanWhiteIcon; 
 									icon2 = humanWhiteIcon_2;
-									humanIcon = "human21.png";
+									humanIcon = "/human21.png";
 								}																
 								
 							}
@@ -252,7 +252,7 @@ public class CheckerFrame extends JFrame{
 						
 
 						public void mouseEntered(MouseEvent e){
-							gamePlay2p.setIcon(new ImageIcon(getClass().getResource("go_2.png")));
+							gamePlay2p.setIcon(new ImageIcon(getClass().getResource("/go_2.png")));
 						}
 						
 						public void mouseExited(MouseEvent e){
@@ -276,7 +276,7 @@ public class CheckerFrame extends JFrame{
 							boardBorder = new JLabel(new ImageIcon(getClass().getResource("/border.png")));
 							boardBorder.setBounds(147, 33, 497, 497);																											
 																												
-							aiPlayer = new JLabel(aiPlayerIcon);	
+							aiPlayer = new JLabel(aiPlayerIcon);
 							humanPlayer2 = new JLabel(new ImageIcon(getClass().getResource(humanIcon)));
 																															
 							aiPlayer.setBounds(30, 20, 80, 80);
@@ -558,7 +558,7 @@ public class CheckerFrame extends JFrame{
 					icon1 = new ImageIcon(getClass().getResource(imageNames[i]));
 					icon2 = new ImageIcon(getClass().getResource(imageNamesHover[i]));					
 					human1.setIcon(icon2);
-					humanIcon = imageNames[i].substring(0, (imageNames[i].length()-5)) + "/1.png";
+					humanIcon = imageNames[i].substring(0, (imageNames[i].length()-5)) + "1.png";
 					break;
 				}
 			}					

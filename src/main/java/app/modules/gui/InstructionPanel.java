@@ -7,13 +7,13 @@ import javax.swing.JPanel;
 
 public class InstructionPanel extends JPanel{
 		
-	String[] bg = {"HowToPlay1.png", "HowToPlay2.png", "HowToPlay3.png", "HowToPlay4.png", "HowToPlay5.png", "HowToPlay6.png",
-					"HowToPlay7.png", "credits1.png", "credits2.png"};
+	String[] bg = {"/HowToPlay1.png", "/HowToPlay2.png", "/HowToPlay3.png", "/HowToPlay4.png", "/HowToPlay5.png", "/HowToPlay6.png",
+					"/HowToPlay7.png", "/credits1.png", "/credits2.png"};
 	
 	private Icon imageIcon;
-	private Icon nextIcon = new ImageIcon(getClass().getResource("next.png"));
-	private Icon backIcon = new ImageIcon(getClass().getResource("back_1.png"));
-	private Icon exitIcon  = new ImageIcon(getClass().getResource("close.png"));
+	private Icon nextIcon = new ImageIcon(getClass().getResource("/next.png"));
+	private Icon backIcon = new ImageIcon(getClass().getResource("/back_1.png"));
+	private Icon exitIcon  = new ImageIcon(getClass().getResource("/close.png"));
 	
 	private JLabel imageLabel;
 	public JLabel nextLabel, backLabel, exitLabel;

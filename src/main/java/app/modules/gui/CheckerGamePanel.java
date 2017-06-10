@@ -7,7 +7,7 @@ import javax.swing.event.*;
 
 public class CheckerGamePanel extends JPanel{	
 	
-	private Icon whiteTextIcon = new ImageIcon(getClass().getResource("whitetext.png"));
+	private Icon whiteTextIcon = new ImageIcon(getClass().getResource("/whitetext.png"));
 
 	public CheckerGamePanel(){		
 		setOpaque(false);	
