@@ -1,3 +1,5 @@
+package app.modules.gui;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -5,19 +7,19 @@ import java.awt.event.*;
 public class CheckerFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	
-	private Icon play_icon1 = new ImageIcon(getClass().getResource("play.png"));	
-	private Icon play_icon2 = new ImageIcon(getClass().getResource("play2.png"));
-	private Icon options1_icon1 = new ImageIcon(getClass().getResource("settings.png"));		
-	private Icon info_icon1 = new ImageIcon(getClass().getResource("help1.png"));				
-	private Icon titleIcon = new ImageIcon(getClass().getResource("dama.png"));
+	private Icon play_icon1 = new ImageIcon(getClass().getResource("/play.png"));
+	private Icon play_icon2 = new ImageIcon(getClass().getResource("/play2.png"));
+	private Icon options1_icon1 = new ImageIcon(getClass().getResource("/settings.png"));
+	private Icon info_icon1 = new ImageIcon(getClass().getResource("/help1.png"));
+	private Icon titleIcon = new ImageIcon(getClass().getResource("/dama.png"));
 	
-	private Icon backToMainIcon = new ImageIcon(getClass().getResource("back1.png"));
-	private Icon backToMainIcon2 = new ImageIcon(getClass().getResource("back2.png"));		
-	private Icon gameMenuIcon = new ImageIcon(getClass().getResource("menu.png")); 
-	private Icon aiPlayerIcon = new ImageIcon(getClass().getResource("bot.png"));
-	private Icon blackTextIcon = new ImageIcon(getClass().getResource("blacktext.png"));
-	private Icon whiteTextIcon = new ImageIcon(getClass().getResource("whitetext.png"));
-	private Icon gamePlay2pIcon = new ImageIcon(getClass().getResource("go.png"));		
+	private Icon backToMainIcon = new ImageIcon(getClass().getResource("/back1.png"));
+	private Icon backToMainIcon2 = new ImageIcon(getClass().getResource("/back2.png"));
+	private Icon gameMenuIcon = new ImageIcon(getClass().getResource("/menu.png"));
+	private Icon aiPlayerIcon = new ImageIcon(getClass().getResource("/bot.png"));
+	private Icon blackTextIcon = new ImageIcon(getClass().getResource("/blacktext.png"));
+	private Icon whiteTextIcon = new ImageIcon(getClass().getResource("/whitetext.png"));
+	private Icon gamePlay2pIcon = new ImageIcon(getClass().getResource("/go.png"));
 	
 	private JLabel gameTitle;
 	private JLabel playGame, boardBorder, gameMenu;
@@ -36,22 +38,22 @@ public class CheckerFrame extends JFrame{
 	GameAvatar avatar1 = new GameAvatar();
 	GameAvatar avatar2 = new GameAvatar();
 	
-	private String[] imageNames = {"serialkiller2.png", "baymax2.png", "xCon2.png", "robot2.png", "alien2.png",
-			 "chick2.png", "starwars2.png", "painter2.png", "thor2.png", "gunman12.png", "gunman22.png",
-			 "hulk2.png", "hero2.png", "luigi2.png", "greenman2.png", "death2.png", "ranger2.png", "wolverine2.png",
-			 "viking2.png", "smoker2.png"};
+	private String[] imageNames = {"/serialkiller2.png", "/baymax2.png", "/xCon2.png", "/robot2.png", "/alien2.png",
+			 "/chick2.png", "/starwars2.png", "/painter2.png", "/thor2.png", "/gunman12.png", "/gunman22.png",
+			 "/hulk2.png", "/hero2.png", "/luigi2.png", "/greenman2.png", "/death2.png", "/ranger2.png", "/wolverine2.png",
+			 "/viking2.png", "/smoker2.png"};
 	
-	private String[] imageNamesHover = {"serialKiller2_2.png", "baymax2_2.png", "xCon2_2.png", "robot2_2.png", "alien2_2.png", 
-			 "chick2_2.png", "starwars2_2.png", "painter2_2.png", "thor2_2.png", "gunman12_2.png", "gunman22_2.png",
-			 "hulk2_2.png", "hero2_2.png", "luigi2_2.png", "greenman2_2.png", "death2_2.png", "ranger2_2.png", "wolverine2_2.png",
-			 "viking2_2.png", "smoker2_2.png"};
+	private String[] imageNamesHover = {"/serialKiller2_2.png", "/baymax2_2.png", "/xCon2_2.png", "/robot2_2.png", "/alien2_2.png",
+			 "/chick2_2.png", "/starwars2_2.png", "/painter2_2.png", "/thor2_2.png", "/gunman12_2.png", "/gunman22_2.png",
+			 "/hulk2_2.png", "/hero2_2.png", "/luigi2_2.png", "/greenman2_2.png", "/death2_2.png", "/ranger2_2.png", "/wolverine2_2.png",
+			 "/viking2_2.png", "/smoker2_2.png"};
 	
 	private String humanBlack, humanBlack_2, 
 				   humanWhite, humanWhite_2, humanIcon;
 	
 	private Icon humanBlackIcon, humanWhiteIcon, icon1, icon2, humanBlackIcon_2, humanWhiteIcon_2;
 	
-	private String whiteTurn ="whiteturn.png";
+	private String whiteTurn ="/whiteturn.png";
 	public String turnImage = whiteTurn;
 	private JTextField human1Name;
 	
@@ -62,9 +64,9 @@ public class CheckerFrame extends JFrame{
 	
 	private int num = 0; // bago
 	
-	CheckerFrame()
+	public CheckerFrame()
 	{
-		super("Checker");
+		super("Checkers");
 		getContentPane().setBackground(Color.ORANGE);				
 		setLayout(null);		
 		setBounds(300, 100, 800, 600);
@@ -267,11 +269,11 @@ public class CheckerFrame extends JFrame{
 							
 							game = new CheckerGamePanel();
 							
-							Icon icon = new ImageIcon(getClass().getResource("greenbg.png"));
+							Icon icon = new ImageIcon(getClass().getResource("/greenbg.png"));
 							JLabel bg = new JLabel(icon);
 							bg.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
 							
-							boardBorder = new JLabel(new ImageIcon(getClass().getResource("border.png")));
+							boardBorder = new JLabel(new ImageIcon(getClass().getResource("/border.png")));
 							boardBorder.setBounds(147, 33, 497, 497);																											
 																												
 							aiPlayer = new JLabel(aiPlayerIcon);	
@@ -284,7 +286,7 @@ public class CheckerFrame extends JFrame{
 							gameMenu.setBounds(40, 470, gameMenuIcon.getIconWidth(), gameMenuIcon.getIconHeight());	
 							gameMenu.addMouseListener(new MouseAdapter(){
 								public void mouseEntered(MouseEvent e){
-									gameMenu.setIcon(new ImageIcon(getClass().getResource("menu_2.png")));
+									gameMenu.setIcon(new ImageIcon(getClass().getResource("/menu_2.png")));
 								}
 								
 								public void mouseExited(MouseEvent e){
@@ -332,7 +334,7 @@ public class CheckerFrame extends JFrame{
 		options1.setBounds(200, 310, options1_icon1.getIconWidth(),options1_icon1.getIconHeight());
 		options1.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				options1.setIcon(new ImageIcon(getClass().getResource("settings2.png")));
+				options1.setIcon(new ImageIcon(getClass().getResource("/settings2.png")));
 			}
 			
 			public void mouseExited(MouseEvent e){
@@ -348,7 +350,7 @@ public class CheckerFrame extends JFrame{
 		info.setBounds(500, 310, info_icon1.getIconWidth(), info_icon1.getIconHeight());
 		info.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				info.setIcon(new ImageIcon(getClass().getResource("help2.png")));
+				info.setIcon(new ImageIcon(getClass().getResource("/help2.png")));
 			}
 			
 			public void mouseExited(MouseEvent e){
@@ -363,11 +365,11 @@ public class CheckerFrame extends JFrame{
 				ins.nextLabel.addMouseListener(new MouseAdapter(){
 															
 					public void mouseEntered(MouseEvent e){
-						ins.nextLabel.setIcon(new ImageIcon(getClass().getResource("next2.png")));
+						ins.nextLabel.setIcon(new ImageIcon(getClass().getResource("/next2.png")));
 					}
 					
 					public void mouseExited(MouseEvent e){
-						ins.nextLabel.setIcon(new ImageIcon(getClass().getResource("next.png")));
+						ins.nextLabel.setIcon(new ImageIcon(getClass().getResource("/next.png")));
 					}
 					
 					public void mouseClicked(MouseEvent e){
@@ -380,11 +382,11 @@ public class CheckerFrame extends JFrame{
 				ins.backLabel.addMouseListener(new MouseAdapter(){
 					
 					public void mouseEntered(MouseEvent e){
-						ins.backLabel.setIcon(new ImageIcon(getClass().getResource("back_2.png")));
+						ins.backLabel.setIcon(new ImageIcon(getClass().getResource("/back_2.png")));
 					}
 					
 					public void mouseExited(MouseEvent e){
-						ins.backLabel.setIcon(new ImageIcon(getClass().getResource("back_1.png")));
+						ins.backLabel.setIcon(new ImageIcon(getClass().getResource("/back_1.png")));
 					}
 					
 					public void mouseClicked(MouseEvent e){
@@ -396,11 +398,11 @@ public class CheckerFrame extends JFrame{
 				ins.exitLabel.addMouseListener(new MouseAdapter(){
 					
 					public void mouseEntered(MouseEvent e){
-						ins.exitLabel.setIcon(new ImageIcon(getClass().getResource("close2.png")));
+						ins.exitLabel.setIcon(new ImageIcon(getClass().getResource("/close2.png")));
 					}
 					
 					public void mouseExited(MouseEvent e){
-						ins.exitLabel.setIcon(new ImageIcon(getClass().getResource("close.png")));
+						ins.exitLabel.setIcon(new ImageIcon(getClass().getResource("/close.png")));
 					}
 					
 					public void mouseClicked(MouseEvent e){
@@ -424,7 +426,7 @@ public class CheckerFrame extends JFrame{
 		
 		gamePaused.backToMain.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				gamePaused.backToMain.setIcon(new ImageIcon(getClass().getResource("gameback2.png")));				
+				gamePaused.backToMain.setIcon(new ImageIcon(getClass().getResource("/gameback2.png")));
 			}
 			
 			public void mouseExited(MouseEvent e){
@@ -445,11 +447,11 @@ public class CheckerFrame extends JFrame{
 		gamePaused.info.addMouseListener(new MouseAdapter(){
 						
 			public void mouseEntered(MouseEvent e){
-				gamePaused.info.setIcon(new ImageIcon(getClass().getResource("gamehelp2.png")));
+				gamePaused.info.setIcon(new ImageIcon(getClass().getResource("/gamehelp2.png")));
 			}
 			
 			public void mouseExited(MouseEvent e){
-				gamePaused.info.setIcon(new ImageIcon(getClass().getResource("gamehelp.png")));
+				gamePaused.info.setIcon(new ImageIcon(getClass().getResource("/gamehelp.png")));
 			}
 			
 			public void mouseClicked(MouseEvent e){
@@ -464,11 +466,11 @@ public class CheckerFrame extends JFrame{
 				ins.nextLabel.addMouseListener(new MouseAdapter(){
 															
 					public void mouseEntered(MouseEvent e){
-						ins.nextLabel.setIcon(new ImageIcon(getClass().getResource("next2.png")));
+						ins.nextLabel.setIcon(new ImageIcon(getClass().getResource("/next2.png")));
 					}
 					
 					public void mouseExited(MouseEvent e){
-						ins.nextLabel.setIcon(new ImageIcon(getClass().getResource("next.png")));
+						ins.nextLabel.setIcon(new ImageIcon(getClass().getResource("/next.png")));
 					}
 					
 					public void mouseClicked(MouseEvent e){
@@ -481,11 +483,11 @@ public class CheckerFrame extends JFrame{
 				ins.backLabel.addMouseListener(new MouseAdapter(){
 					
 					public void mouseEntered(MouseEvent e){
-						ins.backLabel.setIcon(new ImageIcon(getClass().getResource("back_2.png")));
+						ins.backLabel.setIcon(new ImageIcon(getClass().getResource("/back_2.png")));
 					}
 					
 					public void mouseExited(MouseEvent e){
-						ins.backLabel.setIcon(new ImageIcon(getClass().getResource("back_1.png")));
+						ins.backLabel.setIcon(new ImageIcon(getClass().getResource("/back_1.png")));
 					}
 					
 					public void mouseClicked(MouseEvent e){
@@ -497,11 +499,11 @@ public class CheckerFrame extends JFrame{
 				ins.exitLabel.addMouseListener(new MouseAdapter(){
 					
 					public void mouseEntered(MouseEvent e){
-						ins.exitLabel.setIcon(new ImageIcon(getClass().getResource("close2.png")));
+						ins.exitLabel.setIcon(new ImageIcon(getClass().getResource("/close2.png")));
 					}
 					
 					public void mouseExited(MouseEvent e){
-						ins.exitLabel.setIcon(new ImageIcon(getClass().getResource("close.png")));
+						ins.exitLabel.setIcon(new ImageIcon(getClass().getResource("/close.png")));
 					}
 					
 					public void mouseClicked(MouseEvent e){
@@ -556,7 +558,7 @@ public class CheckerFrame extends JFrame{
 					icon1 = new ImageIcon(getClass().getResource(imageNames[i]));
 					icon2 = new ImageIcon(getClass().getResource(imageNamesHover[i]));					
 					human1.setIcon(icon2);
-					humanIcon = imageNames[i].substring(0, (imageNames[i].length()-5)) + "1.png";
+					humanIcon = imageNames[i].substring(0, (imageNames[i].length()-5)) + "/1.png";
 					break;
 				}
 			}					
@@ -566,14 +568,5 @@ public class CheckerFrame extends JFrame{
 			revalidate();
 			
 		}
-	}
-	
-	
-	public static void main(String[] args)
-	{
-		CheckerFrame frame = new CheckerFrame();		
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
-		frame.setResizable(false);
 	}
 }

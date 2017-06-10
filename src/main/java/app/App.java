@@ -10,7 +10,7 @@ public class App
     {
         CheckerFrame frame = new CheckerFrame();
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setResizable(false);
     }
 }
