@@ -22,6 +22,9 @@ public class CheckerBoard extends JPanel{
 	private static int aiNumberOfPieces = 12;
 	private static int humanNumberOfPieces = 12;
 	
+	private int[] aiPlayer_moves = new int[50000];
+	private int aiMovesCount = 0; 
+	
 	private static int currSquareIndex;
 	protected static boolean turn; 
 	
@@ -34,19 +37,39 @@ public class CheckerBoard extends JPanel{
 	ArrayList<Integer> leftEdge = new ArrayList<Integer>();
 	ArrayList<Integer> rightEdge = new ArrayList<Integer>();
 	ArrayList<Integer> aiEdge = new ArrayList<Integer>();
-	
-	
+	ArrayList<Integer> myEdge = new ArrayList<Integer>();	
+	ArrayList<Integer> eatSquares = new ArrayList<Integer>();
+		
 	//	Corresponding specific POINTS assigned to black and white pieces.
 	int indices[] = {0, 2, 4, 6, 9, 11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31, 32, 34, 36, 38, 41, 	
 			43, 45, 47, 48, 50, 52, 54, 57, 59, 61, 63};		
 	
 	//	Edge of Boards
 	int[] lEdge = {0, 16, 32, 48}, rEdge = {15, 31, 47, 63};		
-	int[] kingsEdge = {0, 2, 4, 6};
+	int[] kingsEdge = {0, 2, 4, 6}, inEdge = {57, 59, 61, 63};
 
-	private static Icon humanPlayerPiece, aiPiece, humanPlayerPieceKing;
+	String OnePlayer = "1p", TwoPlayer = "2p", gameMode;
+	
+	private static Icon humanPlayerPiece, aiPiece, humanPlayerPieceKing, aiPieceKing;
 	
 	public CheckerBoard(){
+		
+		init();	
+		placePiece2P();
+		setMode(TwoPlayer);
+		
+	}	
+	
+	public CheckerBoard(String piece){
+		
+		init();		
+		setPlayerPiece(piece);				
+		placePiece1P();
+		setMode(OnePlayer);
+		
+	}
+	
+	private void init(){
 		
 		turn = true;
 		
@@ -98,171 +121,349 @@ public class CheckerBoard extends JPanel{
 			aiEdge.add(kingsEdge[i]);
 		}
 		
-		add(board);						
-	}	
+		for(int i = 0; i < inEdge.length; i++){
+			myEdge.add(inEdge[i]);
+		}
+		
+		add(board);
+				
+		
+	}
+	
+	private void placePiece1P(){
+		
+		for(int j = 0; j < 32; j++){
+			
+			greenSquares[j] =  new JLabel();				
+			squarePanels[greenSqrIndex.get(j)].add(greenSquares[j], BorderLayout.CENTER);			
+			
+			if(greenSqrIndex.get(j) >= 0 && greenSqrIndex.get(j) <= 22)
+				greenSquares[j].setIcon(aiPiece);
+			
+			if(greenSqrIndex.get(j) >= 41 && greenSqrIndex.get(j) <= 63)
+				greenSquares[j].setIcon(humanPlayerPiece);			
+		}		
+		
+	}
+	
+	private void placePiece2P(){
+		
+		for(int j = 0; j < 32; j++){
+			
+			greenSquares[j] =  new JLabel();				
+			squarePanels[greenSqrIndex.get(j)].add(greenSquares[j], BorderLayout.CENTER);			
+			
+			//	placement of Black Chips
+			if(greenSqrIndex.get(j) >= 0 && greenSqrIndex.get(j) <= 22)
+				greenSquares[j].setIcon(blackChip);
+			
+			//	placement of White Chips
+			if(greenSqrIndex.get(j) >= 41 && greenSqrIndex.get(j) <= 63)
+				greenSquares[j].setIcon(whiteChip);			
+		}			
+		
+	}
+	
+	public void setPlayerPiece(String piece){
+		
+		if(piece.equals("white")){
+			humanPlayerPiece = whiteChip;
+			humanPlayerPieceKing = whiteKing;
+			aiPiece = blackChip;					
+		}
+		
+		if(piece.equals("black")){
+			humanPlayerPiece = blackChip;
+			humanPlayerPieceKing = blackKing;
+			aiPiece = whiteChip;
+		}
+	}
+	
+	private void setMode(String mode){
+		gameMode = mode;
+	}
+	
+	private void eraseDottedLines(){
+
+		for(int j = 1; j < indexOfClickedPath.size(); j++){
+			greenSquares[greenSqrIndex.indexOf(indexOfClickedPath.get(j))].setIcon(null);
+		}
+		
+	}
+	
+	private boolean isClickedTwice(int index){
+		return !indexOfClickedPath.isEmpty() && 
+				greenSqrIndex.get(index) == indexOfClickedPath.get(indexOfClickedPath.size()-1);
+	}
+	
+	private void markAsPath(int index){
+		
+		//Add index of square to consecutive collection of paths.
+		indexOfClickedPath.add(index);		
+
+		//Mark square with dotted piece.
+		greenSquares[greenSqrIndex.indexOf(index)].setIcon(dottedWhite);
+		
+	}
+	
+	private void resetAndClean(){
+
+		//Reset board color back to green.
+		resetBoardColor();									
+		
+		//Erase marks (dotted pieces).
+		for(int j = 1; j < indexOfClickedPath.size(); j++){
+			greenSquares[greenSqrIndex.indexOf(indexOfClickedPath.get(j))].setIcon(null);
+		}								
+		
+		//Clean path collection.
+		aPieceWasChosen(false);
+		indexOfClickedPath.removeAll(indexOfClickedPath);
+		eatSquares.removeAll(eatSquares);
+	}
+	
+	private boolean isKing(int square){
+		return greenSquares[square].getIcon().toString().equals(humanPlayerPieceKing.toString());		
+	}
+	
+	private boolean isNormalPiece(int square){
+		return greenSquares[square].getIcon().toString().equals(humanPlayerPiece.toString());
+	}
+	
+	private boolean isEmpty(int square){		
+		return greenSquares[square].getIcon() == null;
+	}
+	
+	private boolean isPath(int square){
+		return greenSquares[square].getIcon().toString().equals(dottedWhite.toString());
+	}
+	
+	private boolean isAIPiece(int square){
+		return greenSquares[square].getIcon().toString().equals(aiPiece.toString());
+	}
+		
+	private boolean aPieceWasChosen(){
+		return prevChip;
+	}
+	
+	private void aPieceWasChosen(boolean bool){
+		prevChip = bool;
+	}
+	
+	private boolean isWhitesTurn(){
+		return turn;
+	}
+	
+	private boolean isBlacksTurn(){
+		return turn;
+	}
+	
+	private boolean isHumansTurn(){
+		
+		if(humanPlayerPiece.equals(whiteChip))
+			return turn;
+		
+		return !turn;
+	}
+	
+	private boolean isAiTurn(){
+		
+		if(aiPiece.equals(blackChip)){
+			return !turn;
+		}
+		
+		return turn;
+	}
 	
 	public class MovementHandler extends MouseAdapter{
-		int index;
-		
+	
 		public void mouseClicked(MouseEvent e){
-			Object source = e.getSource();
+			Object source = e.getSource();		
 			
-			
-			int i;
-			for(i = 0; i < 32; i++){
-				
-				if(source == squarePanels[greenSqrIndex.get(i)]){				
-					currSquareIndex = i;
-					index = greenSqrIndex.get(i);
-					break;
-				}								
+			if(gameMode.equals(OnePlayer)){
+				HumanVsAi(source);
 			}
-							
 			
-			//If user clicked a green square.
-			if(i < 32){
+			if(gameMode.equals(TwoPlayer)){
 				
-				// Human player's turn.
-				if(turn == true){																												
-					
-					//If a piece was previously clicked.
-					
-					if(prevChip == true){							
-													
-						//And if the clicked square is a dotted white.
-						
-						if(greenSquares[currSquareIndex].getIcon() == null || 
-							greenSquares[currSquareIndex].getIcon().toString().equals(dottedWhite.toString())){
-									
-							//If the square was already clicked twice.							
-							if(!indexOfClickedPath.isEmpty() && 
-								greenSqrIndex.get(currSquareIndex) == indexOfClickedPath.get(indexOfClickedPath.size()-1)){								
-											
-								// Erase dotted lines.
-								for(int j = 1; j < indexOfClickedPath.size(); j++){
-									greenSquares[greenSqrIndex.indexOf(indexOfClickedPath.get(j))].setIcon(null);
-								}
-								
-								// Move piece.
-								movePiece(index);	
-								
-							
-							}else{	//If the square was clicked once.
-								
-								//Check if the square is valid as path.							
-								if(isValid(index)){
-									
-									//Add index of square to consecutive collection of paths.
-									indexOfClickedPath.add(index);		
-
-									//Mark square with dotted piece.
-									greenSquares[greenSqrIndex.indexOf(index)].setIcon(dottedWhite);
-									
-									
-								//Square is not valid as a path.
-								}else{
-									
-									//Reset board color back to green.
-									resetBoardColor();									
-									
-									//Erase marks (dotted pieces).
-									for(int j = 1; j < indexOfClickedPath.size(); j++){
-										greenSquares[greenSqrIndex.indexOf(indexOfClickedPath.get(j))].setIcon(null);
-									}								
-									
-									//Clean path collection.
-									indexOfClickedPath.removeAll(indexOfClickedPath);									
-								}
-
-							}
-								
-						
-						// Clicked square is either a King or a normal piece.
-							
-						}else if(greenSquares[i].getIcon().toString().equals(humanPlayerPiece.toString())
-								|| greenSquares[i].getIcon().toString().equals(humanPlayerPieceKing.toString())){
-							
-							//The user chose another piece. 
-							//So reset and clean all previous paths.
-							
-							resetBoardColor();
-							indexOfClickedPath.removeAll(indexOfClickedPath);	
-							
-
-							//Make path of chosen piece glow.
-							
-							if(greenSquares[i].getIcon().toString().equals(humanPlayerPieceKing.toString()))					
-								newPieceClick(humanPlayerPieceKing, currSquareIndex, index);
-							else
-								newPieceClick(humanPlayerPiece, currSquareIndex, index);
-							
-							//Add piece to collection of paths.
-							indexOfClickedPath.add(index);
-						
-						
-							
-						// The user clicked the opponent's (AI) piece.
-							
-						}else if(greenSquares[i].getIcon().toString().equals(aiPiece.toString())){							
-							
-							// This is an invalid move.
-							// Reset and clean board.
-							
-							resetBoardColor();							
-							
-							for(int j = 1; j < indexOfClickedPath.size(); j++)
-								greenSquares[greenSqrIndex.indexOf(indexOfClickedPath.get(j))].setIcon(null);							
-							
-							indexOfClickedPath.removeAll(indexOfClickedPath);
-						
-
-						// The user clicked a non-green square.
-						}else{
-							
-							// This is an invalid move. 
-							// Reset and clean board.
-							
-							resetBoardColor();
-							
-							for(int j = 1; j < indexOfClickedPath.size(); j++){
-								greenSquares[greenSqrIndex.indexOf(indexOfClickedPath.get(j))].setIcon(null);
-							}
-							
-							indexOfClickedPath.removeAll(indexOfClickedPath);
-						}
-					}
-					
-					
-					// A chip was not previously clicked.
-					
-					else if(greenSquares[i].getIcon() != null && prevChip == false){
-					
-						//Make the path of the piece glow.
-						
-						if(greenSquares[currSquareIndex].getIcon().toString().equals(humanPlayerPieceKing.toString()))													
-							newPieceClick(humanPlayerPieceKing, currSquareIndex, index);							
-						else							
-							newPieceClick(humanPlayerPiece, currSquareIndex, index);						
-						
-						// Add to collection of paths.
-						indexOfClickedPath.add(index);	
-					}														
-					
-									
-				}else{
-					
-					// The AI's turn.					
-				}
-				
-				
-			//User did not clicked a green square.
-			}else{
-				
-				resetBoardColor();
+				//HumanVsHuman(source);
 			}
 		}
 	}
 	
+	private void HumanVsAi(Object source){
+		
+		int index = 0;		
+		boolean isGreenSquare = false;
+		
+		int i;
+		for(i = 0; i < 32; i++){
+			
+			if(source == squarePanels[greenSqrIndex.get(i)]){				
+				currSquareIndex = i;
+				index = greenSqrIndex.get(i);
+				isGreenSquare = true;
+				break;
+			}								
+		}
+		
+		//If user clicked a green square.
+		if(isGreenSquare){
+			
+			// Human player's turn.
+			if(isHumansTurn()){																												
+				
+				//If a piece was previously clicked.				
+				if(aPieceWasChosen()){							
+												
+					//If the square is either empty or a path.					
+					if( isEmpty(i) || isPath(i) ){
+								
+						//If the square is clicked twice.							
+						if(isClickedTwice(i)){								
+										
+							//Move the piece.
+							eraseDottedLines();
+							movePiece(index);								
+						
+						}else{	//If the square was clicked once.
+														
+							if( isValid(index) ){
+								//System.out.println("" + index + " is valid");
+								markAsPath(index);								
+							}
+							else 
+								resetAndClean();
+						}
+					
+					// Clicked square is either a King or a normal piece.						
+					}else if( isNormalPiece(i) || isKing(i) ){
+												
+						resetAndClean();	
+						storePath(i);
+
+						//Make path of chosen piece glow.						
+						if(isKing(i))					
+							newPieceClick(humanPlayerPieceKing, i, index);
+						
+						if(isNormalPiece(i))
+							newPieceClick(humanPlayerPiece, i, index);
+						
+						//Add piece to collection of paths.						
+						indexOfClickedPath.add(index);
+						
+					// The user clicked the opponent's (AI) piece.						
+					}else if(isAIPiece(i)){							
+						
+						// This is an invalid move.
+						// Reset and clean board.
+						resetAndClean();	
+
+					// The user clicked a non-green square.
+					}else{
+						
+						// This is an invalid move. 
+						// Reset and clean board.
+						resetAndClean();
+					}
+				}
+								
+				// A chip was not previously clicked.			
+				else if( !isEmpty(i) && !aPieceWasChosen()){
+				
+					//Make the path of the piece glow.
+					storePath(i);
+					
+					if(isKing(i))													
+						newPieceClick(humanPlayerPieceKing, currSquareIndex, index);							
+					
+					if(isNormalPiece(i))					
+						newPieceClick(humanPlayerPiece, currSquareIndex, index);						
+										
+					indexOfClickedPath.add(index);	
+				}														
+				
+								
+			}else{
+				
+				if(aiprevChip == true){		
+					
+					if(index-9 == aiPlayer_moves[aiMovesCount-1]){
+											
+						greenSquares[i].setIcon(aiPiece);
+						aiPlayer_moves[aiMovesCount++] = index;
+
+						int temp = index-9;
+						for(int a = 0; a < 32; a++){
+							if(temp == greenSqrIndex.get(a)){
+								greenSquares[a].setIcon(null);																	
+							}
+						}										
+						
+						resetBoardColor();						
+						
+						turn = !turn;
+						aiprevChip = false;								
+					
+					}else if(index-7 == aiPlayer_moves[aiMovesCount-1]){
+															
+						greenSquares[i].setIcon(aiPiece);
+						
+						aiPlayer_moves[aiMovesCount++] = index;
+															
+						int temp = index-7;
+						for(int a = 0; a < 32; a++){
+							if(temp == greenSqrIndex.get(a)){
+								greenSquares[a].setIcon(null);										
+							}
+						}					
+					
+						resetBoardColor();						
+						
+						turn = !turn;
+						aiprevChip = false;																		
+																						
+
+				}else if(greenSquares[i].getIcon().toString().equals(aiPiece.toString())){
+					
+					// The user chose another black chip.
+					aiprevChip = false;
+					
+				}
+				
+				// The block is OCCUPIED with a white chip.
+				else if(greenSquares[i].getIcon().toString().equals(humanPlayerPiece)){
+					
+					// Change board color back to green.
+					resetBoardColor();	
+				}		
+				
+				
+			}
+		
+			if(aiprevChip == false){
+				
+				if(greenSquares[i].getIcon() == aiPiece){	
+					
+					aiPlayer_moves[aiMovesCount++] = index;
+					squarePanels[index].setBackground(Color.YELLOW);
+					
+					//chipsGlow(currSquareIndex, index, blackChip);
+					
+					aiprevChip = true;								
+				}
+			}
+		}
+				
+				
+		//User did not clicked a green square.
+		}else{
+			
+			resetBoardColor();
+		}		
+		
+	}
+		
 	private void movePiece(int index){		
 						
 		Icon piece = greenSquares[greenSqrIndex.indexOf(indexOfClickedPath.get(0))].getIcon();
@@ -281,27 +482,14 @@ public class CheckerBoard extends JPanel{
 			// If the move will make the piece a king.
 			if(isAtKingsEdge){
 				
-				greenSquares[currSquareIndex].setIcon(humanPlayerPieceKing);	//Move piece and appoint it King.																				
-
-				// UPDATE THE CORRESPONDING KEY (index) OF THIS PIECE IN HASHMAP.
-				//gameBoard.setKingPieceAt(new Point(greenSqrIndex.get(currSquareIndex)));
-				
+				greenSquares[currSquareIndex].setIcon(humanPlayerPieceKing);	//Move piece and appoint it King.				
 			
 			// If the move will not make the piece a king.
-			}else{
-								
+			}else{								
 				greenSquares[currSquareIndex].setIcon(humanPlayerPiece); 	//Move the piece.				
-				
-				//UPDATE KEY/POINT/INDEX OF PIECE IN HASHMAP.
 			}					
 						
-			//Clear the piece from its previous place.
 			greenSquares[greenSqrIndex.indexOf(indexOfClickedPath.get(0))].setIcon(null);									
-
-			
-			// Reset board color.
-			// Toggle turns.
-			// Assign necessary values.
 			
 			resetBoardColor();									
 			turn = !turn;																		
@@ -452,119 +640,36 @@ public class CheckerBoard extends JPanel{
 	
 	private boolean isValid(int index){
 					
-		Icon piece = greenSquares[greenSqrIndex.indexOf(indexOfClickedPath.get(0))].getIcon();
-		
 		// If piece is King.
-		if(piece.toString().equals(humanPlayerPieceKing.toString())){
+		int indexOf = greenSqrIndex.indexOf(indexOfClickedPath.get(0));
+		
+		if(isKing(indexOf)){
 			
-			// Diagonal up/down.
-			if(index%9 == indexOfClickedPath.get(indexOfClickedPath.size()-1)%9)				
-				return true;				
-			
-			// Diagonal up/down
-			if(index%7 == indexOfClickedPath.get(indexOfClickedPath.size()-1)%7)				
-				return true;
-			
+			int index2 = indexOfClickedPath.get(indexOfClickedPath.size()-1);			
+			return (index%9 == index2%9 || index%7 == index2%7);												
+
 		}else{						
 			
 			if(indexOfClickedPath.size() > 1){
-				
-				int nIndex1 = indexOfClickedPath.get(indexOfClickedPath.size()-1);
-				int nIndex2 = indexOfClickedPath.get(indexOfClickedPath.size()-2);							
-				
-				if(index == nIndex1 - 7 || index == nIndex1 - 9){
-						
-					if( !((nIndex2 - 7) == nIndex1) && !((nIndex2 - 9) == nIndex1))
-						return true;
-						
-				}else if(index == nIndex1 - 14 || index == nIndex1 - 18 ||
-						index == nIndex1 + 14 || index == nIndex1 + 18){
-													
-					if(greenSquares[greenSqrIndex.indexOf((nIndex1 - 7))].getIcon().toString().equals(aiPiece.toString()) 
-						|| greenSquares[greenSqrIndex.indexOf((nIndex1 - 9))].getIcon().toString().equals(aiPiece.toString())
-						|| greenSquares[greenSqrIndex.indexOf((nIndex1 + 7))].getIcon().toString().equals(aiPiece.toString())
-						|| greenSquares[greenSqrIndex.indexOf((nIndex1 + 9))].getIcon().toString().equals(aiPiece.toString())){
-						
-						return true;
-						
-					}				
-					
-				}
-				
-			}else{
-				
-				int nIndex1 = indexOfClickedPath.get(indexOfClickedPath.size()-1);						
-				
-				if(index == nIndex1 - 7 || index == nIndex1 - 9){					
-					return true;
-						
-				}else{
-				
-					if(index == nIndex1 - 14 ){
-						
-						if(greenSquares[greenSqrIndex.indexOf((nIndex1 - 7))].getIcon().toString().equals(aiPiece.toString())){
-							return true;
-						}
-					}
-					else if(index == nIndex1 - 18){
-						
-						Icon arbPiece = greenSquares[greenSqrIndex.indexOf((nIndex1 - 9))].getIcon();
-						
-						if(arbPiece != null && arbPiece.toString().equals(aiPiece.toString()))
-							return true;
-						
-					}else if(index == nIndex1 + 14){
-						
-						if(greenSquares[greenSqrIndex.indexOf((nIndex1 + 7))].getIcon().toString().equals(aiPiece.toString()))
-							return true;
-						
-					}else if(index == nIndex1 + 18){
-							
-						if(greenSquares[greenSqrIndex.indexOf((nIndex1 + 9))].getIcon().toString().equals(aiPiece.toString()))
-							return true;
-					}
-															
-				}
 								
+				int nIndex1 = indexOfClickedPath.get(indexOfClickedPath.size()-1);					
 				
-			}
-		
-			
+				return ((nIndex1%9 == index%9 && Math.abs(nIndex1-index) == 18) || (nIndex1%7 == index%7 && 
+						Math.abs(nIndex1-index) == 14));
+				
+			}else if(indexOfClickedPath.size() == 1){
+												
+				int nIndex1 = indexOfClickedPath.get(0);								
+				return ((nIndex1%9 == index%9 && ((nIndex1-index) == 9 || 
+						(Math.abs(nIndex1-index) == 18 && eatSquares.contains(index)))) 
+					|| (nIndex1%7 == index%7 && ((nIndex1-index) == 7 || 
+						(Math.abs(nIndex1-index) == 14 && eatSquares.contains(index)))));
+			}			
 		}
 		
 		return false;
 	}
 	
-	public void setHumanPlayerPiece(String piece){		
-		
-		if(piece.equals("white")){
-			humanPlayerPiece = whiteChip;
-			humanPlayerPieceKing = whiteKing;
-			aiPiece = blackChip;					
-		}
-		
-		if(piece.equals("black")){
-			humanPlayerPiece = blackChip;
-			humanPlayerPieceKing = blackKing;
-			aiPiece = whiteChip;
-		}
-		
-			//	Placing the chips in places		
-			for(int j = 0; j < 32; j++){
-				
-				greenSquares[j] =  new JLabel();				
-				squarePanels[greenSqrIndex.get(j)].add(greenSquares[j], BorderLayout.CENTER);			
-				
-				//	placement of Black Chips
-				if(greenSqrIndex.get(j) >= 0 && greenSqrIndex.get(j) <= 22)
-					greenSquares[j].setIcon(aiPiece);
-				
-				//	placement of White Chips
-				if(greenSqrIndex.get(j) >= 41 && greenSqrIndex.get(j) <= 63)
-					greenSquares[j].setIcon(humanPlayerPiece);			
-			}			
-		
-	}
 	
 	public void resetBoardColor(){		
 		for(int j = 0; j < 32; j++){			
@@ -579,20 +684,228 @@ public class CheckerBoard extends JPanel{
 		if(chipColor.toString().equals(humanPlayerPieceKing.toString())){
 			
 			//Glow king's path.
-			kingspathGlowForward(currSquareIndex, index, chipColor, false);		
+			kingspathGlowForward(currSquareIndex, index, chipColor, false);	
+			//checkForKingsFood(index);
 			
 		}else{
 			
-			//Glow piece's path.
-			pathGlowForward(currSquareIndex, index, chipColor, false);			
-			for(int i1 = 0; i1 < indexOfPath.size(); i1++)						
-				pathGlowBackward(greenSqrIndex.indexOf(indexOfPath.get(i1)), indexOfPath.get(i1), chipColor);
+			pathGlowForward(currSquareIndex, index, chipColor);		
+			checkForFood(index);			
 			
 		}
 		
 		indexOfPath.removeAll(indexOfPath);		
 		prevChip = true;
 	}
+		
+	private void checkForFood(int index){
+		
+		int[] indicesMid = { 7, -7, 9, -9};
+		int[] indicesRight = { 7, -9};
+		int[] indicesLeft = { -7, 9};
+		int[] indicesEEdge = {7, 9};
+		int[] indicesMEdge = {-7, -9};
+		int[] indexRightEdge = {-9};
+		int[] indexLeftEdge = {9};
+		int[] indices;
+		
+		if(rightEdge.contains(index)){
+			
+			if(myEdge.contains(index))
+				indices = indexRightEdge;
+			else
+				indices = indicesRight;			
+			
+		}else if(leftEdge.contains(index)){
+			
+			if(aiEdge.contains(index))
+				indices = indexLeftEdge;
+			else
+				indices = indicesLeft;
+		}
+		else if(aiEdge.contains(index))				
+			indices  = indicesEEdge;	
+		
+		else if(myEdge.contains(index))
+			indices = indicesMEdge;
+		
+		else indices = indicesMid;
+				
+		
+		String aiPlayer = aiPiece.toString();		
+		for(int i = 0; i < indices.length; i++){
+			
+			int index2 = index + indices[i];												
+			if(index2 != indexOfPath.get(indexOfPath.size()-1)){
+				
+				Icon icon = getNeighbor(index, indices[i]);
+				if(icon != null){
+				
+				String neighbor = icon.toString();
+				
+					if(neighbor.equals(aiPlayer) && !isAtEdges(index2)
+						&& getNeighbor(index2, indices[i]) == null){
+						
+						if(!indexOfPath.isEmpty()){
+							
+								
+								squarePanels[index2].setBackground(Color.RED);
+								squarePanels[index2 + indices[i]].setBackground(Color.CYAN);
+								
+								storePath(index2);
+								eatSquares.add(index2 + indices[i]);
+								checkForFood(index2 + indices[i]);							
+							
+						}
+						
+						if(indexOfPath.isEmpty()){
+							squarePanels[index2].setBackground(Color.RED);
+							squarePanels[index2 + indices[i]].setBackground(Color.CYAN);
+							
+							storePath(index2);
+							eatSquares.add(index2 + indices[i]);
+							checkForFood(index2 + indices[i]);
+						}
+						
+					}
+				
+				}
+			}
+		}
+		
+		
+	}
+	
+	private void checkForKingsFood(int index){		
+		
+		int[] indicesMid = { 7, -7, 9, -9};
+		int[] indicesRight = { 7, -9};
+		int[] indicesLeft = { -7, 9};
+		int[] indicesEEdge = {7, 9};
+		int[] indicesMEdge = {-7, -9};
+		int[] indexRightEdge = {-9};
+		int[] indexLeftEdge = {9};
+		int[] indices;
+		
+		if(rightEdge.contains(index)){
+			
+			if(myEdge.contains(index)){
+				System.out.println("indexRightEdge");
+				indices = indexRightEdge;
+			}else{
+				System.out.println("indicesRight");
+				indices = indicesRight;
+			}
+			
+		}else if(leftEdge.contains(index)){
+			
+			if(aiEdge.contains(index)){
+				System.out.println("indexLeftEdge");
+				indices = indexLeftEdge;
+			}else{
+				System.out.println("indicesLeft");
+				indices = indicesLeft;
+			}
+		}
+		else if(aiEdge.contains(index)){	
+			System.out.println("indicesEEdge");
+			indices  = indicesEEdge;	
+		
+		}else if(myEdge.contains(index)){
+			System.out.println("indicesMEdge");
+			indices = indicesMEdge;
+		}
+		else{
+			System.out.println("indicesMid");
+			indices = indicesMid;
+		}
+				
+		
+		String aiPlayer = aiPiece.toString();		
+		for(int i = 0; i < indices.length; i++){
+			
+			System.out.println("index: " + index +
+					"indexOfPath: " +  indexOfPath.get(indexOfPath.size()-1) + 
+					" || " + (index != indexOfPath.get(indexOfPath.size()-1)));
+			
+			int index2 = index + indices[i];
+			// If we are not making balik
+			if(index != indexOfPath.get(indexOfPath.size()-1)){
+				
+				int nIndex = index + indices[i];
+				Icon icon = getNeighbor(index, indices[i]);				
+				
+				while(true){
+															
+					if(icon != null){
+
+						int nIndex2 = nIndex + indices[i];
+						String neighbor = icon.toString();		
+						
+						System.out.println("nIndex: " + nIndex + "  nIndex2: " + nIndex2);
+						
+						//System.out.println("neighbor.equals(aiPlayer): " + neighbor.equals(aiPlayer));
+						//System.out.println("getNeighbor(nIndex + indices[i], indices[i]) == null: " + (getNeighbor(nIndex, indices[i]) == null));
+						
+						if(neighbor.equals(aiPlayer) && !isAtEdges(nIndex)
+								&& getNeighbor(nIndex, indices[i]) == null){
+							
+							System.out.println("inside shit");							
+																
+							squarePanels[nIndex].setBackground(Color.RED);
+							squarePanels[nIndex2].setBackground(Color.CYAN);
+							
+							storePath(nIndex2);
+							eatSquares.add(nIndex2);
+							checkForKingsFood(nIndex2);
+						}
+					
+						break;					
+					}
+						
+					squarePanels[nIndex].setBackground(Color.CYAN);
+					icon = getNeighbor(nIndex, indices[i]);
+					nIndex += indices[i];					
+					//System.out.println("------| nIndex: " + nIndex);
+					
+				}
+			}
+		}
+		
+		
+	}
+	
+	private boolean isAtEdges(int index){		
+		return (rightEdge.contains(index) || leftEdge.contains(index) || aiEdge.contains(index));
+	}
+	
+	private Icon getNeighbor(int index, int direction){
+								
+		int var = index + direction;		
+		Icon icon = greenSquares[greenSqrIndex.indexOf(var)].getIcon();
+
+		//System.out.println("var: " + var + " index: " + index + " direction: " + direction);
+		if(icon != null){
+			
+			String square = greenSquares[greenSqrIndex.indexOf(var)].getIcon().toString();
+			String ai = aiPiece.toString();
+			String human = humanPlayerPiece.toString();
+			
+			if(square.equals(ai)){								
+					return aiPiece;
+			}		
+			
+			if(square.equals(human)){
+				return humanPlayerPiece;
+			}
+			
+			if(isKing(greenSqrIndex.indexOf(var))){
+				return humanPlayerPieceKing;
+			}
+		}		
+		
+		return null;		
+	}	
 	
 	private void kingspathGlowForward(int currSquareIndex, int index, Icon color, boolean inRecur){
 		
@@ -614,7 +927,7 @@ public class CheckerBoard extends JPanel{
 					int indexOfn1 = greenSqrIndex.indexOf(nIndex1);		
 					
 					boolean lEdge = false;
-					while(greenSquares[indexOfn1].getIcon() == null){
+					while(nIndex1 > 0 && greenSquares[indexOfn1].getIcon() == null){
 																		
 						squarePanels[nIndex1].setBackground(Color.CYAN);
 						
@@ -628,7 +941,7 @@ public class CheckerBoard extends JPanel{
 						
 					}															
 					
-					if(!lEdge && greenSquares[indexOfn1].getIcon() != null && 
+					if( nIndex1 > 0 && !lEdge && greenSquares[indexOfn1].getIcon() != null && 
 							greenSquares[indexOfn1].getIcon().toString().equals(aiPiece.toString())){
 
 						boolean isLEdge = false;																											
@@ -643,7 +956,7 @@ public class CheckerBoard extends JPanel{
 								squarePanels[nIndex1 - 9].setBackground(Color.CYAN);
 																		
 								storePath(nIndex1 - 9);							
-								pathGlowForward(greenSqrIndex.indexOf(nIndex1 - 9), nIndex1 - 9, color, true);
+								kingspathGlowForward(greenSqrIndex.indexOf(nIndex1 - 9), nIndex1 - 9, color, true);
 							}
 							
 						}									
@@ -657,7 +970,7 @@ public class CheckerBoard extends JPanel{
 					int indexOfn1 = greenSqrIndex.indexOf(nIndex1);		
 					
 					boolean lEdge = false;
-					while(greenSquares[indexOfn1].getIcon() == null){
+					while(nIndex1 <  64 && greenSquares[indexOfn1].getIcon() == null){
 												
 						squarePanels[nIndex1].setBackground(Color.CYAN);
 						
@@ -670,7 +983,7 @@ public class CheckerBoard extends JPanel{
 						indexOfn1 = greenSqrIndex.indexOf(nIndex1);
 					}
 					
-					if(!lEdge && greenSquares[indexOfn1].getIcon() != null && 
+					if(nIndex1 <  64 && !lEdge && greenSquares[indexOfn1].getIcon() != null && 
 							greenSquares[indexOfn1].getIcon().toString().equals(aiPiece.toString())){
 																	
 						boolean isLEdge = false;																											
@@ -685,7 +998,7 @@ public class CheckerBoard extends JPanel{
 								squarePanels[nIndex1 + 7].setBackground(Color.CYAN);
 																		
 								storePath(nIndex1 + 7);							
-								pathGlowForward(greenSqrIndex.indexOf(nIndex1 + 7), nIndex1 + 7, color, true);
+								kingspathGlowForward(greenSqrIndex.indexOf(nIndex1 + 7), nIndex1 + 7, color, true);
 							}
 							
 						}									
@@ -705,7 +1018,7 @@ public class CheckerBoard extends JPanel{
 					
 					boolean rEdge = false;
 					
-					while(greenSquares[indexOfn1].getIcon() == null){
+					while(nIndex1 > 0 && greenSquares[indexOfn1].getIcon() == null){
 						
 						squarePanels[nIndex1].setBackground(Color.CYAN);
 						
@@ -719,7 +1032,7 @@ public class CheckerBoard extends JPanel{
 						
 					}	
 
-					if(!rEdge && greenSquares[indexOfn1].getIcon() != null && 
+					if(nIndex1 > 0 && !rEdge && greenSquares[indexOfn1].getIcon() != null && 
 							greenSquares[indexOfn1].getIcon().toString().equals(aiPiece.toString())){
 
 						boolean isREdge = false;																											
@@ -734,7 +1047,7 @@ public class CheckerBoard extends JPanel{
 								squarePanels[nIndex1 -7].setBackground(Color.CYAN);
 																		
 								storePath(nIndex1 - 7);							
-								pathGlowForward(greenSqrIndex.indexOf(nIndex1 - 7), nIndex1 - 7, color, true);
+								kingspathGlowForward(greenSqrIndex.indexOf(nIndex1 - 7), nIndex1 - 7, color, true);
 							}
 							
 						}									
@@ -751,7 +1064,7 @@ public class CheckerBoard extends JPanel{
 				int indexOfn1 = greenSqrIndex.indexOf(nIndex1);		
 				
 				boolean rEdge = false;
-				while(greenSquares[indexOfn1].getIcon() == null){
+				while(nIndex1 < 64 && greenSquares[indexOfn1].getIcon() == null){
 											
 					squarePanels[nIndex1].setBackground(Color.CYAN);
 					
@@ -764,7 +1077,7 @@ public class CheckerBoard extends JPanel{
 					indexOfn1 = greenSqrIndex.indexOf(nIndex1);
 				}
 				
-				if(!rEdge && greenSquares[indexOfn1].getIcon() != null && 
+				if(nIndex1 < 64 && !rEdge && greenSquares[indexOfn1].getIcon() != null && 
 						greenSquares[indexOfn1].getIcon().toString().equals(aiPiece.toString())){
 																
 					boolean isREdge = false;																											
@@ -779,7 +1092,7 @@ public class CheckerBoard extends JPanel{
 							squarePanels[nIndex1 + 9].setBackground(Color.CYAN);
 																	
 							storePath(nIndex1 + 9);							
-							pathGlowForward(greenSqrIndex.indexOf(nIndex1 + 9), nIndex1 + 9, color, true);
+							kingspathGlowForward(greenSqrIndex.indexOf(nIndex1 + 9), nIndex1 + 9, color, true);
 						}
 						
 					}									
@@ -796,92 +1109,86 @@ public class CheckerBoard extends JPanel{
 				int indexOfn2 = greenSqrIndex.indexOf(nIndex2);								
 				
 				// Towards left diagonal up. 
-				if(index - 9 > 0){								
-					
-					if(indexOfPath.isEmpty() || (!(index%9 == indexOfPath.get(indexOfPath.size()-1)%9)
-							&& index < indexOfPath.get(indexOfPath.size()-1))){
-					
-						boolean lEdge = false;					
-						while(greenSquares[indexOfn1].getIcon() == null){
-													
-							squarePanels[nIndex1].setBackground(Color.CYAN);
-							
-							if(leftEdge.contains(nIndex1)){
-								lEdge = true;
-								break;
-							}							
-							
-							nIndex1 -= 9;
-							indexOfn1 = greenSqrIndex.indexOf(nIndex1);
-																									
-						}					
-																
-						if(!lEdge && greenSquares[indexOfn1].getIcon() != null && 
-								greenSquares[indexOfn1].getIcon().toString().equals(aiPiece.toString())){
-							
-							boolean isLEdge = false;																	
-							if(leftEdge.contains(nIndex1)) isLEdge = true;														
-							
-							if(!isLEdge && (nIndex1 - 9) > 0){
-													
-								if(greenSquares[greenSqrIndex.indexOf(nIndex1 - 9)].getIcon() == null){
-									squarePanels[nIndex1].setBackground(Color.RED);
-									squarePanels[nIndex1 - 9].setBackground(Color.CYAN);
-									
-									storePath(nIndex1 - 9);	
-									kingspathGlowForward(greenSqrIndex.indexOf(nIndex1 - 9), nIndex1 - 9, color, true);
-								}
+				if(indexOfPath.isEmpty() || (!(index % 9 == indexOfPath.get(indexOfPath.size()-1)%9)
+						&& nIndex1 < indexOfPath.get(indexOfPath.size()-1))){
+				
+					boolean lEdge = false;					
+					while( nIndex1 > 0 && isEmpty(indexOfn1) ){
+												
+						squarePanels[nIndex1].setBackground(Color.CYAN);
+						
+						if(leftEdge.contains(nIndex1)){
+							lEdge = true;
+							break;
+						}							
+						
+						nIndex1 -= 9;
+						indexOfn1 = greenSqrIndex.indexOf(nIndex1);
+																								
+					}					
+															
+					if(nIndex1 > 0 && !lEdge && greenSquares[indexOfn1].getIcon() != null && 
+							greenSquares[indexOfn1].getIcon().toString().equals(aiPiece.toString())){
+						
+						boolean isLEdge = false;																	
+						if(leftEdge.contains(nIndex1)) isLEdge = true;														
+						
+						if(!isLEdge && (nIndex1 - 9) > 0){
+												
+							if(greenSquares[greenSqrIndex.indexOf(nIndex1 - 9)].getIcon() == null){
+								squarePanels[nIndex1].setBackground(Color.RED);
+								squarePanels[nIndex1 - 9].setBackground(Color.CYAN);
 								
-							}									
+								storePath(nIndex1 - 9);	
+								kingspathGlowForward(greenSqrIndex.indexOf(nIndex1 - 9), nIndex1 - 9, color, true);
+							}
 							
-						}
+						}									
+						
 					}
-				}
+				}								
 				
 				// Towards right diagonal up.
-				if(index - 7 > 0){
+				if(indexOfPath.isEmpty() || (!(index%7 == indexOfPath.get(indexOfPath.size()-1)%7)
+						&& nIndex2 < indexOfPath.get(indexOfPath.size()-1))){
 					
-					if(indexOfPath.isEmpty() || (!(index%7 == indexOfPath.get(indexOfPath.size()-1)%7)
-							&& index < indexOfPath.get(indexOfPath.size()-1))){
+					boolean rEdge = false;			
+					
+					while(nIndex2 > 0 && greenSquares[indexOfn2].getIcon() == null){												
 						
-						boolean rEdge = false;			
+						squarePanels[nIndex2].setBackground(Color.CYAN);
 						
-						while(greenSquares[indexOfn2].getIcon() == null){												
-							
-							squarePanels[nIndex2].setBackground(Color.CYAN);
-							
-							if(rightEdge.contains(nIndex2)){
-								rEdge = true;
-								break;
-							}
-							
-							if(nIndex2 - 7 < 0) break;
-							
-							nIndex2 -= 7;
-							indexOfn2 = greenSqrIndex.indexOf(nIndex2);
-						}				
-																	
-						if(!rEdge && greenSquares[indexOfn2].getIcon() != null && 
-								greenSquares[indexOfn2].getIcon().toString().equals(aiPiece.toString())){						
-							
-							boolean isREdge = false;									
-							if(rightEdge.contains(nIndex2)) isREdge = true;						
-									
-							
-							if(!isREdge && (nIndex2 - 7) > 0){															
+						if(rightEdge.contains(nIndex2)){
+							rEdge = true;
+							break;
+						}
+						
+						if(nIndex2 - 7 < 0) break;
+						
+						nIndex2 -= 7;
+						indexOfn2 = greenSqrIndex.indexOf(nIndex2);
+					}				
+																
+					if(nIndex2 > 0 && !rEdge && greenSquares[indexOfn2].getIcon() != null && 
+							greenSquares[indexOfn2].getIcon().toString().equals(aiPiece.toString())){						
+						
+						boolean isREdge = false;									
+						if(rightEdge.contains(nIndex2)) isREdge = true;						
 								
-								if(greenSquares[greenSqrIndex.indexOf(nIndex2 - 7)].getIcon() == null){						
-									squarePanels[nIndex2].setBackground(Color.RED);
-									squarePanels[nIndex2 - 7].setBackground(Color.CYAN);
-									
-									storePath(nIndex2 - 7);	
-									kingspathGlowForward(greenSqrIndex.indexOf(nIndex2 - 7), nIndex2 - 7, color, true);							
-								}
-							}
+						
+						if(!isREdge && (nIndex2 - 7) > 0){															
 							
+							if(greenSquares[greenSqrIndex.indexOf(nIndex2 - 7)].getIcon() == null){						
+								squarePanels[nIndex2].setBackground(Color.RED);
+								squarePanels[nIndex2 - 7].setBackground(Color.CYAN);
+								
+								storePath(nIndex2 - 7);	
+								kingspathGlowForward(greenSqrIndex.indexOf(nIndex2 - 7), nIndex2 - 7, color, true);							
+							}
 						}
 						
 					}
+					
 				}
 				
 				// Towards Down.				
@@ -889,97 +1196,92 @@ public class CheckerBoard extends JPanel{
 				nIndex2 = index + 7;															
 									
 				indexOfn1 = greenSqrIndex.indexOf(nIndex1);
-				indexOfn2 = greenSqrIndex.indexOf(nIndex2);
-													
-				// Towards right diagonal down. 
-				if(index + 9 < 64){
+				indexOfn2 = greenSqrIndex.indexOf(nIndex2);																	
 				
-					if(indexOfPath.isEmpty() || (!(index%9 == indexOfPath.get(indexOfPath.size()-1)%9)
-							&& index > indexOfPath.get(indexOfPath.size()-1))){
+				// Towards right diagonal down. 
+				if(indexOfPath.isEmpty() || (!(index%9 == indexOfPath.get(indexOfPath.size()-1)%9)
+						&& nIndex1 > indexOfPath.get(indexOfPath.size()-1))){
+
+					boolean rEdge = false;					
+					while(nIndex1 < 64 && greenSquares[indexOfn1].getIcon() == null){
+												
+						squarePanels[nIndex1].setBackground(Color.CYAN);
 						
-						boolean rEdge = false;					
-						while(greenSquares[indexOfn1].getIcon() == null){
-													
-							squarePanels[nIndex1].setBackground(Color.CYAN);
-							
-							if(rightEdge.contains(nIndex1)){
-								rEdge = true;
-								break;
-							}							
-							
-							nIndex1 += 9;
-							indexOfn1 = greenSqrIndex.indexOf(nIndex1);
-																									
-						}					
+						if(rightEdge.contains(nIndex1)){
+							rEdge = true;
+							break;
+						}							
 						
-						if(!rEdge && greenSquares[indexOfn1].getIcon() != null && 
-								greenSquares[indexOfn1].getIcon().toString().equals(aiPiece.toString())){
-							
-							boolean isREdge = false;																	
-							if(rightEdge.contains(nIndex1)) isREdge = true;														
-							
-							if(!isREdge && (nIndex1 + 9) < 64){
-													
-								if(greenSquares[greenSqrIndex.indexOf(nIndex1 + 9)].getIcon() == null){
-									squarePanels[nIndex1].setBackground(Color.RED);
-									squarePanels[nIndex1 + 9].setBackground(Color.CYAN);
-									
-									storePath(nIndex1 + 9);	
-									kingspathGlowForward(greenSqrIndex.indexOf(nIndex1 + 9), nIndex1 + 9, color, true);
-								}
+						nIndex1 += 9;
+						indexOfn1 = greenSqrIndex.indexOf(nIndex1);
+																								
+					}					
+					
+					if(nIndex1 < 64 && !rEdge && greenSquares[indexOfn1].getIcon() != null && 
+							greenSquares[indexOfn1].getIcon().toString().equals(aiPiece.toString())){												
+						
+						boolean isREdge = false;																	
+						if(rightEdge.contains(nIndex1)) isREdge = true;														
+						
+						if(!isREdge && (nIndex1 + 9) < 64){
+												
+							if(greenSquares[greenSqrIndex.indexOf(nIndex1 + 9)].getIcon() == null){
+								squarePanels[nIndex1].setBackground(Color.RED);
+								squarePanels[nIndex1 + 9].setBackground(Color.CYAN);
 								
-							}									
+								storePath(nIndex1 + 9);	
+								kingspathGlowForward(greenSqrIndex.indexOf(nIndex1 + 9), nIndex1 + 9, color, true);
+							}
 							
-						}						
-					}
-				}
+						}									
+						
+					}						
+				}							
 				
 				// Towards left diagonal down.
-				if(index + 7 < 64){
+				if(indexOfPath.isEmpty() || (!(index%7 == indexOfPath.get(indexOfPath.size()-1)%7)
+						&& nIndex2 > indexOfPath.get(indexOfPath.size()-1))){
 					
-					if(indexOfPath.isEmpty() || (!(index%7 == indexOfPath.get(indexOfPath.size()-1)%7)
-							&& index > indexOfPath.get(indexOfPath.size()-1))){
+					boolean lEdge = false;
+					
+					while(nIndex2 < 64 && greenSquares[indexOfn2].getIcon() == null){												
 						
-						boolean lEdge = false;
+						squarePanels[nIndex2].setBackground(Color.CYAN);
 						
-						while(greenSquares[indexOfn2].getIcon() == null){												
-							
-							squarePanels[nIndex2].setBackground(Color.CYAN);
-							
-							if(leftEdge.contains(nIndex2)){
-								lEdge = true;
-								break;
-							}
-							
-							nIndex2 += 7;
-							indexOfn2 = greenSqrIndex.indexOf(nIndex2);
+						if(leftEdge.contains(nIndex2)){
+							lEdge = true;
+							break;
 						}
-
-						if(!lEdge && greenSquares[indexOfn2].getIcon() != null && 
-								greenSquares[indexOfn2].getIcon().toString().equals(aiPiece.toString())){						
-							
-							boolean isLEdge = false;									
-							if(leftEdge.contains(nIndex2)) isLEdge = true;						
-									
-							
-							if(!isLEdge && (nIndex2 + 7) > 0){
-								
-								if(greenSquares[greenSqrIndex.indexOf(nIndex2 + 7)].getIcon() == null){						
-									squarePanels[nIndex2].setBackground(Color.RED);
-									squarePanels[nIndex2 + 7].setBackground(Color.CYAN);
-									
-									storePath(nIndex2 + 7);	
-									kingspathGlowForward(greenSqrIndex.indexOf(nIndex2 + 7), nIndex2+7, color, true);							
-								}
-							}
-							
-						}						
+						
+						nIndex2 += 7;
+						indexOfn2 = greenSqrIndex.indexOf(nIndex2);
 					}
+
+					if(nIndex2 < 64 && !lEdge && greenSquares[indexOfn2].getIcon() != null && 
+							greenSquares[indexOfn2].getIcon().toString().equals(aiPiece.toString())){						
+						
+						boolean isLEdge = false;									
+						if(leftEdge.contains(nIndex2)) isLEdge = true;						
+								
+						
+						if(!isLEdge && (nIndex2 + 7) > 0){
+							
+							if(greenSquares[greenSqrIndex.indexOf(nIndex2 + 7)].getIcon() == null){						
+								squarePanels[nIndex2].setBackground(Color.RED);
+								squarePanels[nIndex2 + 7].setBackground(Color.CYAN);
+								
+								storePath(nIndex2 + 7);	
+								kingspathGlowForward(greenSqrIndex.indexOf(nIndex2 + 7), nIndex2+7, color, true);							
+							}
+						}
+						
+					}						
 				}
+								
 		}
 	}
 	
-	public void pathGlowForward(int currSquareIndex, int index, Icon color, boolean inRecur){			
+	public void pathGlowForward(int currSquareIndex, int index, Icon color){			
 				
 		if(index - 9 < 0 || index - 7 < 0 ){ 
 			return;
@@ -992,62 +1294,24 @@ public class CheckerBoard extends JPanel{
 									
 			if(isRightEdge){
 
-				int nIndex1 = index - 9;
-				int indexOfn1 = greenSqrIndex.indexOf(nIndex1);		
+				int nIndex = index - 9;
+				int indexOfn = greenSqrIndex.indexOf(nIndex);		
 				
-				if(greenSquares[indexOfn1].getIcon() == null){
-					
-					if(!inRecur)
-						squarePanels[nIndex1].setBackground(Color.CYAN);
-				}									
-							
-				else if(greenSquares[indexOfn1].getIcon().toString().equals(aiPiece.toString())){
+				if(isEmpty(indexOfn)){
 										
-					boolean isLEdge = false;								
-					if(leftEdge.contains(nIndex1)) isLEdge = true;
-					
-					if(!isLEdge && (nIndex1 - 9) > 0){
-											
-						if(greenSquares[greenSqrIndex.indexOf(nIndex1 - 9)].getIcon() == null){
-							squarePanels[nIndex1].setBackground(Color.RED);
-							squarePanels[nIndex1 - 9].setBackground(Color.CYAN);
-																	
-							storePath(nIndex1 - 9);							
-							pathGlowForward(greenSqrIndex.indexOf(nIndex1 - 9), nIndex1-9, color, true);
-						}
-						
-					}									
-					
-				}
+					squarePanels[nIndex].setBackground(Color.CYAN);
+				}																				
 																	
 			}			
 			else if(isLeftEdge){
 				
 				int nIndex = index - 7;
 				int indexOfn = greenSqrIndex.indexOf(nIndex);
-				if(greenSquares[indexOfn].getIcon() == null){
-					
-					if(!inRecur)
-						squarePanels[nIndex].setBackground(Color.CYAN);
-				}									
-				else if(greenSquares[indexOfn].getIcon().toString().equals(aiPiece.toString())){
+				
+				if(isEmpty(indexOfn)){
 										
-					boolean isREdge = false;															
-					if(rightEdge.contains(nIndex)) isREdge = true;
-					
-					if(!isREdge && (nIndex - 7) > 0){
-											
-						if(greenSquares[greenSqrIndex.indexOf(nIndex - 7)].getIcon() == null){
-							squarePanels[nIndex].setBackground(Color.RED);
-							squarePanels[nIndex - 7].setBackground(Color.CYAN);
-							
-							storePath(nIndex - 7);	
-							pathGlowForward(greenSqrIndex.indexOf(nIndex - 7), nIndex-7, color, true);
-						}
-						
-					}									
-					
-				}
+					squarePanels[nIndex].setBackground(Color.CYAN);
+				}													
 			}
 			else{
 				
@@ -1058,53 +1322,13 @@ public class CheckerBoard extends JPanel{
 				int indexOfn2 = greenSqrIndex.indexOf(nIndex2);
 								
 				
-				if(greenSquares[indexOfn1].getIcon() == null){
-					
-					if(!inRecur)
-						squarePanels[nIndex1].setBackground(Color.CYAN);
+				if(isEmpty(indexOfn1)){									
+					squarePanels[nIndex1].setBackground(Color.CYAN);
 				}									
-				else if(greenSquares[indexOfn1].getIcon().toString().equals(aiPiece.toString())){
-										
-					boolean isLEdge = false;
-					if(leftEdge.contains(nIndex1)) isLEdge = true;
-					
-					if(!isLEdge && (nIndex1 - 9) > 0){
-											
-						if(greenSquares[greenSqrIndex.indexOf(nIndex1 - 9)].getIcon() == null){
-							squarePanels[nIndex1].setBackground(Color.RED);
-							squarePanels[nIndex1 - 9].setBackground(Color.CYAN);
-							
-							storePath(nIndex1 - 9);	
-							pathGlowForward(greenSqrIndex.indexOf(nIndex1 - 9), nIndex1-9, color, true);
-						}
-						
-					}									
-					
-				}
 				
-				if(greenSquares[indexOfn2].getIcon() == null){
-					
-					if(!inRecur)
-						squarePanels[nIndex2].setBackground(Color.CYAN);
-				}
-				else if(greenSquares[indexOfn2].getIcon().toString().equals(aiPiece.toString())){
-					
-					boolean isREdge = false;
-					if(rightEdge.contains(nIndex2)) isREdge = true;													
-					
-					if(!isREdge && (nIndex2 - 7) > 0){
-						
-						if(greenSquares[greenSqrIndex.indexOf(nIndex2 - 7)].getIcon() == null){						
-							squarePanels[nIndex2].setBackground(Color.RED);
-							squarePanels[nIndex2 - 7].setBackground(Color.CYAN);
-							
-							storePath(nIndex2 - 7);	
-							pathGlowForward(greenSqrIndex.indexOf(nIndex2 - 7), nIndex2-7, color, true);							
-						}
-					}
-										
-					
-				}
+				if(isEmpty(indexOfn2)){										
+					squarePanels[nIndex2].setBackground(Color.CYAN);
+				}				
 			}
 	}
 	
@@ -1294,8 +1518,8 @@ public class CheckerBoard extends JPanel{
 					
 				}
 															
-				if(greenSquares[indexOfn2].getIcon() != null && greenSquares[indexOfn2].getIcon().toString().equals(aiPiece.toString()))
-				{
+				if(greenSquares[indexOfn2].getIcon() != null && 
+						greenSquares[indexOfn2].getIcon().toString().equals(aiPiece.toString())){
 						
 						boolean isLEdge = false;
 						if(leftEdge.contains(nIndex2)) isLEdge = true;								
