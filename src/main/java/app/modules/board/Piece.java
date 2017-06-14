@@ -16,6 +16,13 @@ public class Piece
         isKing = false;
     }
 
+    public Piece(PieceColor color, Point position, boolean isKing)
+    {
+        this.color = color;
+        this.position = position;
+        this.isKing() = true;
+    }
+
     public PieceColor getColor() { return color; }
     public Point getPoint() { return position; }
     public boolean isKing() { return isKing; }

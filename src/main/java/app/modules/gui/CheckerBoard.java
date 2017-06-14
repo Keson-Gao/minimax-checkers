@@ -1,9 +1,16 @@
 package app.modules.gui;
 
+import app.modules.board.Board;
+import app.modules.board.Piece;
+import app.utils.enums.PieceColor;
+import app.utils.helper.*;
+import app.utils.helper.Point;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CheckerBoard extends JPanel{
 	private static final long serialVersionUID = 1L;
@@ -321,6 +328,43 @@ public class CheckerBoard extends JPanel{
 		indexOfPath.removeAll(indexOfPath);
 				
 	}
+
+	private Board generateBoard()
+    {
+        HashMap<Point, Piece> blackPieces = new HashMap<>();
+        HashMap<Point, Piece> whitePieces = new HashMap<>();
+
+        int squarePos = 0;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 4; j++) {
+                Point newPoint = new Point(getPieceColumn(squarePos, (i % 2) == 0), i);
+                if (greenSquares[squarePos].getIcon() != null) {
+                    if (greenSquares[squarePos].getIcon().toString().equals(humanPlayerPiece.toString())) {
+                        whitePieces.put(newPoint, new Piece(PieceColor.WHITE, newPoint));
+                    } else if (greenSquares[squarePos].getIcon().toString().equals(humanPlayerPieceKing.toString())) {
+                        whitePieces.put(newPoint, new Piece(PieceColor.WHITE, newPoint, true));
+                    } else if (greenSquares[squarePos].getIcon().toString().equals(aiPiece.toString())) {
+                        blackPieces.put(newPoint, new Piece(PieceColor.BLACK, newPoint));
+                    }
+                }
+
+                squarePos++;
+            }
+        }
+
+        return new Board();
+    }
+
+	private void setBoard(Board board)
+	{
+        Piece[] blackPieces = board.getBlackPieces();
+        Piece[] whitePieces = board.getWhitePieces();
+	}
+
+	private int getPieceColumn(int pieceNumber, boolean isEven)
+    {
+        return (isEven) ? 2 * pieceNumber : (2 * pieceNumber) + 1;
+    }
 	
 	private void moveKing(int index){
 		

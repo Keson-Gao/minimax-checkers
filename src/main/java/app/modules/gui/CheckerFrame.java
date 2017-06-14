@@ -43,7 +43,7 @@ public class CheckerFrame extends JFrame{
 			 "/hulk2.png", "/hero2.png", "/luigi2.png", "/greenman2.png", "/death2.png", "/ranger2.png", "/wolverine2.png",
 			 "/viking2.png", "/smoker2.png"};
 	
-	private String[] imageNamesHover = {"/serialKiller2_2.png", "/baymax2_2.png", "/xCon2_2.png", "/robot2_2.png", "/alien2_2.png",
+	private String[] imageNamesHover = {"/serialkiller2_2.png", "/baymax2_2.png", "/xCon2_2.png", "/robot2_2.png", "/alien2_2.png",
 			 "/chick2_2.png", "/starwars2_2.png", "/painter2_2.png", "/thor2_2.png", "/gunman12_2.png", "/gunman22_2.png",
 			 "/hulk2_2.png", "/hero2_2.png", "/luigi2_2.png", "/greenman2_2.png", "/death2_2.png", "/ranger2_2.png", "/wolverine2_2.png",
 			 "/viking2_2.png", "/smoker2_2.png"};
@@ -556,13 +556,13 @@ public class CheckerFrame extends JFrame{
 				if(source == avatar1.labels[i]){
 										
 					icon1 = new ImageIcon(getClass().getResource(imageNames[i]));
-					icon2 = new ImageIcon(getClass().getResource(imageNamesHover[i]));					
+					icon2 = new ImageIcon(getClass().getResource(imageNamesHover[i]));
 					human1.setIcon(icon2);
 					humanIcon = imageNames[i].substring(0, (imageNames[i].length()-5)) + "1.png";
 					break;
 				}
-			}					
-						
+			}
+
 			add(character);
 			repaint();
 			revalidate();

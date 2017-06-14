@@ -35,7 +35,7 @@ public class Board
         }
     }
 
-    private Board(HashMap<Point, Piece> blackPieces, HashMap<Point, Piece> whitePieces)
+    public Board(HashMap<Point, Piece> blackPieces, HashMap<Point, Piece> whitePieces)
     {
         this.blackPieces = blackPieces;
         this.whitePieces = whitePieces;
