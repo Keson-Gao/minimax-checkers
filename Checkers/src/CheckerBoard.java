@@ -684,8 +684,8 @@ public class CheckerBoard extends JPanel{
 		if(chipColor.toString().equals(humanPlayerPieceKing.toString())){
 			
 			//Glow king's path.
-			kingspathGlowForward(currSquareIndex, index, chipColor, false);	
-			//checkForKingsFood(index);
+			//kingspathGlowForward(currSquareIndex, index, chipColor, false);	
+			checkForKingsFood(index);
 			
 		}else{
 			
@@ -779,21 +779,18 @@ public class CheckerBoard extends JPanel{
 	private void checkForKingsFood(int index){		
 		
 		int[] indicesMid = { 7, -7, 9, -9};
-		int[] indicesRight = { 7, -9};
-		int[] indicesLeft = { -7, 9};
-		int[] indicesEEdge = {7, 9};
-		int[] indicesMEdge = {-7, -9};
-		int[] indexRightEdge = {-9};
-		int[] indexLeftEdge = {9};
+		int[] indicesRight = { 7, -9}, indicesLeft = { -7, 9};
+		int[] indicesEEdge = {7, 9}, indicesMEdge = {-7, -9};
+		int[] indexRightEdge = {-9}, indexLeftEdge = {9};
 		int[] indices;
 		
 		if(rightEdge.contains(index)){
 			
 			if(myEdge.contains(index)){
-				System.out.println("indexRightEdge");
+				//System.out.println("indexRightEdge");
 				indices = indexRightEdge;
 			}else{
-				System.out.println("indicesRight");
+				//System.out.println("indicesRight");
 				indices = indicesRight;
 			}
 			
@@ -824,37 +821,39 @@ public class CheckerBoard extends JPanel{
 		String aiPlayer = aiPiece.toString();		
 		for(int i = 0; i < indices.length; i++){
 			
-			System.out.println("index: " + index +
+			/*System.out.println("index: " + index +
 					"indexOfPath: " +  indexOfPath.get(indexOfPath.size()-1) + 
-					" || " + (index != indexOfPath.get(indexOfPath.size()-1)));
+					" || " + (index != indexOfPath.get(indexOfPath.size()-1)));*/
 			
-			int index2 = index + indices[i];
-			// If we are not making balik
-			if(index != indexOfPath.get(indexOfPath.size()-1)){
+			
+			int nIndex = index + indices[i];
+			Icon icon = getNeighbor(index, indices[i]);				
+			
+			System.out.println("nIndex: " + nIndex + "\n Checking if in indexOfPath...");			
+			if(!indexOfPath.contains(nIndex)){
 				
-				int nIndex = index + indices[i];
-				Icon icon = getNeighbor(index, indices[i]);				
-				
-				while(true){
-															
+				while(true){					
+					
 					if(icon != null){
 
 						int nIndex2 = nIndex + indices[i];
 						String neighbor = icon.toString();		
 						
-						System.out.println("nIndex: " + nIndex + "  nIndex2: " + nIndex2);
+						//System.out.println("nIndex: " + nIndex + "  nIndex2: " + nIndex2);
 						
 						//System.out.println("neighbor.equals(aiPlayer): " + neighbor.equals(aiPlayer));
 						//System.out.println("getNeighbor(nIndex + indices[i], indices[i]) == null: " + (getNeighbor(nIndex, indices[i]) == null));
+						//System.out.println("nIndex: " + nIndex);
 						
 						if(neighbor.equals(aiPlayer) && !isAtEdges(nIndex)
 								&& getNeighbor(nIndex, indices[i]) == null){
 							
-							System.out.println("inside shit");							
+														
 																
 							squarePanels[nIndex].setBackground(Color.RED);
 							squarePanels[nIndex2].setBackground(Color.CYAN);
 							
+							System.out.println("pass " + nIndex2);
 							storePath(nIndex2);
 							eatSquares.add(nIndex2);
 							checkForKingsFood(nIndex2);
@@ -864,12 +863,17 @@ public class CheckerBoard extends JPanel{
 					}
 						
 					squarePanels[nIndex].setBackground(Color.CYAN);
+					storePath(nIndex);
+					
+					if(isAtEdges(nIndex)) break;
+					
 					icon = getNeighbor(nIndex, indices[i]);
-					nIndex += indices[i];					
-					//System.out.println("------| nIndex: " + nIndex);
+					nIndex += indices[i];
+					storePath(nIndex);
 					
 				}
 			}
+			
 		}
 		
 		
@@ -879,8 +883,8 @@ public class CheckerBoard extends JPanel{
 		return (rightEdge.contains(index) || leftEdge.contains(index) || aiEdge.contains(index));
 	}
 	
-	private Icon getNeighbor(int index, int direction){
-								
+	private Icon getNeighbor(int index, int direction){								
+		
 		int var = index + direction;		
 		Icon icon = greenSquares[greenSqrIndex.indexOf(var)].getIcon();
 
@@ -1542,6 +1546,7 @@ public class CheckerBoard extends JPanel{
 	}			
 	
 	private void storePath(int indexOfSquarePath){		
+				
 		indexOfPath.add(indexOfSquarePath);		
 	}
 }
