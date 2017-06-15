@@ -20,7 +20,7 @@ public class Piece
     {
         this.color = color;
         this.position = position;
-        this.isKing() = true;
+        this.isKing = true;
     }
 
     public PieceColor getColor() { return color; }
