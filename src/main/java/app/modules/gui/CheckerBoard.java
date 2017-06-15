@@ -326,7 +326,6 @@ public class CheckerBoard extends JPanel{
 		
 		indexOfClickedPath.removeAll(indexOfClickedPath);
 		indexOfPath.removeAll(indexOfPath);
-				
 	}
 
 	private Board generateBoard()
@@ -352,14 +351,54 @@ public class CheckerBoard extends JPanel{
             }
         }
 
-        return new Board();
+        return new Board(blackPieces, whitePieces);
     }
 
 	private void setBoard(Board board)
 	{
+	    clearGreenSquares();
+
         Piece[] blackPieces = board.getBlackPieces();
         Piece[] whitePieces = board.getWhitePieces();
+
+        for (Piece blackPiece : blackPieces) {
+            placePieceToBoard(blackPiece);
+        }
+
+        for (Piece whitePiece : whitePieces) {
+            placePieceToBoard(whitePiece);
+        }
 	}
+
+	private void placePieceToBoard(Piece piece)
+    {
+        /*
+         * Here, we're actually getting the ordinality of each piece which will map to the right green square.
+         * The first (zeroth, rather) square is the top leftmost green square, and the 32nd square is the
+         * bottom rightmost green square.
+         */
+        int xPos = piece.getPoint().x;
+        int yPos = piece.getPoint().y;
+        int multiplier = 4 * yPos; // This makes sure the piece is placed in the right green square, and just does not
+                                   // repeat in the first, second, third, or fourth square.
+        int squarePos = (yPos % 2 == 0) ? (xPos / 2) : (xPos - 1) / 2;
+        squarePos *= multiplier;
+
+        if (piece.getColor() == PieceColor.BLACK) {
+            if (piece.isKing()) greenSquares[squarePos].setIcon(aiPiece); // Temporary while we don't have a king AI piece icon.
+            else greenSquares[squarePos].setIcon(aiPiece);
+        } else /* if (piece.getColor() == PieceColor.WHITE) */ {
+            if (piece.isKing()) greenSquares[squarePos].setIcon(humanPlayerPieceKing);
+            else greenSquares[squarePos].setIcon(humanPlayerPiece);
+        }
+    }
+
+    private void clearGreenSquares()
+    {
+        for (JLabel square : greenSquares) {
+            square.setIcon(null);
+        }
+    }
 
 	private int getPieceColumn(int pieceNumber, boolean isEven)
     {
