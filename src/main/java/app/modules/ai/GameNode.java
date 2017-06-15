@@ -64,21 +64,24 @@ public class GameNode
     private void movePiece()
     {
         Point origPoint = movement[0];
+        PieceColor pieceColor = board.getPieceAt(origPoint).getColor();
+        boolean isPieceKing = board.getPieceAt(origPoint).isKing();
+        boolean setToKing = false;
         for (int i = 1; i < movement.length; i++) { // Start from the second point.
-            if (Math.abs(origPoint.x - movement[i].x) == 2) {
-                // No need to check for the y-axis because we can already check if we did a jump
-                // by just using one coordinate. Remember straight lines with slopes of either
-                // 1 or -1. Their points would have the same value for the x and y coordinates.
-                board.removePieceAt(getMidpoint(origPoint, movement[i]));
-            }
+            if (pieceColor == PieceColor.BLACK && !isPieceKing && movement[i].y == 7) setToKing = true;
+            else if (pieceColor == PieceColor.WHITE && !isPieceKing && movement[i].y == 0) setToKing = true;
 
-            if (i == movement.length - 1) {
-                // Oh look, we're at the last point. Time to move the piece to the last point.
-                board.movePieceTo(movement[0], movement[movement.length - 1]);
-            } else {
-                origPoint = movement[i];
-            }
+            if (Math.abs(origPoint.x - movement[i].x) == 2) board.removePieceAt(getMidpoint(origPoint, movement[i]));
+            // Programmer's note regarding the statement above: No need to check for the y-axis
+            // because we can already check if we did a jump by just using one coordinate. Remember
+            // straight lines with slopes of either 1 or -1. Their points would have the same
+            // value for the x and y coordinates.
+
+            if (i == movement.length - 1) board.movePieceTo(movement[0], movement[movement.length - 1]);
+            else origPoint = movement[i];
         }
+
+        if (setToKing) board.setKingPieceAt(movement[movement.length - 1]);
     }
 
     private Point getMidpoint(Point source, Point target)
