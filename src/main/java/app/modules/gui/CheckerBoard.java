@@ -2,6 +2,7 @@ package app.modules.gui;
 
 import app.modules.board.Board;
 import app.modules.board.Piece;
+import app.modules.ai.AI;
 import app.utils.enums.PieceColor;
 import app.utils.helper.*;
 import app.utils.helper.Point;
@@ -153,9 +154,12 @@ public class CheckerBoard extends JPanel{
 								}
 								
 								// Move piece.
-								movePiece(index);	
-								
-							
+								movePiece(index);
+								turn = true;
+
+								// We can just invoke the AI after we move the piece.
+								Board currBoard = generateBoard();
+								setBoard(new AI().getMove(currBoard, PieceColor.BLACK, 4));
 							}else{	//If the square was clicked once.
 								
 								//Check if the square is valid as path.							
@@ -204,8 +208,8 @@ public class CheckerBoard extends JPanel{
 								newPieceClick(humanPlayerPieceKing, currSquareIndex, index);
 							else
 								newPieceClick(humanPlayerPiece, currSquareIndex, index);
-							
-							//Add piece to collection of paths.
+
+ 							//Add piece to collection of paths.
 							indexOfClickedPath.add(index);
 						
 						
@@ -356,10 +360,10 @@ public class CheckerBoard extends JPanel{
 
 	private void setBoard(Board board)
 	{
-	    clearGreenSquares();
-
         Piece[] blackPieces = board.getBlackPieces();
         Piece[] whitePieces = board.getWhitePieces();
+
+        clearGreenSquares();
 
         for (Piece blackPiece : blackPieces) {
             placePieceToBoard(blackPiece);
@@ -385,7 +389,7 @@ public class CheckerBoard extends JPanel{
         squarePos *= multiplier;
 
         if (piece.getColor() == PieceColor.BLACK) {
-            if (piece.isKing()) greenSquares[squarePos].setIcon(aiPiece); // Temporary while we don't have a king AI piece icon.
+            if (piece.isKing()) greenSquares[squarePos].setIcon(blackKing);
             else greenSquares[squarePos].setIcon(aiPiece);
         } else /* if (piece.getColor() == PieceColor.WHITE) */ {
             if (piece.isKing()) greenSquares[squarePos].setIcon(humanPlayerPieceKing);
