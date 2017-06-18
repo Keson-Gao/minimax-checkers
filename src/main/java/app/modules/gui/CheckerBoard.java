@@ -340,7 +340,7 @@ public class CheckerBoard extends JPanel{
         int squarePos = 0;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 4; j++) {
-                Point newPoint = new Point(getPieceColumn(squarePos, (i % 2) == 0), i);
+                Point newPoint = new Point(getPieceColumn(j, (i % 2) == 0), i);
                 if (greenSquares[squarePos].getIcon() != null) {
                     if (greenSquares[squarePos].getIcon().toString().equals(humanPlayerPiece.toString())) {
                         whitePieces.put(newPoint, new Piece(PieceColor.WHITE, newPoint));
@@ -428,7 +428,7 @@ public class CheckerBoard extends JPanel{
 
 		for(int i = 0 ; i + 1 < indexOfClickedPath.size(); i++){
 			
-			int var1 =  indexOfClickedPath.get(i);
+			int var1 = indexOfClickedPath.get(i);
 			int var2 = indexOfClickedPath.get(i+1);			
 			
 			if(var1%9 == var2%9){

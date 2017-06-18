@@ -34,12 +34,15 @@ public class GameTree
                 pieceNode, new ArrayList<>(), new ArrayList<>()
             );
 
-            for (ArrayList<Point> movement : movements) {
-                Board newBoard = board.clone();
-                GameNode newNode = new GameNode(newBoard);
-                newNode.setMovement(movement.toArray(new Point[0]));
-                PieceColor nextColor = (currColor == PieceColor.BLACK) ? PieceColor.WHITE : PieceColor.BLACK;
-                node.addChild(generateTree(newNode.getBoard(), newNode, nextColor, depth - 1));
+            if (movements.size() > 1) {
+                // A size of 1 would indicate that the piece does not have a place to go. It's basically stuck.
+                for (ArrayList<Point> movement : movements) {
+                    Board newBoard = board.clone();
+                    GameNode newNode = new GameNode(newBoard);
+                    newNode.setMovement(movement.toArray(new Point[0]));
+                    PieceColor nextColor = (currColor == PieceColor.BLACK) ? PieceColor.WHITE : PieceColor.BLACK;
+                    node.addChild(generateTree(newNode.getBoard(), newNode, nextColor, depth - 1));
+                }
             }
         }
 
@@ -87,13 +90,13 @@ public class GameTree
             if (canMove(board, piece, depth, new Point[] { topLeft }) && !piece.isKing()) {
                 Point newPoint = (board.hasPieceAt(topLeft)) ? new Point(topLeft.x - 1, topLeft.y - 1)
                                                              : topLeft;
-                currentNode.setTopLeftChild(generatePieceMoveTree(board, piece, depth, newPoint));
+                currentNode.setTopLeftChild(generatePieceMoveTree(board, piece, depth - 1, newPoint));
             }
 
             if (canMove(board, piece, depth, new Point[] { topRight }) && !piece.isKing()) {
                 Point newPoint = (board.hasPieceAt(topRight)) ? new Point(topRight.x + 1, topRight.y - 1)
                                                               : topRight;
-                currentNode.setTopRightChild(generatePieceMoveTree(board, piece, depth, newPoint));
+                currentNode.setTopRightChild(generatePieceMoveTree(board, piece, depth - 1, newPoint));
             }
         }
 
@@ -101,13 +104,13 @@ public class GameTree
             if (canMove(board, piece, depth, new Point[] { bottomLeft })) {
                 Point newPoint = (board.hasPieceAt(bottomLeft)) ? new Point(bottomLeft.x - 1, bottomRight.y + 1)
                                                                 : bottomLeft;
-                currentNode.setBottomLeftChild(generatePieceMoveTree(board, piece, depth, newPoint));
+                currentNode.setBottomLeftChild(generatePieceMoveTree(board, piece, depth - 1, newPoint));
             }
 
             if (canMove(board, piece, depth, new Point[] { bottomRight })) {
                 Point newPoint = (board.hasPieceAt(bottomRight)) ? new Point(bottomRight.x + 1, bottomRight.y + 1)
                                                                  : bottomRight;
-                currentNode.setBottomRightChild(generatePieceMoveTree(board, piece, depth, newPoint));
+                currentNode.setBottomRightChild(generatePieceMoveTree(board, piece, depth - 1, newPoint));
             }
         }
 
@@ -164,7 +167,7 @@ public class GameTree
     private boolean canMove(Board board, Piece piece, int depth, Point[] points)
     {
         for (Point point : points) {
-            if (isPointInBoard(point)) {
+            if (isPointInBoard(point)) {;
                 if (!board.hasPieceAt(point) && depth == 0) {
                     return true;
                 } else if (board.getPieceAt(point).getColor() != piece.getColor()) {
