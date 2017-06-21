@@ -29,7 +29,7 @@ public class GameTree
 
         Piece[] pieces = (currColor == PieceColor.BLACK) ? board.getBlackPieces() : board.getWhitePieces();
         for (Piece piece : pieces) {
-            MoveNode pieceNode = generatePieceMoveTree(board, piece, 0, piece.getPoint());
+            MoveNode pieceNode = generatePieceMoveTree(board, piece, 1, piece.getPoint());
             ArrayList<ArrayList<Point>> movements = generateMovePoints(
                 pieceNode, new ArrayList<>(), new ArrayList<>()
             );
@@ -168,10 +168,15 @@ public class GameTree
     {
         for (Point point : points) {
             if (isPointInBoard(point)) {;
-                if (!board.hasPieceAt(point) && depth == 0) {
+                if (!board.hasPieceAt(point) && depth > 0) {
                     return true;
-                } else if (board.getPieceAt(point).getColor() != piece.getColor()) {
-                    return canJump(board, piece.getPoint(), point);
+                } else {
+                    Piece adjacentPiece = board.getPieceAt(point);
+                    if (adjacentPiece != null) {
+                        if (adjacentPiece.getColor() != piece.getColor()) {
+                            return canJump(board, piece.getPoint(), point);
+                        }
+                    }
                 }
             }
         }

@@ -139,13 +139,8 @@ public class Board
     private HashMap<Point, Piece> deepCopyHashMap(HashMap<Point, Piece> source)
     {
         HashMap<Point, Piece> target = new HashMap<>();
-        Iterator it = source.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-
-            target.put((Point) pair.getKey(), (Piece) pair.getValue());
-
-            it.remove();
+        for (Map.Entry<Point, Piece> pieceEntry : source.entrySet()) {
+            target.put(pieceEntry.getKey(), pieceEntry.getValue());
         }
 
         return target;
