@@ -32,9 +32,15 @@ public class CheckerFrame extends JFrame{
 	private JLabel humanPlayer, aiPlayer;
 	
 	//////////////////////////////////////////
-	private JLabel humanPlayer2, human1;	
-	private JLabel humanPlayer1, human2, versus;
+	private static JLabel humanPlayer2;
+
+	private static JLabel human1;	
+	private static JLabel humanPlayer1;
 	////////////////////////////////
+
+	private static JLabel human2;
+
+	private JLabel versus;
 	
 	private JLabel onePlayer, twoPlayer;
 	private JLabel backToMain, blackText, whiteText;
@@ -44,11 +50,11 @@ public class CheckerFrame extends JFrame{
 	
 	private JLabel gameBack, gamePlay, gameBack2p, gamePlay2p;	
 	
-	private JLabel playerTurn;	
+	public static JLabel playerTurn;	
 	private JLabel options1;		
 	private JLabel info;
 	
-	private JPanel gamePanel;
+	private static JPanel gamePanel;
 
 	CheckerGamePanel game; 	
 	
@@ -78,15 +84,17 @@ public class CheckerFrame extends JFrame{
 	
 	private String whiteTurn ="whiteturn.png";
 	public String turnImage = whiteTurn;
-	private JTextField human1Name, human2Name;
+	private static JTextField human1Name;
+
+	private static JTextField human2Name;
 	
 	public static FixedGlassPane glass;
 	private GamePausedPanel gamePaused;
 	
-	private JPanel menu, mode, character;
+	private static JPanel menu, mode, character;
 	
 	private int num = 0;	
-	
+	private static Container container;
 	
 	CheckerFrame()
 	{
@@ -259,14 +267,14 @@ public class CheckerFrame extends JFrame{
 									}
 									
 								}
-							});				
+							});			
 							
 							gameBack = new JLabel(backToMainIcon);
 							gameBack.setBounds(40, 480, backToMainIcon.getIconWidth(), backToMainIcon.getIconHeight());
 							gameBack.addMouseListener(new MouseAdapter(){
 								public void mouseEntered(MouseEvent e){
 									gameBack.setIcon(backToMainIcon2);
-								}
+								}                                                                                      
 								
 								public void mouseExited(MouseEvent e){
 									gameBack.setIcon(backToMainIcon);
@@ -526,6 +534,11 @@ public class CheckerFrame extends JFrame{
 								public void mouseClicked(MouseEvent e){
 									getContentPane().removeAll();
 									
+									gamePanel = new JPanel();
+									gamePanel.setBounds(0, 0, 1000, 600);
+									gamePanel.setOpaque(false);
+									gamePanel.setLayout(null);
+									
 									Icon icon = new ImageIcon(getClass().getResource("greenbg.png"));
 									JLabel bg = new JLabel(icon);
 									bg.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
@@ -564,13 +577,15 @@ public class CheckerFrame extends JFrame{
 									playerTurn = new JLabel(new ImageIcon(getClass().getResource(turnImage)));
 									playerTurn.setBounds(695, 30, 59, 69);							
 									
-									add(playerTurn);									
-									add(humanPlayer1);
-									add(humanPlayer2);							
-									add(game);
-									add(boardBorder);
-									add(gameMenu);														
-									add(bg);
+									gamePanel.add(playerTurn);									
+									gamePanel.add(humanPlayer1);
+									gamePanel.add(humanPlayer2);							
+									gamePanel.add(game);
+									gamePanel.add(boardBorder);
+									gamePanel.add(gameMenu);														
+									gamePanel.add(bg);
+									
+									add(gamePanel);
 									
 									repaint();
 									revalidate();
@@ -834,14 +849,7 @@ public class CheckerFrame extends JFrame{
 	    glass.setLayout(null);
 	    glass.setOpaque(false);
 	    glass.setBackground(Color.GRAY);
-	    glass.add(gamePaused);
-	     
-	    /*
-		glass1 = new FixedGlassPane(getJMenuBar(), getContentPane());
-	    glass1.setLayout(null);
-	    glass1.setOpaque(false);
-	    glass1.setBackground(Color.GRAY);
-	    glass1.add(gamePaused);*/
+	    glass.add(gamePaused);	     	    
 	    
 	    setGlassPane(glass);
 		
@@ -850,7 +858,9 @@ public class CheckerFrame extends JFrame{
 		menu.add(options1);
 		menu.add(info);
 		
-		add(menu);		
+		add(menu);	
+		
+		container = getContentPane();
 	}
 	
 	public class AvatarHandler extends MouseAdapter{
@@ -905,6 +915,32 @@ public class CheckerFrame extends JFrame{
 		}
 	}
 	
+	public static void gameOver(GameOver game, int blacksScore, int whitesScore, int blacksMoves, int whitesMoves){
+		
+		container.removeAll();
+		
+		if(blacksScore == 0)			
+			game.setWinner(human2.getIcon(), human2Name.getText(), whitesMoves);
+		
+		else if(whitesScore == 0)
+			game.setWinner(human1.getIcon(), human1Name.getText(), blacksMoves);
+		
+		container.add(game);
+		
+		game.ok.addMouseListener(new MouseAdapter(){
+			
+			public void mouseClicked(MouseEvent e){
+				container.removeAll();
+				container.add(mode);
+				container.repaint();
+				container.revalidate();
+			}
+		});				
+		
+		container.repaint();
+		container.revalidate();
+		
+	}
 	
 	public static void main(String[] args)
 	{
