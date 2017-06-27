@@ -315,8 +315,39 @@ public class CheckerBoard extends JPanel{
 		return turn;
 	}
 	
-	private boolean isAtKingsEdge(int index){
-		return (aiEdge.contains(index) || myEdge.contains(index));
+	private boolean toCrownAsKing(){
+				
+		for(int i: indexOfClickedPath){					
+			
+			if(myEdge.contains(i) || aiEdge.contains(i))
+				return true;				
+		}
+		
+		return false;			
+		
+	}
+	
+	private boolean toCrownAsKingBlack(){
+		
+		for(int i: indexOfClickedPath){		
+			
+			if(myEdge.contains(i))
+				return true;
+		}
+		
+		return false;
+		
+	}
+	
+	private boolean toCrownAsKingWhite(){
+		
+		for(int i: indexOfClickedPath){		
+			
+			if(aiEdge.contains(i))
+				return true;
+		}
+		
+		return false;
 	}
 	
 	private boolean isWhitePiece(int square){
@@ -549,7 +580,7 @@ public class CheckerBoard extends JPanel{
 							movePiece(index, i);														
 						
 						}else{	
-														
+																	
 							if( isValid(index) )								
 								markAsPath(index);								
 							
@@ -611,7 +642,7 @@ public class CheckerBoard extends JPanel{
 							movePiece(index, i);														
 						
 						}else{	
-														
+																		
 							if( isValid(index) ){								
 								markAsPath(index);								
 							}
@@ -672,28 +703,26 @@ public class CheckerBoard extends JPanel{
 		if(isKing(nIndex))		
 			moveKing(i);
 		
-		else if(isNormalPiece(nIndex)){
-			
-			//boolean isAtKingsEdge = false;
-			//if(aiEdge.contains(index)) isAtKingsEdge = true;		
+		else if(isNormalPiece(nIndex)){		
 					
-			if(isAtKingsEdge(index)){
+			if(toCrownAsKing()){
 				
 				if(gameMode.equals(TwoPlayer)){
 					
 					if(isBlacksTurn()){
 						
-						if(myEdge.contains(index))
+						if(toCrownAsKingBlack())
 							greenSquares[currSquareIndex].setIcon(blackKing);
 						else
 							greenSquares[currSquareIndex].setIcon(blackChip);
 					
 					}else if(isWhitesTurn()){
-						
-						if(aiEdge.contains(index))
+											
+						if(toCrownAsKingWhite())
 							greenSquares[currSquareIndex].setIcon(whiteKing);
-						else
+						else 
 							greenSquares[currSquareIndex].setIcon(whiteChip);
+					
 					}
 					
 				}else	greenSquares[currSquareIndex].setIcon(humanPlayerPieceKing);
@@ -749,13 +778,17 @@ public class CheckerBoard extends JPanel{
 		eatEnemyPiece(i);	
 
 		turn = !turn;																		
-		prevChip = false;		
+		prevChip = false;	
+		
+		if(turn)
+			CheckerFrame.playerTurn.setIcon(new ImageIcon(getClass().getResource("whiteturn.png")));
+		else
+			CheckerFrame.playerTurn.setIcon(new ImageIcon(getClass().getResource("blackturn.png")));
 
 	}		
 	
 	private void eatEnemyPiece(int j){
 		
-		//int score = 0;
 		for(int i = 0 ; i + 1 < indexOfClickedPath.size(); i++){
 						
 			int var = (indexOfClickedPath.get(i+1) - indexOfClickedPath.get(i));					
@@ -863,7 +896,7 @@ public class CheckerBoard extends JPanel{
 			}
 			
 		}else{						
-			
+									
 			if(indexOfClickedPath.size() > 1){
 								
 				int nIndex1 = indexOfClickedPath.get(indexOfClickedPath.size()-1);					
@@ -873,7 +906,7 @@ public class CheckerBoard extends JPanel{
 				
 			}else if(indexOfClickedPath.size() == 1){
 												
-				int nIndex1 = indexOfClickedPath.get(0);		
+				int nIndex1 = indexOfClickedPath.get(0);	
 				
 				if(gameMode.equals(TwoPlayer)){
 					
@@ -932,15 +965,14 @@ public class CheckerBoard extends JPanel{
 		prevChip = true;
 	}
 		
-	private void checkForFood(int index){
-		
-		System.out.println("index: " + index);
+	private void checkForFood(int index){			
+				
 		
 		int[] indicesMid = { 7, -7, 9, -9};
 		int[] indicesRight = { 7, -9};
 		int[] indicesLeft = { -7, 9};
 		int[] indicesEEdge = {7, 9};
-		int[] indicesMEdge = {-7, -9};
+		int[] indicesMEdge = {-9, -7};
 		int[] indexRightEdge = {-9};
 		int[] indexLeftEdge = {9};
 		int[] indices;
@@ -952,23 +984,25 @@ public class CheckerBoard extends JPanel{
 			else
 				indices = indicesRight;			
 			
-			System.out.println("1");
 		}else if(leftEdge.contains(index)){
 			
 			if(aiEdge.contains(index))
 				indices = indexLeftEdge;
 			else
 				indices = indicesLeft;
-			System.out.println("2");
+			
 		}
 		else if(aiEdge.contains(index)){				
 			indices  = indicesEEdge;	
-			System.out.println("3");
+			
 		}else if(myEdge.contains(index)){
 			indices = indicesMEdge;
-			System.out.println("4");
-		}else{ indices = indicesMid; System.out.println("5");
+			
+		}else{ 
+			indices = indicesMid; 
+			
 		}
+		
 		String enemyPlayer = null;
 		String enemyPlayerKing = null;
 		
@@ -988,33 +1022,23 @@ public class CheckerBoard extends JPanel{
 		
 		for(int i = 0; i < indices.length; i++){
 			
-			//System.out.println("--------||" + indices[i]);
-			int index2 = index + indices[i];
+			int index2 = index + indices[i];			
 			
-			//System.out.println("index2: " + index2);
-			//System.out.println(indexOfPath);
-			
-			if(index2 != indexOfPath.get(indexOfPath.size()-1)){
-				
-				//System.out.println("con1");
-				//System.out.println("index2: " + index2);
+			if(greenSqrIndex.indexOf(index2) != indexOfPath.get(indexOfPath.size()-1)){
+								
 				
 				Icon icon = getNeighbor(index, indices[i]);
 				if(icon != null){
 				
-				//System.out.println("con2");
 				String neighbor = icon.toString();
 				
 					if((neighbor.equals(enemyPlayer) || neighbor.equals(enemyPlayerKing)) 
-							&& !isAtEdges(index2) && getNeighbor(index2, indices[i]) == null){
-						
-						//System.out.println("con3");
+							&& !isAtEdges(index2) && getNeighbor(index2, indices[i]) == null){						
 					
 						squarePanels[index2].setBackground(Color.RED);
 						squarePanels[index2 + indices[i]].setBackground(Color.CYAN);
-						
-						storePath(index2);
-						//System.out.println("store " + index2);
+															
+						storePath(greenSqrIndex.indexOf(index2));
 						eatSquares.add(index2 + indices[i]);
 						checkForFood(index2 + indices[i]);
 						
@@ -1081,37 +1105,23 @@ public class CheckerBoard extends JPanel{
 		for(int i = 0; i < indices.length; i++){
 			
 			int index2 = index + indices[i];												
-			if(index2 != indexOfPath.get(indexOfPath.size()-1)){
+			if(greenSqrIndex.indexOf(index2) != indexOfPath.get(indexOfPath.size()-1)){
 								
 				Icon icon = getNeighbor(index, indices[i]);
 				if(icon != null){
 
 				String neighbor = icon.toString();
-				
-					System.out.println("!isAtEdges(index2): " + !isAtEdges(index2));
+									
 					if((neighbor.equals(enemyPlayer) || neighbor.equals(enemyPlayerKing)) 
 							&& !isAtEdges(index2) && getNeighbor(index2, indices[i]) == null){												
 						
-						if(!indexOfPath.isEmpty()){
-														
-								squarePanels[index2].setBackground(Color.RED);
-								squarePanels[index2 + indices[i]].setBackground(Color.CYAN);
-								
-								storePath(index2);
-								eatSquares.add(index2 + indices[i]);
-								checkForFood(index2 + indices[i]);							
-							
-						}
+						squarePanels[index2].setBackground(Color.RED);
+						squarePanels[index2 + indices[i]].setBackground(Color.CYAN);
 						
-						if(indexOfPath.isEmpty()){
-							squarePanels[index2].setBackground(Color.RED);
-							squarePanels[index2 + indices[i]].setBackground(Color.CYAN);
-							
-							storePath(index2);
-							eatSquares.add(index2 + indices[i]);
-							checkForFood(index2 + indices[i]);
-						}
-						
+						storePath(greenSqrIndex.indexOf(index2));
+						eatSquares.add(index2 + indices[i]);
+						checkForFood(index2 + indices[i]);
+
 					}
 				
 				}
@@ -1286,8 +1296,7 @@ public class CheckerBoard extends JPanel{
 		}		
 	}		
 	
-	private void storePath(int indexOfSquarePath){		
-				
+	private void storePath(int indexOfSquarePath){							
 		indexOfPath.add(indexOfSquarePath);		
 	}
 }
