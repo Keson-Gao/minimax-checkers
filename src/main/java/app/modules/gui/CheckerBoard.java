@@ -157,9 +157,13 @@ public class CheckerBoard extends JPanel{
 								movePiece(index);
 								turn = true;
 
+								// Winning condition already?
+
 								// We can just invoke the AI after we move the piece.
 								Board currBoard = generateBoard();
 								setBoard(new AI().getMove(currBoard, PieceColor.BLACK, 4));
+
+								// Winning condition already?
 							}else{	//If the square was clicked once.
 								
 								//Check if the square is valid as path.							
