@@ -14,19 +14,15 @@ public class GameNode
     private Point[] movement;
     private int whiteScore;
     private int blackScore;
+    private int depth;
 
-    public GameNode(Board board)
+    public GameNode(Board board, int depth)
     {
         this.board = board;
         whiteScore = board.getBoardValue(PieceColor.WHITE);
         blackScore = board.getBoardValue(PieceColor.BLACK);
         children = new ArrayList<>();
-    }
-
-    public GameNode(int score)
-    {
-        whiteScore = score;
-        blackScore = score;
+        this.depth = depth;
     }
 
     public void addChild(GameNode child)
@@ -56,6 +52,7 @@ public class GameNode
 
     public GameNode[] getChildren() { return children.toArray(new GameNode[0]); }
     public Board getBoard() { return board; }
+    public int getDepth() { return depth; }
     public Point[] getMovement() { return movement; }
     public boolean hasChildren() { return children.size() != 0; }
 
