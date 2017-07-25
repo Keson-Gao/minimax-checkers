@@ -25,6 +25,13 @@ public class GameNode
         this.depth = depth;
     }
 
+    public GameNode(int score, int depth)
+    {
+        whiteScore = score;
+        blackScore = score;
+        this.depth = depth;
+    }
+
     public void addChild(GameNode child)
     {
         if (child != null) {
