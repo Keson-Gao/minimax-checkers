@@ -15,6 +15,7 @@ public class GameNode
     private int whiteScore;
     private int blackScore;
     private int depth;
+    private int id;
 
     public GameNode(Board board, int depth)
     {
@@ -60,8 +61,10 @@ public class GameNode
     public GameNode[] getChildren() { return children.toArray(new GameNode[0]); }
     public Board getBoard() { return board; }
     public int getDepth() { return depth; }
+    public int getID() { return id; }
     public Point[] getMovement() { return movement; }
     public boolean hasChildren() { return children.size() != 0; }
+    public void setID(int id) { this.id = id; }
 
     private void setParent(GameNode parent) { this.parent = parent; }
 

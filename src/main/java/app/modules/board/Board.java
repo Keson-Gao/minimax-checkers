@@ -91,16 +91,19 @@ public class Board
     {
         if (blackPieces.containsKey(p)) {
             Piece piece = blackPieces.get(p);
-            piece.setPoint(newPoint);
             blackPieces.remove(p);
+
+            piece.setPoint(newPoint);
             blackPieces.put(newPoint, piece);
         } else if (whitePieces.containsKey(p)) {
             Piece piece = whitePieces.get(p);
             piece.setPoint(newPoint);
             whitePieces.remove(p);
+
+            piece.setPoint(newPoint);
             whitePieces.put(newPoint, piece);
         } else {
-            throw new NullPointerException("Piece does not exist at (" + p.x + ", " + p.y + ".");
+            throw new NullPointerException("Piece does not exist at (" + p.x + ", " + p.y + ").");
         }
     }
 
@@ -142,6 +145,8 @@ public class Board
         for (Map.Entry<Point, Piece> pieceEntry : source.entrySet()) {
             target.put(pieceEntry.getKey(), pieceEntry.getValue());
         }
+
+        System.out.println("-");
 
         return target;
     }

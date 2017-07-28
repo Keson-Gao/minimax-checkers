@@ -11,11 +11,15 @@ public class Point
         this.y = y;
     }
 
+    @Override public String toString() { return "(" + x + ", " + y + ")"; }
+
     @Override public Point clone() { return new Point(x, y); }
 
     @Override public int hashCode()
     {
-        return 31 * x + y;
+        int result = x;
+        result = 31 * result + y;
+        return result;
     }
 
     @Override public boolean equals(Object obj)
