@@ -76,7 +76,6 @@ public class GameTree
             currParentID = currNode.getID();
             System.out.println("Current node: " + currNode.getID());
             drawBoard(currNode.getBoard());
-            printBoardValue(currNode.getBoard());
             ArrayList<GameNode> childNodes = generateChildNodes(currNode.getBoard(), currColor, currNode.getDepth() + 1);
             for (GameNode child : childNodes) {
                 currNode.addChild(child);

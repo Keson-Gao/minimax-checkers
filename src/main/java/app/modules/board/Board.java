@@ -143,7 +143,7 @@ public class Board
     {
         HashMap<Point, Piece> target = new HashMap<>();
         for (Map.Entry<Point, Piece> pieceEntry : source.entrySet()) {
-            target.put(pieceEntry.getKey(), pieceEntry.getValue());
+            target.put(pieceEntry.getKey().clone(), pieceEntry.getValue().clone());
         }
 
         System.out.println("&");

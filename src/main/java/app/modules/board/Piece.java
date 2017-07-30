@@ -20,7 +20,12 @@ public class Piece
     {
         this.color = color;
         this.position = position;
-        this.isKing = true;
+        this.isKing = isKing;
+    }
+
+    public Piece clone()
+    {
+        return new Piece(color, position.clone(), isKing);
     }
 
     public PieceColor getColor() { return color; }
