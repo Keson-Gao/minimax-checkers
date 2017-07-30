@@ -146,7 +146,7 @@ public class Board
             target.put(pieceEntry.getKey(), pieceEntry.getValue());
         }
 
-        System.out.println("-");
+        System.out.println("&");
 
         return target;
     }
