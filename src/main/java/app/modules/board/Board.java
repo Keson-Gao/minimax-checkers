@@ -146,8 +146,6 @@ public class Board
             target.put(pieceEntry.getKey().clone(), pieceEntry.getValue().clone());
         }
 
-        System.out.println("&");
-
         return target;
     }
 

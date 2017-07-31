@@ -74,15 +74,11 @@ public class GameTree
             }
 
             currParentID = currNode.getID();
-            System.out.println("Current node: " + currNode.getID());
-            drawBoard(currNode.getBoard());
             ArrayList<GameNode> childNodes = generateChildNodes(currNode.getBoard(), currColor, currNode.getDepth() + 1);
             for (GameNode child : childNodes) {
                 currNode.addChild(child);
 
-                if (currNode.getDepth() + 1 < maxDepth || currNode.getBoard().getWhitePieces().length != 0 ||
-                    currNode.getBoard().getBlackPieces().length != 0) {
-
+                if (currNode.getDepth() + 1 < maxDepth && (currNode.getBoard().getWhitePieces().length != 0 || currNode.getBoard().getBlackPieces().length != 0)) {
                     gameNodes.add(child);
                 }
             }
@@ -104,11 +100,6 @@ public class GameTree
 
             for (Point[] pointPath : generatedPiecePaths) {
                 if (pointPath.length > 1) {
-                    if (nodeCount + 1 == 2) {
-                        System.out.println("Node #2");
-                        drawBoard(board);
-                    }
-
                     GameNode node = new GameNode(board.clone(), childDepth);
                     node.setMovement(pointPath);
                     node.setID(++nodeCount);
@@ -257,43 +248,6 @@ public class GameTree
     private PieceColor getOppositeColor(PieceColor color)
     {
         return (color == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
-    }
-
-    private void printBoardValue(Board board)
-    {
-        System.out.println("Black pieces");
-        for (Piece blackPiece : board.getBlackPieces()) {
-            System.out.println("Point: " + blackPiece.getPoint());
-        }
-
-        System.out.println("White pieces");
-        for (Piece whitePiece : board.getWhitePieces()) {
-            System.out.println("Point: " + whitePiece.getPoint());
-        }
-    }
-
-    private void drawBoard(Board board)
-    {
-        System.out.println("Board drawing");
-        printBoardValue(board);
-        System.out.println(board.hasPieceAt(new Point(0, 0)));
-
-        for (int y = 0; y < 8; y++) {
-            for (int x = 0; x < 8; x++) {
-                if (!board.hasPieceAt(new Point(x, y))) {
-                    System.out.print("*");
-                } else {
-                    PieceColor pointColor = board.getPieceAt(new Point(x, y)).getColor();
-                    if (pointColor == PieceColor.BLACK) {
-                        System.out.print("x");
-                    } else {
-                        System.out.print("o");
-                    }
-                }
-            }
-
-            System.out.print("\n");
-        }
     }
 
     private boolean isPointTraversable(Board board, Point target, HashSet<Point> removedPoints)
