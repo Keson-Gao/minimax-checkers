@@ -10,16 +10,16 @@ public class CheckerFrame extends JFrame{
 	private Icon play_icon1 = new ImageIcon(getClass().getResource("/play.png"));
 	private Icon play_icon2 = new ImageIcon(getClass().getResource("/play2.png"));
 	private Icon options1_icon1 = new ImageIcon(getClass().getResource("/settings.png"));
-	private Icon info_icon1 = new ImageIcon(getClass().getResource("/help1.png"));
+	private Icon info_icon1 = new ImageIcon(getClass().getResource("/help1.png"));				
 	private Icon titleIcon = new ImageIcon(getClass().getResource("/dama.png"));
 	
 	private Icon backToMainIcon = new ImageIcon(getClass().getResource("/back1.png"));
-	private Icon backToMainIcon2 = new ImageIcon(getClass().getResource("/back2.png"));
-	private Icon gameMenuIcon = new ImageIcon(getClass().getResource("/menu.png"));
+	private Icon backToMainIcon2 = new ImageIcon(getClass().getResource("/back2.png"));		
+	private Icon gameMenuIcon = new ImageIcon(getClass().getResource("/menu.png")); 
 	private Icon aiPlayerIcon = new ImageIcon(getClass().getResource("/bot.png"));
 	private Icon blackTextIcon = new ImageIcon(getClass().getResource("/blacktext.png"));
 	private Icon whiteTextIcon = new ImageIcon(getClass().getResource("/whitetext.png"));
-	private Icon gamePlay2pIcon = new ImageIcon(getClass().getResource("/go.png"));
+	private Icon gamePlay2pIcon = new ImageIcon(getClass().getResource("/go.png"));		
 	
 	private JLabel gameTitle;
 	private JLabel playGame, boardBorder, gameMenu;
@@ -38,22 +38,22 @@ public class CheckerFrame extends JFrame{
 	GameAvatar avatar1 = new GameAvatar();
 	GameAvatar avatar2 = new GameAvatar();
 	
-	private String[] imageNames = {"/serialkiller2.png", "/baymax2.png", "/xCon2.png", "/robot2.png", "/alien2.png",
-			 "/chick2.png", "/starwars2.png", "/painter2.png", "/thor2.png", "/gunman12.png", "/gunman22.png",
-			 "/hulk2.png", "/hero2.png", "/luigi2.png", "/greenman2.png", "/death2.png", "/ranger2.png", "/wolverine2.png",
-			 "/viking2.png", "/smoker2.png"};
+	private String[] imageNames = {"serialKiller2.png", "baymax2.png", "xCon2.png", "robot2.png", "alien2.png", 
+			 "chick2.png", "starwars2.png", "painter2.png", "thor2.png", "gunman12.png", "gunman22.png",
+			 "hulk2.png", "hero2.png", "luigi2.png", "greenman2.png", "death2.png", "ranger2.png", "wolverine2.png",
+			 "viking2.png", "smoker2.png"};
 	
-	private String[] imageNamesHover = {"/serialkiller2_2.png", "/baymax2_2.png", "/xCon2_2.png", "/robot2_2.png", "/alien2_2.png",
-			 "/chick2_2.png", "/starwars2_2.png", "/painter2_2.png", "/thor2_2.png", "/gunman12_2.png", "/gunman22_2.png",
-			 "/hulk2_2.png", "/hero2_2.png", "/luigi2_2.png", "/greenman2_2.png", "/death2_2.png", "/ranger2_2.png", "/wolverine2_2.png",
-			 "/viking2_2.png", "/smoker2_2.png"};
+	private String[] imageNamesHover = {"serialKiller2_2.png", "baymax2_2.png", "xCon2_2.png", "robot2_2.png", "alien2_2.png", 
+			 "chick2_2.png", "starwars2_2.png", "painter2_2.png", "thor2_2.png", "gunman12_2.png", "gunman22_2.png",
+			 "hulk2_2.png", "hero2_2.png", "luigi2_2.png", "greenman2_2.png", "death2_2.png", "ranger2_2.png", "wolverine2_2.png",
+			 "viking2_2.png", "smoker2_2.png"};
 	
 	private String humanBlack, humanBlack_2, 
 				   humanWhite, humanWhite_2, humanIcon;
 	
 	private Icon humanBlackIcon, humanWhiteIcon, icon1, icon2, humanBlackIcon_2, humanWhiteIcon_2;
 	
-	private String whiteTurn ="/whiteturn.png";
+	private String whiteTurn ="whiteturn.png";
 	public String turnImage = whiteTurn;
 	private JTextField human1Name;
 	
@@ -66,7 +66,7 @@ public class CheckerFrame extends JFrame{
 	
 	public CheckerFrame()
 	{
-		super("Checkers");
+		super("Checker");
 		getContentPane().setBackground(Color.ORANGE);				
 		setLayout(null);		
 		setBounds(300, 100, 800, 600);
@@ -75,7 +75,7 @@ public class CheckerFrame extends JFrame{
 		/*
 		try
 		{
-			URL url = this.getClass().getClassLoader().getResource("bgsound.wav");
+			URL url = this.getClass().getClassLoader().getResource("/bgsound.wav");
 			AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
 			Clip clip = AudioSystem.getClip();
 			clip.open(audioIn);
@@ -186,7 +186,7 @@ public class CheckerFrame extends JFrame{
 									human1.setIcon(humanBlackIcon);
 									icon1 = humanBlackIcon; 
 									icon2 = humanBlackIcon_2;
-									humanIcon = "/human11.png";
+									humanIcon = "human11.png";
 									
 								}
 								
@@ -276,7 +276,7 @@ public class CheckerFrame extends JFrame{
 							boardBorder = new JLabel(new ImageIcon(getClass().getResource("/border.png")));
 							boardBorder.setBounds(147, 33, 497, 497);																											
 																												
-							aiPlayer = new JLabel(aiPlayerIcon);
+							aiPlayer = new JLabel(aiPlayerIcon);	
 							humanPlayer2 = new JLabel(new ImageIcon(getClass().getResource(humanIcon)));
 																															
 							aiPlayer.setBounds(30, 20, 80, 80);
@@ -426,7 +426,7 @@ public class CheckerFrame extends JFrame{
 		
 		gamePaused.backToMain.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				gamePaused.backToMain.setIcon(new ImageIcon(getClass().getResource("/gameback2.png")));
+				gamePaused.backToMain.setIcon(new ImageIcon(getClass().getResource("/gameback2.png")));				
 			}
 			
 			public void mouseExited(MouseEvent e){
@@ -556,17 +556,26 @@ public class CheckerFrame extends JFrame{
 				if(source == avatar1.labels[i]){
 										
 					icon1 = new ImageIcon(getClass().getResource(imageNames[i]));
-					icon2 = new ImageIcon(getClass().getResource(imageNamesHover[i]));
+					icon2 = new ImageIcon(getClass().getResource(imageNamesHover[i]));					
 					human1.setIcon(icon2);
 					humanIcon = imageNames[i].substring(0, (imageNames[i].length()-5)) + "1.png";
 					break;
 				}
-			}
-
+			}					
+						
 			add(character);
 			repaint();
 			revalidate();
 			
 		}
+	}
+	
+	
+	public static void main(String[] args)
+	{
+		CheckerFrame frame = new CheckerFrame();		
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
+		frame.setResizable(false);
 	}
 }

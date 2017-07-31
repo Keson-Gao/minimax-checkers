@@ -1,7 +1,6 @@
 package app.modules.gui;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -16,7 +15,7 @@ public class GamePausedPanel extends JPanel{
 	private Icon titleIcon = new ImageIcon(getClass().getResource("/gamePaused.png"));
 	private Icon infoIcon = new ImageIcon(getClass().getResource("/gamehelp.png"));
 	private Icon optionsIcon = new ImageIcon(getClass().getResource("/gameoptions.png"));
-	private Icon resignIcon = new ImageIcon(getClass().getResource("/resign.png"));
+	private Icon resignIcon = new ImageIcon(getClass().getResource("/resign.png")); 
 	public Icon backToMainIcon = new ImageIcon(getClass().getResource("/gameback.png"));
 	private Icon closeIcon = new ImageIcon(getClass().getResource("/close.png"));
 	
@@ -53,7 +52,7 @@ public class GamePausedPanel extends JPanel{
 		resign.setBounds(270, 150, resignIcon.getIconWidth(), resignIcon.getIconHeight());
 		resign.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				resign.setIcon(new ImageIcon(getClass().getResource("/resign2.png")));
+				resign.setIcon(new ImageIcon(getClass().getResource("/resign2.png")));				
 			}
 			
 			public void mouseExited(MouseEvent e){

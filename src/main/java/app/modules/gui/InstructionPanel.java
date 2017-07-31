@@ -7,8 +7,8 @@ import javax.swing.JPanel;
 
 public class InstructionPanel extends JPanel{
 		
-	String[] bg = {"/HowToPlay1.png", "/HowToPlay2.png", "/HowToPlay3.png", "/HowToPlay4.png", "/HowToPlay5.png", "/HowToPlay6.png",
-					"/HowToPlay7.png", "/credits1.png", "/credits2.png"};
+	String[] bg = {"HowToPlay1.png", "HowToPlay2.png", "HowToPlay3.png", "HowToPlay4.png", "HowToPlay5.png", "HowToPlay6.png",
+					"HowToPlay7.png", "credits1.png", "credits2.png"};
 	
 	private Icon imageIcon;
 	private Icon nextIcon = new ImageIcon(getClass().getResource("/next.png"));

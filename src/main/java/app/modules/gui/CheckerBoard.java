@@ -23,10 +23,10 @@ public class CheckerBoard extends JPanel{
 	private JLabel[] greenSquares = new JLabel[32];				
 	
 	private Icon whiteChip = new ImageIcon(getClass().getResource("/white.png"));
-	private Icon whiteKing = new ImageIcon(getClass().getResource("/whiteKing.png"));
+	private Icon whiteKing = new ImageIcon(getClass().getResource("/whiteKing.png"));	
 	private Icon blackChip = new ImageIcon(getClass().getResource("/black.png"));
-	private Icon blackKing = new ImageIcon(getClass().getResource("/blackKing.png"));
-	private Icon dottedWhite = new ImageIcon(getClass().getResource("/eatpathwhite.png"));
+	private Icon blackKing = new ImageIcon(getClass().getResource("/blackKing.png"));	
+	private Icon dottedWhite = new ImageIcon(getClass().getResource("/eatpathwhite.png"));		
 	
 	//Number of Pieces left of the players.
 	private static int aiNumberOfPieces = 12;
@@ -39,7 +39,7 @@ public class CheckerBoard extends JPanel{
 	private static boolean aiprevChip = false;
 
     private boolean hasEndState = false;
-	
+
 	ArrayList<Integer> indexOfPath = new ArrayList<Integer>();
 	ArrayList<Integer> greenSqrIndex = new ArrayList<Integer>();
 	ArrayList<Integer> indexOfClickedPath = new ArrayList<Integer>();
@@ -157,32 +157,32 @@ public class CheckerBoard extends JPanel{
 								
 								// Move piece.
 								movePiece(index);
-								turn = true;
 
-                                Board currBoard = generateBoard();
+								Board currBoard = generateBoard();
 
 								// Winning condition already?
-                                if (currBoard.getWhitePieces().length == 0) {
-                                    hasEndState = true;
-                                    JOptionPane.showMessageDialog(null, "You lose", "Game Over", JOptionPane.ERROR_MESSAGE);
-                                } else if (currBoard.getBlackPieces().length == 0) {
-                                    hasEndState = true;
-                                    JOptionPane.showMessageDialog(null, "You win", "Game Over", JOptionPane.INFORMATION_MESSAGE);
-                                }
+								if (currBoard.getWhitePieces().length == 0) {
+									hasEndState = true;
+									JOptionPane.showMessageDialog(null, "You lose", "Game Over", JOptionPane.ERROR_MESSAGE);
+								} else if (currBoard.getBlackPieces().length == 0) {
+									hasEndState = true;
+									JOptionPane.showMessageDialog(null, "You win", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+								}
 
 								// We can just invoke the AI after we move the piece.
-                                if (!hasEndState) {
-                                    setBoard(new AI().getMove(currBoard, PieceColor.BLACK, 4));
-                                }
+								if (!hasEndState) {
+									setBoard(new AI().getMove(currBoard, PieceColor.BLACK, 4));
+								}
 
 								// Winning condition already?
-                                if (currBoard.getWhitePieces().length == 0) {
-                                    hasEndState = true;
-                                    JOptionPane.showMessageDialog(null, "You lose", "Game Over", JOptionPane.ERROR_MESSAGE);
-                                } else if (currBoard.getBlackPieces().length == 0) {
-                                    hasEndState = true;
-                                    JOptionPane.showMessageDialog(null, "You win", "Game Over", JOptionPane.INFORMATION_MESSAGE);
-                                }
+								if (currBoard.getWhitePieces().length == 0) {
+									hasEndState = true;
+									JOptionPane.showMessageDialog(null, "You lose", "Game Over", JOptionPane.ERROR_MESSAGE);
+								} else if (currBoard.getBlackPieces().length == 0) {
+									hasEndState = true;
+									JOptionPane.showMessageDialog(null, "You win", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+								}
+							
 							}else{	//If the square was clicked once.
 								
 								//Check if the square is valid as path.							
@@ -231,8 +231,8 @@ public class CheckerBoard extends JPanel{
 								newPieceClick(humanPlayerPieceKing, currSquareIndex, index);
 							else
 								newPieceClick(humanPlayerPiece, currSquareIndex, index);
-
- 							//Add piece to collection of paths.
+							
+							//Add piece to collection of paths.
 							indexOfClickedPath.add(index);
 						
 						
@@ -353,9 +353,10 @@ public class CheckerBoard extends JPanel{
 		
 		indexOfClickedPath.removeAll(indexOfClickedPath);
 		indexOfPath.removeAll(indexOfPath);
+				
 	}
 
-	private Board generateBoard()
+    private Board generateBoard()
     {
         HashMap<Point, Piece> blackPieces = new HashMap<>();
         HashMap<Point, Piece> whitePieces = new HashMap<>();
@@ -381,8 +382,8 @@ public class CheckerBoard extends JPanel{
         return new Board(blackPieces, whitePieces);
     }
 
-	private void setBoard(Board board)
-	{
+    private void setBoard(Board board)
+    {
         Piece[] blackPieces = board.getBlackPieces();
         Piece[] whitePieces = board.getWhitePieces();
 
@@ -395,9 +396,9 @@ public class CheckerBoard extends JPanel{
         for (Piece whitePiece : whitePieces) {
             placePieceToBoard(whitePiece);
         }
-	}
+    }
 
-	private void placePieceToBoard(Piece piece)
+    private void placePieceToBoard(Piece piece)
     {
         /*
          * Here, we're actually getting the ordinality of each piece which will map to the right green square.
@@ -407,7 +408,7 @@ public class CheckerBoard extends JPanel{
         int xPos = piece.getPoint().x;
         int yPos = piece.getPoint().y;
         int multiplier = 4 * yPos; // This makes sure the piece is placed in the right green square, and just does not
-                                   // repeat in the first, second, third, or fourth square.
+        // repeat in the first, second, third, or fourth square.
         int squarePos = (yPos % 2 == 0) ? (xPos / 2) : (xPos - 1) / 2;
         squarePos += multiplier;
 
@@ -427,7 +428,7 @@ public class CheckerBoard extends JPanel{
         }
     }
 
-	private int getPieceColumn(int pieceNumber, boolean isEven)
+    private int getPieceColumn(int pieceNumber, boolean isEven)
     {
         return (isEven) ? 2 * pieceNumber : (2 * pieceNumber) + 1;
     }
@@ -451,7 +452,7 @@ public class CheckerBoard extends JPanel{
 
 		for(int i = 0 ; i + 1 < indexOfClickedPath.size(); i++){
 			
-			int var1 = indexOfClickedPath.get(i);
+			int var1 =  indexOfClickedPath.get(i);
 			int var2 = indexOfClickedPath.get(i+1);			
 			
 			if(var1%9 == var2%9){

@@ -10,12 +10,12 @@ import javax.swing.JPanel;
 
 public class GameAvatar extends JPanel{
 	
-	private String[] imageNames = {"/serialkiller1.png", "/baymax1.png", "/xCon1.png", "/robot1.png", "/alien1.png",
+	private String[] imageNames = {"/serialKiller1.png", "/baymax1.png", "/xCon1.png", "/robot1.png", "/alien1.png",
 			 "/chick1.png", "/starwars1.png", "/painter1.png", "/thor1.png", "/gunman11.png", "/gunman21.png",
 			 "/hulk1.png", "/hero1.png", "/luigi1.png", "/greenman1.png", "/death1.png", "/ranger1.png", "/wolverine1.png",
 			 "/viking1.png", "/smoker1.png"};
 	
-	private String[] imageNamesHover = {"/serialkiller1_2.png", "/baymax1_2.png", "/xCon1_2.png", "/robot1_2.png", "/alien1_2.png",
+	private String[] imageNamesHover = {"/serialKiller1_2.png", "/baymax1_2.png", "/xCon1_2.png", "/robot1_2.png", "/alien1_2.png",
 			 "/chick1_2.png", "/starwars1_2.png", "/painter1_2.png", "/thor1_2.png", "/gunman11_2.png", "/gunman21_2.png",
 			 "/hulk1_2.png", "/hero1_2.png", "/luigi1_2.png", "/greenman1_2.png", "/death1_2.png", "/ranger1_2.png", "/wolverine1_2.png",
 			 "/viking1_2.png", "/smoker1_2.png"};
@@ -101,4 +101,5 @@ public class GameAvatar extends JPanel{
 		}			
 		
 	}
+	
 }
