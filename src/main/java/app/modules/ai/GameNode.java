@@ -61,12 +61,13 @@ public class GameNode
     public GameNode[] getChildren() { return children.toArray(new GameNode[0]); }
     public Board getBoard() { return board; }
     public int getDepth() { return depth; }
+    public boolean hasParent() { return parent != null; }
+    public GameNode getParent() { return parent; }
     public int getID() { return id; }
     public Point[] getMovement() { return movement; }
     public boolean hasChildren() { return children.size() != 0; }
     public void setID(int id) { this.id = id; }
-
-    private void setParent(GameNode parent) { this.parent = parent; }
+    public void setParent(GameNode parent) { this.parent = parent; }
 
     private void movePiece()
     {

@@ -16,11 +16,17 @@ public class GameTree
     public Board getMove(Board board, PieceColor maxColor, int maxDepth)
     {
         GameNode root = generateTree(board, maxColor, maxDepth);
-        GameNode chosenBoard = alphaBeta(
+        GameNode chosenNode = alphaBeta(
             root, 0, new GameNode(Integer.MIN_VALUE, -1), new GameNode(Integer.MAX_VALUE, -1), maxColor, true
         );
 
-        return chosenBoard.getBoard();
+        int nodeDepth = chosenNode.getDepth();
+        while (nodeDepth > 1) {
+            chosenNode = chosenNode.getParent();
+            nodeDepth--;
+        }
+
+        return chosenNode.getBoard();
     }
 
     private GameNode alphaBeta(GameNode node, int depth, GameNode alpha, GameNode beta, PieceColor currColor, boolean isMax)
@@ -74,7 +80,7 @@ public class GameTree
             }
 
             currParentID = currNode.getID();
-            ArrayList<GameNode> childNodes = generateChildNodes(currNode.getBoard(), currColor, currNode.getDepth() + 1);
+            ArrayList<GameNode> childNodes = generateChildNodes(currNode, currColor, currNode.getDepth() + 1);
             for (GameNode child : childNodes) {
                 currNode.addChild(child);
 
@@ -87,8 +93,9 @@ public class GameTree
         return root;
     }
 
-    private ArrayList<GameNode> generateChildNodes(Board board, PieceColor currColor, int childDepth)
+    private ArrayList<GameNode> generateChildNodes(GameNode currNode, PieceColor currColor, int childDepth)
     {
+        Board board = currNode.getBoard();
         ArrayList<GameNode> childNodes = new ArrayList<>();
         Piece[] pieces = (currColor == PieceColor.WHITE) ? board.getWhitePieces() : board.getBlackPieces();
         for (Piece piece : pieces) {
@@ -103,6 +110,7 @@ public class GameTree
                     GameNode node = new GameNode(board.clone(), childDepth);
                     node.setMovement(pointPath);
                     node.setID(++nodeCount);
+                    node.setParent(currNode);
 
                     childNodes.add(node);
                 }
