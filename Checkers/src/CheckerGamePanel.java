@@ -1,38 +1,20 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.event.*;
+import javax.swing.JPanel;
 
 public class CheckerGamePanel extends JPanel{	
 	
-	private Icon whiteTextIcon = new ImageIcon(getClass().getResource("whitetext.png"));	
-	
-	public CheckerGamePanel(JLabel pieceTextColor){		
-		
-		CheckerBoard board;
-		
-		init();
-		
-		if(pieceTextColor.getIcon().toString().equals(whiteTextIcon.toString()))
-			board = new CheckerBoard("white");								
-		else
-			board = new CheckerBoard("black");
-		
-				
+	public CheckerGamePanel(PieceColor pieceTextColor){				
+		init();		
+		CheckerBoard board = new CheckerBoard((pieceTextColor == PieceColor.WHITE)? PieceColor.WHITE : PieceColor.BLACK);										
 		add(board);	
 	}
 	
-	public CheckerGamePanel(){		
-		
-		CheckerBoard board = new CheckerBoard();
+	public CheckerGamePanel(){				
 		init();
-				
-		add(board);	
-		
+		BoardTwoPlayer board = new BoardTwoPlayer();						
+		add(board);			
 	}
 	
-	private void init(){
-		
+	private void init(){		
 		setOpaque(false);	
 		setLayout(null);	
 		setBounds(0, 0, 1000, 600);

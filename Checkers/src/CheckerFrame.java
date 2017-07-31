@@ -5,103 +5,64 @@ import java.awt.event.*;
 public class CheckerFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	
-	private Icon play_icon1 = new ImageIcon(getClass().getResource("play.png"));	
-	private Icon play_icon2 = new ImageIcon(getClass().getResource("pLay2.png"));		
-	private Icon options1_icon1 = new ImageIcon(getClass().getResource("settings.png"));		
-	private Icon info_icon1 = new ImageIcon(getClass().getResource("help1.png"));				
-	private Icon titleIcon = new ImageIcon(getClass().getResource("dama.png"));
-	
-	private Icon selectModeIcon = new ImageIcon(getClass().getResource("selectMode.png"));
-	private Icon onePlayerIcon = new ImageIcon(getClass().getResource("1p.png"));
-	private Icon onePlayerIcon2 = new ImageIcon(getClass().getResource("1p_2.png"));
-	private Icon twoPlayerIcon = new ImageIcon(getClass().getResource("2p.png"));
-	private Icon twoPlayerIcon2 = new ImageIcon(getClass().getResource("2p_2.png"));	
-	private Icon backToMainIcon = new ImageIcon(getClass().getResource("back1.png"));
-	private Icon backToMainIcon2 = new ImageIcon(getClass().getResource("back2.png"));		
-	private Icon gameMenuIcon = new ImageIcon(getClass().getResource("menu.png")); 
-	private Icon aiPlayerIcon = new ImageIcon(getClass().getResource("bot.png"));
-	private Icon blackTextIcon = new ImageIcon(getClass().getResource("blacktext.png"));
-	private Icon whiteTextIcon = new ImageIcon(getClass().getResource("whitetext.png"));
-	private Icon gamePlay2pIcon = new ImageIcon(getClass().getResource("go.png"));			
-	private Icon humanPlayerIcon = new ImageIcon(getClass().getResource("human.png"));	
-	private Icon vsIcon = new ImageIcon(getClass().getResource("versus.png"));
+	private Icon[] icon;	
+	private Icon humanBlackIcon, humanWhiteIcon, icon1, icon2, humanBlackIcon_2, humanWhiteIcon_2;
+	private Icon aiWins = new ImageIcon(getClass().getResource("robotwins.png"));
+	private static JLabel aiWinsLabel = new JLabel();
 	
 	
-	private JLabel gameTitle, selectMode;
-	private JLabel playGame, boardBorder, gameMenu;
-	private JLabel humanPlayer, aiPlayer;
+	private String[] iconImage = {"play.png", "pLay2.png", "settings.png", "help1.png", "dama.png", "selectMode.png", "1p.png", "1p_2.png",
+								"2p.png", "2p_2.png", "back1.png", "back2.png", "menu.png", "bot.png", "blacktext.png", "whitetext.png",
+								"go.png", "human.png", "versus.png"};
 	
-	//////////////////////////////////////////
-	private static JLabel humanPlayer2;
+	private String[] imageNames = {"serialKiller2.png", "baymax2.png", "xCon2.png", "robot2.png", "alien2.png", "chick2.png", "starwars2.png", 
+								"painter2.png", "thor2.png", "gunman12.png", "gunman22.png", "hulk2.png", "hero2.png", "luigi2.png", "greenman2.png", 
+								"death2.png", "ranger2.png", "wolverine2.png", "viking2.png", "smoker2.png"};
+	
+	private String[] imageNamesHover = {"serialKiller2_2.png", "baymax2_2.png", "xCon2_2.png", "robot2_2.png", "alien2_2.png", "chick2_2.png", 
+								"starwars2_2.png", "painter2_2.png", "thor2_2.png", "gunman12_2.png", "gunman22_2.png", "hulk2_2.png", "hero2_2.png", 
+								"luigi2_2.png", "greenman2_2.png", "death2_2.png", "ranger2_2.png", "wolverine2_2.png", "viking2_2.png", "smoker2_2.png"};
+	
+	private String human1Icon, human1Icon_2, human2Icon, human2Icon_2, humanBlack, humanBlack_2, 
+	   				humanWhite, humanWhite_2, humanIcon;
+	private String whiteTurn = "whiteturn.png", turnImage = whiteTurn;	
+	
+	private static JPanel gamePanel, menu, mode, character;	
+	private static JLabel gameTitle, gameMenu, selectMode, boardBorder, playGame, humanPlayer, aiPlayer,
+				   optionsButton, infoButton, onePlayer, twoPlayer, playerOne, playerTwo,
+				   versusLabel, backToMain, blackText, whiteText, gameBackOnePlayer, gamePlayOnePlayer, 
+				   gameBackTwoPlayer, gamePlayTwoPlayer;
+	private static JLabel playerOneAvatar, playerTwoAvatar, pieceTextColor;
 
-	private static JLabel human1;	
-	private static JLabel humanPlayer1;
-	////////////////////////////////
-
-	private static JLabel human2;
-
-	private JLabel versus;
+	static JLabel playerTurn;		
+	private static JTextField human1Name, human2Name;	
+	private static Container container;	
 	
-	private JLabel onePlayer, twoPlayer;
-	private JLabel backToMain, blackText, whiteText;
-	//private JLabel backToMain;
-	
-	public static JLabel pieceTextColor;
-	
-	private JLabel gameBack, gamePlay, gameBack2p, gamePlay2p;	
-	
-	public static JLabel playerTurn;	
-	private JLabel options1;		
-	private JLabel info;
-	
-	private static JPanel gamePanel;
-
-	CheckerGamePanel game; 	
-	
-	private static int t = 0;
-	
+	static FixedGlassPane glass;
+	CheckerGamePanel game; 		
+	GamePausedPanel gamePaused;	
 	GameAvatar avatar = new GameAvatar();
 	GameAvatar avatar1 = new GameAvatar();
 	GameAvatar avatar2 = new GameAvatar();
+	private static int t = 0;
 	
-	private String[] imageNames = {"serialKiller2.png", "baymax2.png", "xCon2.png", "robot2.png", "alien2.png", 
-			 "chick2.png", "starwars2.png", "painter2.png", "thor2.png", "gunman12.png", "gunman22.png",
-			 "hulk2.png", "hero2.png", "luigi2.png", "greenman2.png", "death2.png", "ranger2.png", "wolverine2.png",
-			 "viking2.png", "smoker2.png"};
-	
-	private String[] imageNamesHover = {"serialKiller2_2.png", "baymax2_2.png", "xCon2_2.png", "robot2_2.png", "alien2_2.png", 
-			 "chick2_2.png", "starwars2_2.png", "painter2_2.png", "thor2_2.png", "gunman12_2.png", "gunman22_2.png",
-			 "hulk2_2.png", "hero2_2.png", "luigi2_2.png", "greenman2_2.png", "death2_2.png", "ranger2_2.png", "wolverine2_2.png",
-			 "viking2_2.png", "smoker2_2.png"};
-	
-	private String human1Icon, human1Icon_2, 
-	 				   human2Icon, human2Icon_2;
-	
-	private String humanBlack, humanBlack_2, 
-				   humanWhite, humanWhite_2, humanIcon;
-	
-	private Icon humanBlackIcon, humanWhiteIcon, icon1, icon2, humanBlackIcon_2, humanWhiteIcon_2;
-	
-	private String whiteTurn ="whiteturn.png";
-	public String turnImage = whiteTurn;
-	private static JTextField human1Name;
-
-	private static JTextField human2Name;
-	
-	public static FixedGlassPane glass;
-	private GamePausedPanel gamePaused;
-	
-	private static JPanel menu, mode, character;
-	
-	private int num = 0;	
-	private static Container container;
+	private void init(){
+		
+		icon = new Icon[iconImage.length];
+		for(int i = 0; i < iconImage.length; i++){
+			icon[i] = new ImageIcon(getClass().getResource(iconImage[i]));
+		}
+		aiWinsLabel.setIcon(aiWins);
+	}
 	
 	CheckerFrame()
 	{
 		super("Checker");
 		getContentPane().setBackground(Color.ORANGE);				
 		setLayout(null);		
-		setBounds(300, 100, 800, 600);
+		setBounds(300, 100, 800, 600);		
+		
+		init();
 		
 		//play background music
 		/*
@@ -131,27 +92,27 @@ public class CheckerFrame extends JFrame{
 		menu.setOpaque(false);
 		menu.setLayout(null);
 		
-		gameTitle = new JLabel(titleIcon);
-		gameTitle.setBounds(215, 160, titleIcon.getIconWidth(), titleIcon.getIconHeight());		
+		gameTitle = new JLabel(icon[4]);
+		gameTitle.setBounds(215, 160, icon[4].getIconWidth(), icon[4].getIconHeight());		
 		
-		playGame = new JLabel(play_icon1);
-		playGame.setBounds(325, 280, play_icon1.getIconWidth(), play_icon1.getIconHeight());
+		playGame = new JLabel(icon[0]);
+		playGame.setBounds(325, 280, icon[0].getIconWidth(), icon[0].getIconHeight());
 		
 		playGame.addMouseListener(
 			new MouseListener(){
 				public void mousePressed(MouseEvent e){
-					playGame.setIcon(play_icon2);
+					playGame.setIcon(icon[1]);
 				}				
 				public void mouseEntered(MouseEvent e){
-					playGame.setIcon(play_icon2);
+					playGame.setIcon(icon[1]);
 				}
 				public void mouseExited(MouseEvent e)
 				{
-					playGame.setIcon(play_icon1);
+					playGame.setIcon(icon[0]);
 				}				
 				public void mouseReleased(MouseEvent e)
 				{
-					playGame.setIcon(play_icon1);
+					playGame.setIcon(icon[0]);
 				}
 				public void mouseClicked(MouseEvent e)
 				{														
@@ -163,25 +124,25 @@ public class CheckerFrame extends JFrame{
 					mode.setOpaque(false);
 					mode.setLayout(null);
 					
-					selectMode = new JLabel(selectModeIcon);
-					selectMode.setBounds(180, 40, selectModeIcon.getIconWidth(), selectModeIcon.getIconHeight());
+					selectMode = new JLabel(icon[5]);
+					selectMode.setBounds(180, 40, icon[5].getIconWidth(), icon[5].getIconHeight());
 					
-					onePlayer = new JLabel(onePlayerIcon);
-					onePlayer.setBounds(150, 160, onePlayerIcon.getIconWidth(), onePlayerIcon.getIconHeight());
+					onePlayer = new JLabel(icon[6]);
+					onePlayer.setBounds(150, 160, icon[6].getIconWidth(), icon[6].getIconHeight());
 					onePlayer.addMouseListener(new MouseAdapter(){
 						public void mouseEntered(MouseEvent e){
-							onePlayer.setIcon(onePlayerIcon2);
-							onePlayer.setBounds(46, 160, onePlayerIcon2.getIconWidth(), onePlayerIcon2.getIconHeight());
+							onePlayer.setIcon(icon[7]);
+							onePlayer.setBounds(46, 160, icon[7].getIconWidth(), icon[7].getIconHeight());
 						}
 						
 						public void mouseExited(MouseEvent e){
-							onePlayer.setIcon(onePlayerIcon);
-							onePlayer.setBounds(150, 160, onePlayerIcon.getIconWidth(), onePlayerIcon.getIconHeight());
+							onePlayer.setIcon(icon[6]);
+							onePlayer.setBounds(150, 160, icon[6].getIconWidth(), icon[6].getIconHeight());
 						}
 						
 						public void mouseReleased(MouseEvent e){
-							onePlayer.setIcon(onePlayerIcon);
-							onePlayer.setBounds(150, 160, onePlayerIcon.getIconWidth(), onePlayerIcon.getIconHeight());
+							onePlayer.setIcon(icon[6]);
+							onePlayer.setBounds(150, 160, icon[6].getIconWidth(), icon[6].getIconHeight());
 						}
 						
 						public void mouseClicked(MouseEvent e){
@@ -231,15 +192,15 @@ public class CheckerFrame extends JFrame{
 								}
 							});					
 							
-							pieceTextColor = new JLabel(whiteTextIcon);
-							pieceTextColor.setBounds(290, 150, whiteTextIcon.getIconWidth(), whiteTextIcon.getIconHeight());	
+							pieceTextColor = new JLabel(icon[15]);
+							pieceTextColor.setBounds(290, 150, icon[15].getIconWidth(), icon[15].getIconHeight());	
 							pieceTextColor.setToolTipText("Click to play as Black.");
 							pieceTextColor.addMouseListener(new MouseAdapter(){
 								public void mouseClicked(MouseEvent e){
 									
-									if(pieceTextColor.getIcon() == whiteTextIcon){
+									if(pieceTextColor.getIcon() == icon[15]){
 										
-										pieceTextColor.setIcon(blackTextIcon);
+										pieceTextColor.setIcon(icon[14]);
 										pieceTextColor.setToolTipText("Click to play as White.");
 										
 										if(humanPlayer.getIcon() == humanWhiteIcon){
@@ -251,9 +212,9 @@ public class CheckerFrame extends JFrame{
 											
 										}
 										
-									}else if(pieceTextColor.getIcon() == blackTextIcon){
+									}else if(pieceTextColor.getIcon() == icon[14]){
 										
-										pieceTextColor.setIcon(whiteTextIcon);
+										pieceTextColor.setIcon(icon[15]);
 										pieceTextColor.setToolTipText("Click to play as Black.");
 										
 										if(humanPlayer.getIcon() == humanBlackIcon){
@@ -269,15 +230,15 @@ public class CheckerFrame extends JFrame{
 								}
 							});			
 							
-							gameBack = new JLabel(backToMainIcon);
-							gameBack.setBounds(40, 480, backToMainIcon.getIconWidth(), backToMainIcon.getIconHeight());
-							gameBack.addMouseListener(new MouseAdapter(){
+							gameBackOnePlayer = new JLabel(icon[10]);
+							gameBackOnePlayer.setBounds(40, 480, icon[10].getIconWidth(), icon[10].getIconHeight());
+							gameBackOnePlayer.addMouseListener(new MouseAdapter(){
 								public void mouseEntered(MouseEvent e){
-									gameBack.setIcon(backToMainIcon2);
+									gameBackOnePlayer.setIcon(icon[11]);
 								}                                                                                      
 								
 								public void mouseExited(MouseEvent e){
-									gameBack.setIcon(backToMainIcon);
+									gameBackOnePlayer.setIcon(icon[10]);
 								}
 								
 								public void mouseClicked(MouseEvent e){
@@ -289,17 +250,17 @@ public class CheckerFrame extends JFrame{
 								}
 							});
 							
-							gamePlay = new JLabel(gamePlay2pIcon);
-							gamePlay.setBounds(670, 480, gamePlay2pIcon.getIconWidth(), gamePlay2pIcon.getIconHeight());
-							gamePlay.addMouseListener(new MouseAdapter(){
+							gamePlayOnePlayer = new JLabel(icon[16]);
+							gamePlayOnePlayer.setBounds(670, 480, icon[16].getIconWidth(), icon[16].getIconHeight());
+							gamePlayOnePlayer.addMouseListener(new MouseAdapter(){
 								
 
 								public void mouseEntered(MouseEvent e){
-									gamePlay.setIcon(new ImageIcon(getClass().getResource("go_2.png")));
+									gamePlayOnePlayer.setIcon(new ImageIcon(getClass().getResource("go_2.png")));
 								}
 								
 								public void mouseExited(MouseEvent e){
-									gamePlay.setIcon(gamePlay2pIcon);
+									gamePlayOnePlayer.setIcon(icon[16]);
 								}
 								
 								public void mouseClicked(MouseEvent e){
@@ -310,30 +271,31 @@ public class CheckerFrame extends JFrame{
 									gamePanel.setOpaque(false);
 									gamePanel.setLayout(null);
 									
-									game = new CheckerGamePanel(pieceTextColor);
+									game = new CheckerGamePanel(
+											(pieceTextColor.getIcon().toString().equals(icon[15].toString()))? PieceColor.WHITE : PieceColor.BLACK);
 									
-									Icon icon = new ImageIcon(getClass().getResource("greenbg.png"));
-									JLabel bg = new JLabel(icon);
-									bg.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
+									Icon bgIcon = new ImageIcon(getClass().getResource("greenbg.png"));
+									JLabel bg = new JLabel(bgIcon);
+									bg.setBounds(0, 0, bgIcon.getIconWidth(), bgIcon.getIconHeight());
 									
 									boardBorder = new JLabel(new ImageIcon(getClass().getResource("border.png")));
 									boardBorder.setBounds(147, 33, 497, 497);																											
 																														
-									aiPlayer = new JLabel(aiPlayerIcon);	
-									humanPlayer1 = new JLabel(new ImageIcon(getClass().getResource(humanIcon)));
+									aiPlayer = new JLabel(icon[13]);									
+									playerOne = new JLabel(new ImageIcon(getClass().getResource(humanIcon)));
 																																	
 									aiPlayer.setBounds(30, 20, 80, 80);
-									humanPlayer1.setBounds(675, 440, 80, 80);
+									playerOne.setBounds(675, 440, 80, 80);
 									
-									gameMenu = new JLabel(gameMenuIcon);
-									gameMenu.setBounds(40, 470, gameMenuIcon.getIconWidth(), gameMenuIcon.getIconHeight());	
+									gameMenu = new JLabel(icon[12]);
+									gameMenu.setBounds(40, 470, icon[12].getIconWidth(), icon[12].getIconHeight());	
 									gameMenu.addMouseListener(new MouseAdapter(){
 										public void mouseEntered(MouseEvent e){
 											gameMenu.setIcon(new ImageIcon(getClass().getResource("menu_2.png")));
 										}
 										
 										public void mouseExited(MouseEvent e){
-											gameMenu.setIcon(gameMenuIcon);
+											gameMenu.setIcon(icon[12]);
 										}
 										
 										public void mouseClicked(MouseEvent e){
@@ -346,7 +308,7 @@ public class CheckerFrame extends JFrame{
 									
 									gamePanel.add(playerTurn);									
 									gamePanel.add(aiPlayer);
-									gamePanel.add(humanPlayer1);							
+									gamePanel.add(playerOne);							
 									gamePanel.add(game);
 									gamePanel.add(boardBorder);
 									gamePanel.add(gameMenu);														
@@ -361,8 +323,8 @@ public class CheckerFrame extends JFrame{
 														
 							character.add(humanPlayer);				
 							character.add(pieceTextColor);					
-							character.add(gameBack);
-							character.add(gamePlay);
+							character.add(gameBackOnePlayer);
+							character.add(gamePlayOnePlayer);
 							
 							add(character);
 							
@@ -372,23 +334,23 @@ public class CheckerFrame extends JFrame{
 						
 					});
 					
-					twoPlayer = new JLabel(twoPlayerIcon);
-					twoPlayer.setBounds(160, 320, twoPlayerIcon.getIconWidth(), twoPlayerIcon.getIconHeight());
+					twoPlayer = new JLabel(icon[8]);
+					twoPlayer.setBounds(160, 320, icon[8].getIconWidth(), icon[8].getIconHeight());
 					
 					twoPlayer.addMouseListener(new MouseAdapter(){
 						public void mouseEntered(MouseEvent e){
-							twoPlayer.setIcon(twoPlayerIcon2);
-							twoPlayer.setBounds(160, 320, twoPlayerIcon2.getIconWidth(), twoPlayerIcon2.getIconHeight());
+							twoPlayer.setIcon(icon[9]);
+							twoPlayer.setBounds(160, 320, icon[9].getIconWidth(), icon[9].getIconHeight());
 						}
 						
 						public void mouseExited(MouseEvent e){
-							twoPlayer.setIcon(twoPlayerIcon);
-							twoPlayer.setBounds(160, 320, twoPlayerIcon.getIconWidth(), twoPlayerIcon.getIconHeight());
+							twoPlayer.setIcon(icon[8]);
+							twoPlayer.setBounds(160, 320, icon[8].getIconWidth(), icon[8].getIconHeight());
 						}
 						
 						public void mouseReleased(MouseEvent e){
-							twoPlayer.setIcon(twoPlayerIcon);
-							twoPlayer.setBounds(160, 320, twoPlayerIcon.getIconWidth(), twoPlayerIcon.getIconHeight());
+							twoPlayer.setIcon(icon[8]);
+							twoPlayer.setBounds(160, 320, icon[8].getIconWidth(), icon[8].getIconHeight());
 						}
 						
 						public void mouseClicked(MouseEvent e){
@@ -402,15 +364,15 @@ public class CheckerFrame extends JFrame{
 							character.setOpaque(false);
 							character.setLayout(null);
 							
-							human1 = new JLabel(new ImageIcon(getClass().getResource(human1Icon)));
-							human1.setBounds(170, 170, 177, 177);
-							human1.addMouseListener(new MouseAdapter(){
+							playerOneAvatar = new JLabel(new ImageIcon(getClass().getResource(human1Icon)));
+							playerOneAvatar.setBounds(170, 170, 177, 177);
+							playerOneAvatar.addMouseListener(new MouseAdapter(){
 								public void mouseEntered(MouseEvent e){
-									human1.setIcon(new ImageIcon(getClass().getResource(human1Icon_2)));
+									playerOneAvatar.setIcon(new ImageIcon(getClass().getResource(human1Icon_2)));
 								}
 								
 								public void mouseExited(MouseEvent e){
-									human1.setIcon(new ImageIcon(getClass().getResource(human1Icon)));
+									playerOneAvatar.setIcon(new ImageIcon(getClass().getResource(human1Icon)));
 								}
 								
 								public void mouseClicked(MouseEvent e){
@@ -430,15 +392,15 @@ public class CheckerFrame extends JFrame{
 								}
 							});
 							
-							human2 = new JLabel(new ImageIcon(getClass().getResource(human2Icon)));
-							human2.setBounds(450, 170, 177, 177);
-							human2.addMouseListener(new MouseAdapter(){
+							playerTwoAvatar = new JLabel(new ImageIcon(getClass().getResource(human2Icon)));
+							playerTwoAvatar.setBounds(450, 170, 177, 177);
+							playerTwoAvatar.addMouseListener(new MouseAdapter(){
 								public void mouseEntered(MouseEvent e){
-									human2.setIcon(new ImageIcon(getClass().getResource(human2Icon_2)));
+									playerTwoAvatar.setIcon(new ImageIcon(getClass().getResource(human2Icon_2)));
 								}
 								
 								public void mouseExited(MouseEvent e){
-									human2.setIcon(new ImageIcon(getClass().getResource(human2Icon)));
+									playerTwoAvatar.setIcon(new ImageIcon(getClass().getResource(human2Icon)));
 								}
 								
 								public void mouseClicked(MouseEvent e){
@@ -458,14 +420,14 @@ public class CheckerFrame extends JFrame{
 								}
 							});
 							
-							versus = new JLabel(vsIcon);
-							versus.setBounds(350, 270, vsIcon.getIconWidth(), vsIcon.getIconHeight());		
+							versusLabel = new JLabel(icon[18]);
+							versusLabel.setBounds(350, 270, icon[18].getIconWidth(), icon[18].getIconHeight());		
 							
-							blackText = new JLabel(blackTextIcon);
-							blackText.setBounds(160, 120, blackTextIcon.getIconWidth(), blackTextIcon.getIconHeight());
+							blackText = new JLabel(icon[14]);
+							blackText.setBounds(160, 120, icon[14].getIconWidth(), icon[14].getIconHeight());
 							
-							whiteText = new JLabel(whiteTextIcon);
-							whiteText.setBounds(430, 120, whiteTextIcon.getIconWidth(), whiteTextIcon.getIconHeight());							
+							whiteText = new JLabel(icon[15]);
+							whiteText.setBounds(430, 120, icon[15].getIconWidth(), icon[15].getIconHeight());							
 							
 							human1Name = new JTextField();
 							human1Name.setBounds(160, 370, 180, 50);
@@ -501,15 +463,15 @@ public class CheckerFrame extends JFrame{
 								}
 							});
 							
-							gameBack2p = new JLabel(backToMainIcon);
-							gameBack2p.setBounds(40, 480, backToMainIcon.getIconWidth(), backToMainIcon.getIconHeight());
-							gameBack2p.addMouseListener(new MouseAdapter(){
+							gameBackTwoPlayer = new JLabel(icon[10]);
+							gameBackTwoPlayer.setBounds(40, 480, icon[10].getIconWidth(), icon[10].getIconHeight());
+							gameBackTwoPlayer.addMouseListener(new MouseAdapter(){
 								public void mouseEntered(MouseEvent e){
-									gameBack2p.setIcon(backToMainIcon2);
+									gameBackTwoPlayer.setIcon(icon[11]);
 								}
 								
 								public void mouseExited(MouseEvent e){
-									gameBack2p.setIcon(backToMainIcon);
+									gameBackTwoPlayer.setIcon(icon[10]);
 								}
 								
 								public void mouseClicked(MouseEvent e){
@@ -520,15 +482,15 @@ public class CheckerFrame extends JFrame{
 								}
 							});
 							
-							gamePlay2p = new JLabel(gamePlay2pIcon);
-							gamePlay2p.setBounds(670, 480, gamePlay2pIcon.getIconWidth(), gamePlay2pIcon.getIconHeight());
-							gamePlay2p.addMouseListener(new MouseAdapter(){
+							gamePlayTwoPlayer = new JLabel(icon[16]);
+							gamePlayTwoPlayer.setBounds(670, 480, icon[16].getIconWidth(), icon[16].getIconHeight());
+							gamePlayTwoPlayer.addMouseListener(new MouseAdapter(){
 								public void mouseEntered(MouseEvent e){
-									gamePlay2p.setIcon(new ImageIcon(getClass().getResource("go_2.png")));
+									gamePlayTwoPlayer.setIcon(new ImageIcon(getClass().getResource("go_2.png")));
 								}
 								
 								public void mouseExited(MouseEvent e){
-									gamePlay2p.setIcon(gamePlay2pIcon);
+									gamePlayTwoPlayer.setIcon(icon[16]);
 								}
 								
 								public void mouseClicked(MouseEvent e){
@@ -539,9 +501,9 @@ public class CheckerFrame extends JFrame{
 									gamePanel.setOpaque(false);
 									gamePanel.setLayout(null);
 									
-									Icon icon = new ImageIcon(getClass().getResource("greenbg.png"));
-									JLabel bg = new JLabel(icon);
-									bg.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
+									Icon bgIcon = new ImageIcon(getClass().getResource("greenbg.png"));
+									JLabel bg = new JLabel(bgIcon);
+									bg.setBounds(0, 0, bgIcon.getIconWidth(), bgIcon.getIconHeight());
 									
 									game = new CheckerGamePanel();
 									
@@ -552,21 +514,21 @@ public class CheckerFrame extends JFrame{
 									String hum1 =  human1Icon.substring(0, human1Icon.length()-5) + "1.png";									
 									String hum2 = human2Icon.substring(0, human2Icon.length()-5) + "1.png";
 										
-									humanPlayer1 = new JLabel(new ImageIcon(getClass().getResource(hum1)));	
-									humanPlayer2 = new JLabel(new ImageIcon(getClass().getResource(hum2)));
+									playerOne = new JLabel(new ImageIcon(getClass().getResource(hum1)));	
+									playerTwo = new JLabel(new ImageIcon(getClass().getResource(hum2)));
 																																	
-									humanPlayer1.setBounds(30, 20, 80, 80);
-									humanPlayer2.setBounds(675, 440, 80, 80);
+									playerOne.setBounds(30, 20, 80, 80);
+									playerTwo.setBounds(675, 440, 80, 80);
 									
-									gameMenu = new JLabel(gameMenuIcon);
-									gameMenu.setBounds(40, 470, gameMenuIcon.getIconWidth(), gameMenuIcon.getIconHeight());	
+									gameMenu = new JLabel(icon[12]);
+									gameMenu.setBounds(40, 470, icon[12].getIconWidth(), icon[12].getIconHeight());	
 									gameMenu.addMouseListener(new MouseAdapter(){
 										public void mouseEntered(MouseEvent e){
 											gameMenu.setIcon(new ImageIcon(getClass().getResource("menu_2.png")));
 										}
 										
 										public void mouseExited(MouseEvent e){
-											gameMenu.setIcon(gameMenuIcon);
+											gameMenu.setIcon(icon[12]);
 										}
 										
 										public void mouseClicked(MouseEvent e){
@@ -578,8 +540,8 @@ public class CheckerFrame extends JFrame{
 									playerTurn.setBounds(695, 30, 59, 69);							
 									
 									gamePanel.add(playerTurn);									
-									gamePanel.add(humanPlayer1);
-									gamePanel.add(humanPlayer2);							
+									gamePanel.add(playerOne);
+									gamePanel.add(playerTwo);							
 									gamePanel.add(game);
 									gamePanel.add(boardBorder);
 									gamePanel.add(gameMenu);														
@@ -592,15 +554,15 @@ public class CheckerFrame extends JFrame{
 								}
 							});
 														
-							character.add(human1);
-							character.add(human2);
-							character.add(versus);
+							character.add(playerOneAvatar);
+							character.add(playerTwoAvatar);
+							character.add(versusLabel);
 							character.add(blackText);
 							character.add(whiteText);
 							character.add(human1Name);
 							character.add(human2Name);
-							character.add(gameBack2p);
-							character.add(gamePlay2p);
+							character.add(gameBackTwoPlayer);
+							character.add(gamePlayTwoPlayer);
 							
 							add(character);
 							
@@ -611,15 +573,15 @@ public class CheckerFrame extends JFrame{
 						
 					});
 					
-					backToMain =  new JLabel(backToMainIcon);
-					backToMain.setBounds(680, 480, backToMainIcon.getIconWidth(), backToMainIcon.getIconHeight());
+					backToMain =  new JLabel(icon[10]);
+					backToMain.setBounds(680, 480, icon[10].getIconWidth(), icon[10].getIconHeight());
 					backToMain.addMouseListener(new MouseAdapter(){
 						public void mouseEntered(MouseEvent e){							
-							backToMain.setIcon(backToMainIcon2);
+							backToMain.setIcon(icon[11]);
 						}
 						
 						public void mouseExited(MouseEvent e){							
-							backToMain.setIcon(backToMainIcon);
+							backToMain.setIcon(icon[10]);
 						}
 						
 						public void mouseClicked(MouseEvent e){
@@ -644,19 +606,19 @@ public class CheckerFrame extends JFrame{
 			
 		);
 		
-		options1 = new JLabel(options1_icon1);
-		options1.setBounds(200, 310, options1_icon1.getIconWidth(),options1_icon1.getIconHeight());
-		options1.addMouseListener(new MouseAdapter(){
+		optionsButton = new JLabel(icon[2]);
+		optionsButton.setBounds(200, 310, icon[2].getIconWidth(),icon[2].getIconHeight());
+		optionsButton.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				options1.setIcon(new ImageIcon(getClass().getResource("settings2.png")));
+				optionsButton.setIcon(new ImageIcon(getClass().getResource("settings2.png")));
 			}
 			
 			public void mouseExited(MouseEvent e){
-				options1.setIcon(options1_icon1);
+				optionsButton.setIcon(icon[2]);
 			}
 			
 			public void mouseReleased(MouseEvent e){
-				options1.setIcon(options1_icon1);
+				optionsButton.setIcon(icon[2]);
 			}
 			
 			public void mouseClicked(MouseEvent e){
@@ -664,19 +626,19 @@ public class CheckerFrame extends JFrame{
 			}
 		});
 		
-		info = new JLabel(info_icon1);
-		info.setBounds(500, 310, info_icon1.getIconWidth(), info_icon1.getIconHeight());
-		info.addMouseListener(new MouseAdapter(){
+		infoButton = new JLabel(icon[3]);
+		infoButton.setBounds(500, 310, icon[3].getIconWidth(), icon[3].getIconHeight());
+		infoButton.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
-				info.setIcon(new ImageIcon(getClass().getResource("help2.png")));
+				infoButton.setIcon(new ImageIcon(getClass().getResource("help2.png")));
 			}
 			
 			public void mouseExited(MouseEvent e){
-				info.setIcon(info_icon1);
+				infoButton.setIcon(icon[3]);
 			}
 			
 			public void mouseReleased(MouseEvent e){
-				info.setIcon(info_icon1);
+				infoButton.setIcon(icon[3]);
 			}
 			
 			public void mouseClicked(MouseEvent e){
@@ -855,8 +817,8 @@ public class CheckerFrame extends JFrame{
 		
 		menu.add(gameTitle);
 		menu.add(playGame);
-		menu.add(options1);
-		menu.add(info);
+		menu.add(optionsButton);
+		menu.add(infoButton);
 		
 		add(menu);	
 		
@@ -890,7 +852,7 @@ public class CheckerFrame extends JFrame{
 						human1Icon = imageNames[i];
 						human1Icon_2 = imageNamesHover[i];					
 						
-						human1.setIcon(new ImageIcon(getClass().getResource(human1Icon_2)));												
+						playerOneAvatar.setIcon(new ImageIcon(getClass().getResource(human1Icon_2)));												
 						break;
 					}
 				}
@@ -901,7 +863,7 @@ public class CheckerFrame extends JFrame{
 						human2Icon = imageNames[i];
 						human2Icon_2 = imageNamesHover[i];					
 						
-						human2.setIcon(new ImageIcon(getClass().getResource(human2Icon_2)));												
+						playerTwoAvatar.setIcon(new ImageIcon(getClass().getResource(human2Icon_2)));												
 						break;
 					}
 				}
@@ -915,15 +877,27 @@ public class CheckerFrame extends JFrame{
 		}
 	}
 	
-	public static void gameOver(GameOver game, int blacksScore, int whitesScore, int blacksMoves, int whitesMoves){
+	public static void gameOver(GameOver game, int blacksScore, int whitesScore, int blacksMoves, int whitesMoves, boolean twoP){
 		
-		container.removeAll();
 		
-		if(blacksScore == 0)			
-			game.setWinner(human2.getIcon(), human2Name.getText(), whitesMoves);
+		container.removeAll();		
 		
-		else if(whitesScore == 0)
-			game.setWinner(human1.getIcon(), human1Name.getText(), blacksMoves);
+		if(blacksScore == 0){
+			System.out.println("blacksScore: " + blacksScore);
+			if(twoP)
+				game.setWinner(playerTwoAvatar.getIcon(), human2Name.getText(), whitesMoves);
+			else
+				game.setWinner((CheckerBoard.aiColor == PieceColor.BLACK)? humanPlayer.getIcon(): aiWinsLabel.getIcon() ,
+						(CheckerBoard.aiColor == PieceColor.BLACK)? "Human" : "Computer", whitesMoves);
+			
+		}else if(whitesScore == 0){
+			System.out.println("whitesScore: " + whitesScore);
+			if(twoP)
+				game.setWinner(playerOneAvatar.getIcon(), human1Name.getText(), blacksMoves);
+			else
+				game.setWinner((CheckerBoard.aiColor == PieceColor.WHITE)? humanPlayer.getIcon() : aiWinsLabel.getIcon(), 
+						(CheckerBoard.aiColor == PieceColor.WHITE)? "Human": "Computer", blacksMoves);
+		}
 		
 		container.add(game);
 		
