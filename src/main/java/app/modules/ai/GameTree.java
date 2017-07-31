@@ -103,13 +103,13 @@ public class GameTree
             path.push(piece.getPoint());
             ArrayList<Point[]> generatedPiecePaths = new ArrayList<>();
 
-            generatePossiblePiecePaths(board, path, generatedPiecePaths, new HashSet<>());
+            generatePossiblePiecePaths(board, piece.getColor(), piece.isKing(), path, generatedPiecePaths, new HashSet<>(), false);
 
             for (Point[] pointPath : generatedPiecePaths) {
-                if (pointPath.length > 1) {
+                if (pointPath.length > 1 && board.hasPieceAt(pointPath[0]) /* LMAO, this hack though. XD. */) {
                     GameNode node = new GameNode(board.clone(), childDepth);
-                    node.setMovement(pointPath);
                     node.setID(++nodeCount);
+                    node.setMovement(pointPath);
                     node.setParent(currNode);
 
                     childNodes.add(node);
@@ -120,16 +120,15 @@ public class GameTree
         return childNodes;
     }
 
-    private void generatePossiblePiecePaths(Board board, Stack<Point> path, ArrayList<Point[]> paths, HashSet<Point> removedPieces)
+    private void generatePossiblePiecePaths(Board board, PieceColor color, boolean isKing, Stack<Point> path, ArrayList<Point[]> paths, HashSet<Point> removedPieces, boolean eatOnly)
     {
         boolean addPathToPaths = true;
         Point currPoint = path.peek();
-        Piece piece = board.getPieceAt(currPoint);
-        if (path.size() == 1) { // Haven't moved yet
+        if (!eatOnly) { // Haven't moved yet
             // If we move here, we know that the next cell it will be in will contain a piece that is considered a
             // leaf piece. This is due to the fact that after moving to that specific cell, the piece can no longer
             // move again.
-            if (piece.getColor() == PieceColor.WHITE || piece.isKing()) {
+            if (color == PieceColor.WHITE || isKing) {
                 Point topLeftPoint = getTopLeftPoint(currPoint, 1);
                 if (isPointTraversable(board, topLeftPoint, removedPieces) && !isPointNearStackTop(path, currPoint)) {
                     addPathToPaths = false;
@@ -143,7 +142,7 @@ public class GameTree
                 }
             }
 
-            if (piece.getColor() == PieceColor.BLACK || piece.isKing()) {
+            if (color == PieceColor.BLACK || isKing) {
                 Point bottomLeftPoint = getBottomLeftPoint(currPoint, 1);
                 if (isPointTraversable(board, bottomLeftPoint, removedPieces) && !isPointNearStackTop(path, currPoint)) {
                     addPathToPaths = false;
@@ -156,57 +155,65 @@ public class GameTree
                     addPieceMovePathToPath(path, paths, bottomRightPoint);
                 }
             }
-        } else { // Okay, we have moved before already.
-            if (piece.getColor() == PieceColor.WHITE || piece.isKing()) {
-                Point topLeftPoint = getTopLeftPoint(currPoint, 2);
-                Point immediateTopLeftPoint = getTopLeftPoint(currPoint, 1);
-                if (isPointTraversable(board, topLeftPoint, removedPieces) && !isPointNearStackTop(path, currPoint) &&
-                    !isPointTraversable(board, immediateTopLeftPoint, removedPieces)) {
-                    addPathToPaths = false;
-                    path.push(topLeftPoint);
-                    removedPieces.add(immediateTopLeftPoint);
-                    generatePossiblePiecePaths(board, path, paths, removedPieces);
-                    path.pop();
-                    removedPieces.remove(immediateTopLeftPoint);
-                }
+        }
 
-                Point topRightPoint = getTopRightPoint(currPoint, 2);
-                Point immediateTopRightPoint = getTopRightPoint(currPoint, 1);
-                if (isPointTraversable(board, topRightPoint, removedPieces) && !isPointNearStackTop(path, currPoint) &&
-                    !isPointTraversable(board, immediateTopRightPoint, removedPieces)) {
-                    addPathToPaths = false;
-                    path.push(topRightPoint);
-                    removedPieces.add(immediateTopRightPoint);
-                    generatePossiblePiecePaths(board, path, paths, removedPieces);
-                    path.pop();
-                    removedPieces.remove(immediateTopRightPoint);
-                }
+        if (color == PieceColor.WHITE || isKing) {
+            Point topLeftPoint = getTopLeftPoint(currPoint, 2);
+            Point immediateTopLeftPoint = getTopLeftPoint(currPoint, 1);
+            if (isPointTraversable(board, topLeftPoint, removedPieces) &&
+                !isPointNearStackTop(path, currPoint) &&
+                !isPointTraversable(board, immediateTopLeftPoint, removedPieces) &&
+                !board.getPieceAt(immediateTopLeftPoint).getColor().equals(color)) {
+                addPathToPaths = false;
+                path.push(topLeftPoint);
+                removedPieces.add(immediateTopLeftPoint);
+                generatePossiblePiecePaths(board, color, isKing, path, paths, removedPieces, true);
+                path.pop();
+                removedPieces.remove(immediateTopLeftPoint);
             }
 
-            if (piece.getColor() == PieceColor.BLACK || piece.isKing()) {
-                Point bottomLeftPoint = getBottomLeftPoint(currPoint, 2);
-                Point immediateBottomLeftPoint = getBottomLeftPoint(currPoint, 1);
-                if (isPointTraversable(board, bottomLeftPoint, removedPieces) && !isPointNearStackTop(path, currPoint) &&
-                    !isPointTraversable(board, immediateBottomLeftPoint, removedPieces)) {
-                    addPathToPaths = false;
-                    path.push(bottomLeftPoint);
-                    removedPieces.add(immediateBottomLeftPoint);
-                    generatePossiblePiecePaths(board, path, paths, removedPieces);
-                    path.pop();
-                    removedPieces.remove(immediateBottomLeftPoint);
-                }
+            Point topRightPoint = getTopRightPoint(currPoint, 2);
+            Point immediateTopRightPoint = getTopRightPoint(currPoint, 1);
+            if (isPointTraversable(board, topRightPoint, removedPieces) &&
+                !isPointNearStackTop(path, currPoint) &&
+                !isPointTraversable(board, immediateTopRightPoint, removedPieces) &&
+                !board.getPieceAt(immediateTopRightPoint).getColor().equals(color)) {
+                addPathToPaths = false;
+                path.push(topRightPoint);
+                removedPieces.add(immediateTopRightPoint);
+                generatePossiblePiecePaths(board, color, isKing, path, paths, removedPieces, true);
+                path.pop();
+                removedPieces.remove(immediateTopRightPoint);
+            }
+        }
 
-                Point bottomRightPoint = getBottomRightPoint(currPoint, 2);
-                Point immediateBottomRightPoint = getBottomRightPoint(currPoint, 1);
-                if (isPointTraversable(board, bottomRightPoint, removedPieces) && !isPointNearStackTop(path, currPoint) &&
-                    !isPointTraversable(board, immediateBottomRightPoint, removedPieces)) {
-                    addPathToPaths = false;
-                    path.push(bottomRightPoint);
-                    removedPieces.add(immediateBottomRightPoint);
-                    generatePossiblePiecePaths(board, path, paths, removedPieces);
-                    path.pop();
-                    removedPieces.remove(immediateBottomRightPoint);
-                }
+        if (color == PieceColor.BLACK || isKing) {
+            Point bottomLeftPoint = getBottomLeftPoint(currPoint, 2);
+            Point immediateBottomLeftPoint = getBottomLeftPoint(currPoint, 1);
+            if (isPointTraversable(board, bottomLeftPoint, removedPieces) &&
+                !isPointNearStackTop(path, currPoint) &&
+                !isPointTraversable(board, immediateBottomLeftPoint, removedPieces) &&
+                !board.getPieceAt(immediateBottomLeftPoint).getColor().equals(color)) {
+                addPathToPaths = false;
+                path.push(bottomLeftPoint);
+                removedPieces.add(immediateBottomLeftPoint);
+                generatePossiblePiecePaths(board, color, isKing, path, paths, removedPieces, true);
+                path.pop();
+                removedPieces.remove(immediateBottomLeftPoint);
+            }
+
+            Point bottomRightPoint = getBottomRightPoint(currPoint, 2);
+            Point immediateBottomRightPoint = getBottomRightPoint(currPoint, 1);
+            if (isPointTraversable(board, bottomRightPoint, removedPieces) &&
+                !isPointNearStackTop(path, currPoint) &&
+                !isPointTraversable(board, immediateBottomRightPoint, removedPieces) &&
+                !board.getPieceAt(immediateBottomRightPoint).getColor().equals(color)) {
+                addPathToPaths = false;
+                path.push(bottomRightPoint);
+                removedPieces.add(immediateBottomRightPoint);
+                generatePossiblePiecePaths(board, color, isKing, path, paths, removedPieces, true);
+                path.pop();
+                removedPieces.remove(immediateBottomRightPoint);
             }
         }
 
