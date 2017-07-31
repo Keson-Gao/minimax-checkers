@@ -80,7 +80,9 @@ public class GameTree
             for (GameNode child : childNodes) {
                 currNode.addChild(child);
 
-                if (currNode.getDepth() + 1 < maxDepth) { // Add check for winning conditions soon.
+                if (currNode.getDepth() + 1 < maxDepth || currNode.getBoard().getWhitePieces().length != 0 ||
+                    currNode.getBoard().getBlackPieces().length != 0) {
+
                     gameNodes.add(child);
                 }
             }

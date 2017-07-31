@@ -37,6 +37,8 @@ public class CheckerBoard extends JPanel{
 	
 	private static boolean prevChip = false;
 	private static boolean aiprevChip = false;
+
+    private boolean hasEndState = false;
 	
 	ArrayList<Integer> indexOfPath = new ArrayList<Integer>();
 	ArrayList<Integer> greenSqrIndex = new ArrayList<Integer>();
@@ -157,13 +159,30 @@ public class CheckerBoard extends JPanel{
 								movePiece(index);
 								turn = true;
 
+                                Board currBoard = generateBoard();
+
 								// Winning condition already?
+                                if (currBoard.getWhitePieces().length == 0) {
+                                    hasEndState = true;
+                                    JOptionPane.showMessageDialog(null, "You lose", "Game Over", JOptionPane.ERROR_MESSAGE);
+                                } else if (currBoard.getBlackPieces().length == 0) {
+                                    hasEndState = true;
+                                    JOptionPane.showMessageDialog(null, "You win", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+                                }
 
 								// We can just invoke the AI after we move the piece.
-								Board currBoard = generateBoard();
-								setBoard(new AI().getMove(currBoard, PieceColor.BLACK, 4));
+                                if (!hasEndState) {
+                                    setBoard(new AI().getMove(currBoard, PieceColor.BLACK, 4));
+                                }
 
 								// Winning condition already?
+                                if (currBoard.getWhitePieces().length == 0) {
+                                    hasEndState = true;
+                                    JOptionPane.showMessageDialog(null, "You lose", "Game Over", JOptionPane.ERROR_MESSAGE);
+                                } else if (currBoard.getBlackPieces().length == 0) {
+                                    hasEndState = true;
+                                    JOptionPane.showMessageDialog(null, "You win", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+                                }
 							}else{	//If the square was clicked once.
 								
 								//Check if the square is valid as path.							
@@ -390,7 +409,7 @@ public class CheckerBoard extends JPanel{
         int multiplier = 4 * yPos; // This makes sure the piece is placed in the right green square, and just does not
                                    // repeat in the first, second, third, or fourth square.
         int squarePos = (yPos % 2 == 0) ? (xPos / 2) : (xPos - 1) / 2;
-        squarePos *= multiplier;
+        squarePos += multiplier;
 
         if (piece.getColor() == PieceColor.BLACK) {
             if (piece.isKing()) greenSquares[squarePos].setIcon(blackKing);
