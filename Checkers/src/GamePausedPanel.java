@@ -31,11 +31,11 @@ public class GamePausedPanel extends JPanel{
 		title.setBounds(100, 50, titleIcon.getIconWidth(), titleIcon.getIconHeight());
 		
 		info = new JLabel(infoIcon);
-		info.setBounds(90, 150, infoIcon.getIconWidth(), infoIcon.getIconHeight());
+		info.setBounds(170, 150, infoIcon.getIconWidth(), infoIcon.getIconHeight());
 		
 				
 		
-		options = new JLabel(optionsIcon);
+		/*options = new JLabel(optionsIcon);
 		options.setBounds(180, 150, optionsIcon.getIconWidth(), optionsIcon.getIconHeight());
 		options.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
@@ -48,7 +48,7 @@ public class GamePausedPanel extends JPanel{
 		});
 		
 		resign = new JLabel(resignIcon);
-		resign.setBounds(270, 150, resignIcon.getIconWidth(), resignIcon.getIconHeight());
+		resign.setBounds(200, 150, resignIcon.getIconWidth(), resignIcon.getIconHeight());
 		resign.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
 				resign.setIcon(new ImageIcon(getClass().getResource("resign2.png")));				
@@ -57,10 +57,10 @@ public class GamePausedPanel extends JPanel{
 			public void mouseExited(MouseEvent e){
 				resign.setIcon(resignIcon);
 			}
-		});
+		});*/
 		
 		backToMain = new JLabel(backToMainIcon);
-		backToMain.setBounds(360, 150, backToMainIcon.getIconWidth(), backToMainIcon.getIconHeight());
+		backToMain.setBounds(260, 150, backToMainIcon.getIconWidth(), backToMainIcon.getIconHeight());
 		
 		
 		close = new JLabel(closeIcon);
@@ -81,8 +81,8 @@ public class GamePausedPanel extends JPanel{
 		
 		add(title);
 		add(info);   
-		add(options);
-		add(resign);
+		//add(options);
+		//add(resign);
 		add(backToMain);
 		add(close);
 	}

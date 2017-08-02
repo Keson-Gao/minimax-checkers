@@ -98,10 +98,8 @@ public class Board
     public void removePieceAt(Point p)
     {
         if (blackPieces.containsKey(p)) {
-        	//System.out.println("removed from blackPieces");
             blackPieces.remove(p);
         } else if (whitePieces.containsKey(p)) {
-        	//System.out.println("removed from whitePieces");
             whitePieces.remove(p);
         } else {
             throw new NullPointerException("Piece does not exist at (" + p.x + ", " + p.y + ".");
@@ -109,8 +107,7 @@ public class Board
     }
 
     public boolean movePiece(Move move)
-    {
-    	//System.out.println("move: " + move);    	
+    {  	
     	Point currPoint = new Point(move.currCol, move.currRow);
     	Point newPoint = new Point(move.movCol, move.movRow);    	    	
     	boolean crowned = false;  	    	    	
@@ -118,11 +115,14 @@ public class Board
     	int kingsEdge = 0;
     	if(player == AI.getColor())
     		kingsEdge = 7;
+    	else{
+    		kingsEdge = 0;
+    	}
     	    	
         if (blackPieces.containsKey(currPoint)){
         	
         	Piece currPiece = blackPieces.get(currPoint);            
-        	if(currPiece.getColor() == player &&  move.movRow == kingsEdge){
+        	if(currPiece.getColor() == player &&  move.movRow == kingsEdge){        		
         		currPiece.setKing();
         		currPiece.setColor(PieceColor.BLACK_KING);        		
                 blackKingsCount++;
@@ -194,7 +194,7 @@ public class Board
     {
         HashMap<Point, Piece> target = new HashMap<>();
         for (Map.Entry<Point, Piece> pieceEntry : source.entrySet()) {
-            target.put(pieceEntry.getKey(), pieceEntry.getValue());
+            target.put(pieceEntry.getKey().clone(), pieceEntry.getValue().clone());
         }
 
         return target;
@@ -221,7 +221,7 @@ public class Board
     			if(getPieceAt(new Point(col, row)) != null){
     				PieceColor currPieceColor = getPieceAt(new Point(col, row)).getColor();    			
         			
-        			// Normal pieces
+        			// Normal pieces    				
         			if(currPieceColor == color){
         				moves.addAll(getPossibleMovesForColorAt(color, row, col));        				
         				count++;
@@ -236,7 +236,6 @@ public class Board
         				count++;
         			}
         			
-        		//	System.out.println("moves siezes: " + moves.size());
         			if(count == 12)
         				return moves;
     			}    			
@@ -254,21 +253,23 @@ public class Board
     	ArrayList<Move> moves = new ArrayList<Move>();
     	
     	int rowDirection = 0;    	
-    	
-    	if(color == AI.getColor()){    	
+    	if(color == AI.getColor()){    	    		
     		rowDirection = 1;
-    	} else {
+    	} else {    		
     		rowDirection = -1;
     	}
-    	
+
     	if(color == PieceColor.WHITE){
     		if(currPiece == PieceColor.WHITE || currPiece == PieceColor.WHITE_KING){
+    			
+    			
     			if(isPointInBoard(new Point(col + 1, row + rowDirection)) && 
-    					getPieceAt(new Point(col + 1, row + rowDirection)) == null){    				
+    					getPieceAt(new Point(col + 1, row + rowDirection)) == null){       					
     				moves.add(new Move(row, col, row + rowDirection, col + 1));     				
     			}    			
+    			
     			if(isPointInBoard(new Point(col - 1, row + rowDirection)) && 
-    					getPieceAt(new Point(col - 1, row + rowDirection)) == null){
+    					getPieceAt(new Point(col - 1, row + rowDirection)) == null){    				
     				moves.add(new Move(row, col, row + rowDirection, col - 1));
     			}    			    	
     		}
@@ -297,8 +298,7 @@ public class Board
     			}    			    	
     		}
     		
-    		if(currPiece == PieceColor.BLACK_KING){
-    			System.out.println("BlackKing");
+    		if(currPiece == PieceColor.BLACK_KING){    			
     			if(isPointInBoard(new Point(col + 1, row - rowDirection)) && 
     					getPieceAt(new Point(col + 1, row - rowDirection)) == null){    				
     				moves.add(new Move(row, col, row - rowDirection, col + 1));
@@ -314,13 +314,11 @@ public class Board
     	ArrayList<Move> jumps = getJumps(row, col);
     	moves.addAll(jumps);
     	
-    	//System.out.println("moves size: " + moves.size());
     	return moves;    	
     }
     
     private boolean isPointInBoard(Point pos)
     {
-    	//System.out.println("[" + pos.x + ", " + pos.y + "]");
         return (pos.x >= 0 && pos.x < 8) && (pos.y >= 0 && pos.y < 8);
     }    
 
@@ -403,15 +401,12 @@ public class Board
     	return jumps;
     }
 	
-	public void handleJump(Move move){
-		//System.out.println("jumping.");
+	public void handleJump(Move move){		
 		Pair<Integer, Integer> squareSkipped = move.getSquareSkipped();
 		
 		if(squareSkipped.getFirst() != move.currRow && squareSkipped.getFirst() != move.movRow &&
 				squareSkipped.getSecond() != move.currCol && squareSkipped.getSecond() != move.movCol){
-			
-			//System.out.println(move);
-			//System.out.println("squareSkipped [" + squareSkipped.getSecond() + ", " + squareSkipped.getFirst() + "]" );
+					
 			PieceColor pieceSkipped = getPieceAt(new Point(squareSkipped.getSecond(), squareSkipped.getFirst())).getColor(); 
 			
 			if(pieceSkipped == PieceColor.WHITE_KING){
@@ -443,11 +438,11 @@ public class Board
 	}
 	
 	public int getWhiteScore(){
-		return whiteCount - whiteKingsCount + (3 * whiteKingsCount);
+		return getBoardValue(PieceColor.WHITE);
 	}
 	
 	public int getBlackScore(){
-		return blackCount - blackKingsCount + (3 * blackKingsCount);
+		return getBoardValue(PieceColor.BLACK);
 	}
 	
 	public int getWhiteCount(){

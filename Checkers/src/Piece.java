@@ -27,4 +27,7 @@ public class Piece
     public boolean isKing() { return isKing; }
     public void setPoint(Point newPosition) { position = newPosition; }
     public void setKing() { isKing = true; }
+    @Override public Piece clone() {
+    	return new Piece(color, position.clone(), isKing);
+    }
 }

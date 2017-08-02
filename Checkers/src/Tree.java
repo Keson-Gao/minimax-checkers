@@ -8,6 +8,7 @@ public class Tree{
 	private Move move;
 	private int score;
 	private ArrayList<Tree> children;
+	private int depth;
 	
 	public Tree(Board node, Move move, int score, Tree ... children){
 		this.node = node;
@@ -21,6 +22,12 @@ public class Tree{
 	public int getScore(){ return score;}
 	public List<Tree> getChildren(){ return children;}	
 	public int getNumberOfChildren(){ return children.size();}
+	public int getDepth() { return depth; }
+	
+	public void setDepth(int depth)
+	{
+		this.depth = depth;
+	}
 	
 	public void updateScore(int newScore){
 		score = newScore;

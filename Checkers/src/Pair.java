@@ -14,4 +14,8 @@ public class Pair<F, S>{
 	public S getSecond(){
 		return second;
 	}
+	
+	public String toString(){
+		return "[" + first + ", " + second + "]"; 
+	}
 }

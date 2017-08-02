@@ -29,7 +29,7 @@ public class CheckerFrame extends JFrame{
 	
 	private static JPanel gamePanel, menu, mode, character;	
 	private static JLabel gameTitle, gameMenu, selectMode, boardBorder, playGame, humanPlayer, aiPlayer,
-				   optionsButton, infoButton, onePlayer, twoPlayer, playerOne, playerTwo,
+				   infoButton, onePlayer, twoPlayer, playerOne, playerTwo,
 				   versusLabel, backToMain, blackText, whiteText, gameBackOnePlayer, gamePlayOnePlayer, 
 				   gameBackTwoPlayer, gamePlayTwoPlayer;
 	private static JLabel playerOneAvatar, playerTwoAvatar, pieceTextColor;
@@ -57,35 +57,13 @@ public class CheckerFrame extends JFrame{
 	
 	CheckerFrame()
 	{
-		super("Checker");
+		super("DAMA");
 		getContentPane().setBackground(Color.ORANGE);				
 		setLayout(null);		
 		setBounds(300, 100, 800, 600);		
 		
-		init();
-		
-		//play background music
-		/*
-		try
-		{
-			URL url = this.getClass().getClassLoader().getResource("bgsound.wav");
-			AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
-			Clip clip = AudioSystem.getClip();
-			clip.open(audioIn);
-			clip.loop(Clip.LOOP_CONTINUOUSLY);
-		}
-		catch(UnsupportedAudioFileException e)
-		{
-			e.printStackTrace();
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
-		catch(LineUnavailableException e)
-		{
-			e.printStackTrace();
-		}*/
+		setIconImage(new ImageIcon(getClass().getResource("Logo.png")).getImage());
+		init();				
 		
 		menu = new JPanel();
 		menu.setBounds(0, 0, 1000, 600);
@@ -96,7 +74,7 @@ public class CheckerFrame extends JFrame{
 		gameTitle.setBounds(215, 160, icon[4].getIconWidth(), icon[4].getIconHeight());		
 		
 		playGame = new JLabel(icon[0]);
-		playGame.setBounds(325, 280, icon[0].getIconWidth(), icon[0].getIconHeight());
+		playGame.setBounds(250, 280, icon[0].getIconWidth(), icon[0].getIconHeight());
 		
 		playGame.addMouseListener(
 			new MouseListener(){
@@ -165,7 +143,7 @@ public class CheckerFrame extends JFrame{
 							character.setLayout(null);
 							
 							humanPlayer = new JLabel(icon1);
-							humanPlayer.setBounds(300, 200, 177, 177);
+							humanPlayer.setBounds(300, 190, 177, 177);
 							humanPlayer.addMouseListener(new MouseAdapter(){
 								public void mouseEntered(MouseEvent e){
 									humanPlayer.setIcon(icon2);
@@ -193,7 +171,7 @@ public class CheckerFrame extends JFrame{
 							});					
 							
 							pieceTextColor = new JLabel(icon[15]);
-							pieceTextColor.setBounds(290, 150, icon[15].getIconWidth(), icon[15].getIconHeight());	
+							pieceTextColor.setBounds(290, 140, icon[15].getIconWidth(), icon[15].getIconHeight());	
 							pieceTextColor.setToolTipText("Click to play as Black.");
 							pieceTextColor.addMouseListener(new MouseAdapter(){
 								public void mouseClicked(MouseEvent e){
@@ -231,7 +209,7 @@ public class CheckerFrame extends JFrame{
 							});			
 							
 							gameBackOnePlayer = new JLabel(icon[10]);
-							gameBackOnePlayer.setBounds(40, 480, icon[10].getIconWidth(), icon[10].getIconHeight());
+							gameBackOnePlayer.setBounds(40, 490, icon[10].getIconWidth(), icon[10].getIconHeight());
 							gameBackOnePlayer.addMouseListener(new MouseAdapter(){
 								public void mouseEntered(MouseEvent e){
 									gameBackOnePlayer.setIcon(icon[11]);
@@ -251,7 +229,7 @@ public class CheckerFrame extends JFrame{
 							});
 							
 							gamePlayOnePlayer = new JLabel(icon[16]);
-							gamePlayOnePlayer.setBounds(670, 480, icon[16].getIconWidth(), icon[16].getIconHeight());
+							gamePlayOnePlayer.setBounds(645, 480, icon[16].getIconWidth(), icon[16].getIconHeight());
 							gamePlayOnePlayer.addMouseListener(new MouseAdapter(){
 								
 
@@ -263,6 +241,10 @@ public class CheckerFrame extends JFrame{
 									gamePlayOnePlayer.setIcon(icon[16]);
 								}
 								
+								public void mouseReleased(MouseEvent e){
+									gamePlayOnePlayer.setIcon(icon[16]);
+								}
+								
 								public void mouseClicked(MouseEvent e){
 									getContentPane().removeAll();
 									
@@ -270,6 +252,9 @@ public class CheckerFrame extends JFrame{
 									gamePanel.setBounds(0, 0, 1000, 600);
 									gamePanel.setOpaque(false);
 									gamePanel.setLayout(null);
+									
+									playerTurn = new JLabel(new ImageIcon(getClass().getResource(turnImage)));
+									playerTurn.setBounds(685, 30, 59, 69);							
 									
 									game = new CheckerGamePanel(
 											(pieceTextColor.getIcon().toString().equals(icon[15].toString()))? PieceColor.WHITE : PieceColor.BLACK);
@@ -284,7 +269,7 @@ public class CheckerFrame extends JFrame{
 									aiPlayer = new JLabel(icon[13]);									
 									playerOne = new JLabel(new ImageIcon(getClass().getResource(humanIcon)));
 																																	
-									aiPlayer.setBounds(30, 20, 80, 80);
+									aiPlayer.setBounds(30, 20, icon[13].getIconWidth(), icon[13].getIconHeight());
 									playerOne.setBounds(675, 440, 80, 80);
 									
 									gameMenu = new JLabel(icon[12]);
@@ -302,9 +287,7 @@ public class CheckerFrame extends JFrame{
 											glass.setVisible(true);
 										}
 									});
-									
-									playerTurn = new JLabel(new ImageIcon(getClass().getResource(turnImage)));
-									playerTurn.setBounds(695, 30, 59, 69);							
+																		
 									
 									gamePanel.add(playerTurn);									
 									gamePanel.add(aiPlayer);
@@ -421,7 +404,7 @@ public class CheckerFrame extends JFrame{
 							});
 							
 							versusLabel = new JLabel(icon[18]);
-							versusLabel.setBounds(350, 270, icon[18].getIconWidth(), icon[18].getIconHeight());		
+							versusLabel.setBounds(365, 270, icon[18].getIconWidth(), icon[18].getIconHeight());		
 							
 							blackText = new JLabel(icon[14]);
 							blackText.setBounds(160, 120, icon[14].getIconWidth(), icon[14].getIconHeight());
@@ -464,7 +447,7 @@ public class CheckerFrame extends JFrame{
 							});
 							
 							gameBackTwoPlayer = new JLabel(icon[10]);
-							gameBackTwoPlayer.setBounds(40, 480, icon[10].getIconWidth(), icon[10].getIconHeight());
+							gameBackTwoPlayer.setBounds(40, 490, icon[10].getIconWidth(), icon[10].getIconHeight());
 							gameBackTwoPlayer.addMouseListener(new MouseAdapter(){
 								public void mouseEntered(MouseEvent e){
 									gameBackTwoPlayer.setIcon(icon[11]);
@@ -483,7 +466,7 @@ public class CheckerFrame extends JFrame{
 							});
 							
 							gamePlayTwoPlayer = new JLabel(icon[16]);
-							gamePlayTwoPlayer.setBounds(670, 480, icon[16].getIconWidth(), icon[16].getIconHeight());
+							gamePlayTwoPlayer.setBounds(645, 480, icon[16].getIconWidth(), icon[16].getIconHeight());
 							gamePlayTwoPlayer.addMouseListener(new MouseAdapter(){
 								public void mouseEntered(MouseEvent e){
 									gamePlayTwoPlayer.setIcon(new ImageIcon(getClass().getResource("go_2.png")));
@@ -574,7 +557,7 @@ public class CheckerFrame extends JFrame{
 					});
 					
 					backToMain =  new JLabel(icon[10]);
-					backToMain.setBounds(680, 480, icon[10].getIconWidth(), icon[10].getIconHeight());
+					backToMain.setBounds(40, 490, icon[10].getIconWidth(), icon[10].getIconHeight());
 					backToMain.addMouseListener(new MouseAdapter(){
 						public void mouseEntered(MouseEvent e){							
 							backToMain.setIcon(icon[11]);
@@ -606,7 +589,7 @@ public class CheckerFrame extends JFrame{
 			
 		);
 		
-		optionsButton = new JLabel(icon[2]);
+		/*optionsButton = new JLabel(icon[2]);
 		optionsButton.setBounds(200, 310, icon[2].getIconWidth(),icon[2].getIconHeight());
 		optionsButton.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
@@ -624,10 +607,10 @@ public class CheckerFrame extends JFrame{
 			public void mouseClicked(MouseEvent e){
 				//code here.
 			}
-		});
+		});*/
 		
 		infoButton = new JLabel(icon[3]);
-		infoButton.setBounds(500, 310, icon[3].getIconWidth(), icon[3].getIconHeight());
+		infoButton.setBounds(430, 310, icon[3].getIconWidth(), icon[3].getIconHeight());
 		infoButton.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(MouseEvent e){
 				infoButton.setIcon(new ImageIcon(getClass().getResource("help2.png")));
@@ -817,7 +800,7 @@ public class CheckerFrame extends JFrame{
 		
 		menu.add(gameTitle);
 		menu.add(playGame);
-		menu.add(optionsButton);
+		//menu.add(optionsButton);
 		menu.add(infoButton);
 		
 		add(menu);	
@@ -878,20 +861,17 @@ public class CheckerFrame extends JFrame{
 	}
 	
 	public static void gameOver(GameOver game, int blacksScore, int whitesScore, int blacksMoves, int whitesMoves, boolean twoP){
-		
-		
+				
 		container.removeAll();		
 		
-		if(blacksScore == 0){
-			System.out.println("blacksScore: " + blacksScore);
+		if(blacksScore == 0){						
 			if(twoP)
 				game.setWinner(playerTwoAvatar.getIcon(), human2Name.getText(), whitesMoves);
 			else
 				game.setWinner((CheckerBoard.aiColor == PieceColor.BLACK)? humanPlayer.getIcon(): aiWinsLabel.getIcon() ,
 						(CheckerBoard.aiColor == PieceColor.BLACK)? "Human" : "Computer", whitesMoves);
 			
-		}else if(whitesScore == 0){
-			System.out.println("whitesScore: " + whitesScore);
+		}else if(whitesScore == 0){						
 			if(twoP)
 				game.setWinner(playerOneAvatar.getIcon(), human1Name.getText(), blacksMoves);
 			else

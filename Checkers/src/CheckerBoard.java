@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,6 +12,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class CheckerBoard extends JPanel{
 	private static final long serialVersionUID = 1L;
@@ -23,8 +26,9 @@ public class CheckerBoard extends JPanel{
 	private Icon blackChip = new ImageIcon(getClass().getResource("black.png"));
 	private Icon blackKing = new ImageIcon(getClass().getResource("blackKing.png"));	
 	private Icon dottedWhite = new ImageIcon(getClass().getResource("eatpathwhite.png"));			
-	private static int whiteMoves = 0, blackMoves = 0; 	
+	private Icon humanTurn = new ImageIcon(getClass().getResource("eatpathwhite.png"));
 	
+	private static int whiteMoves = 0, blackMoves = 0; 			
 	private static int currIndex;
 	protected static boolean turn; 	
 	private static boolean prevChip = false;	
@@ -60,9 +64,41 @@ public class CheckerBoard extends JPanel{
 		placePiecesOnePlayer();		
 		
 		gameBoard = generateBoard();
-		aiColor = (aiColor == PieceColor.WHITE)? PieceColor.WHITE: PieceColor.BLACK;	
-		gameBoard.setPlayer(playerColor);
+		aiColor = (aiColor == PieceColor.WHITE)? PieceColor.WHITE: PieceColor.BLACK;
+		
+		if(playerColor == PieceColor.WHITE){
+			gameBoard.setPlayer(playerColor);			
+		}else{
+			gameBoard.setPlayer(aiColor);
+		}
+		
+		
 		ai = new AI(aiColor);
+		if(aiColor == PieceColor.WHITE){
+			if(gameBoard.player == AI.getColor()){
+				 new Thread(new Runnable() {
+			         @Override
+			         public void run() {
+			        	 				         							        	 
+			             // do the long-running work here				        	 
+			        	 CheckerFrame.playerTurn.setIcon(new ImageIcon(getClass().getResource("hourglass.png")));							        	 
+			        	 Move aiMove = ai.getAIMove(gameBoard);																
+						 boolean crownedAi = gameBoard.movePiece(aiMove);								
+						 gameBoard.handleJump(aiMove);
+						 handleJump(aiMove);
+						 updateBoard(gameBoard, aiMove, crownedAi);										 										 																	
+						
+			             // at the end:
+			             SwingUtilities.invokeLater(new Runnable() {
+			                 @Override
+			                 public void run() {		                	 
+			                	 CheckerFrame.playerTurn.setIcon(new ImageIcon(getClass().getResource((playerColor == PieceColor.BLACK)? "blackturn.png" : "whiteturn.png")));
+			                 }
+			             });
+			          }
+			     }).start();								 							
+			}
+		}
 	}	
 	
 	private void initBoard(){				
@@ -73,8 +109,7 @@ public class CheckerBoard extends JPanel{
 		board.setBackground(Color.BLACK);
 		board.setBounds(160, 46, 470, 470);			
 		MovementHandler handler = new MovementHandler();		
-		int tog = 0;
-		turn = true;
+		int tog = 0;					
 		
 		for(int i = 0; i<64; i++){	
 			squarePanels[i] = new JPanel();
@@ -137,50 +172,79 @@ public class CheckerBoard extends JPanel{
 				if(aPieceWasPreviouslyChosen()){				
 					if( cellIsEmpty(currIndex) || isPath(currIndex) ){						
 						if(cellIsClickedTwice(currIndex)){								
-							eraseDottedLines();	
+							eraseDottedLines();								
 														
 							Pair<Integer, Integer> rowCol = getRowColAt(currIndex);
 							int row = rowCol.getFirst(), col = rowCol.getSecond();									
 							boolean crowned;
 							
-							if(gameBoard.player != AI.getColor()){												
-								for(Move move: moves){
+							if(moves == null)
+								moves = getJumps(indexOfClickedPath);
+							else
+								moves.addAll(getJumps(indexOfClickedPath));							
+							
+							boolean isMultipleJumps = false;
+							if(gameBoard.player != AI.getColor()){		
+								
+								ArrayList<Move> jumps = getJumps(indexOfClickedPath);								
+								if(jumps.size() > 2) isMultipleJumps = true;	
+								
+								for(int j = 0; j < jumps.size()-1; j++){											
+									gameBoard.handleJump(jumps.get(j));																																	
+								}		
+								
+								for(Move move: moves){									
 									if(move.movRow == row && move.movCol == col){										
-										crowned = gameBoard.movePiece(move);
-										gameBoard.handleJump(move);
-										handleJump(indexOfClickedPath);
+										
+										if(isMultipleJumps){
+											Move leapMove = jumps.get(jumps.size()-1);											
+											move = leapMove;											
+										}																				
+										
+										crowned = gameBoard.movePiece(move);									
+										handleJump(indexOfClickedPath);																																
 										updateBoard(gameBoard, move, crowned);										
 										break;								        								        									        
 									}
 								}								
 							}
 														
-							if(gameBoard.player == AI.getColor()){								
-								Move aiMove = ai.getAIMove(gameBoard);																
-								crowned = gameBoard.movePiece(aiMove);								
-								gameBoard.handleJump(aiMove);
-								handleJump(aiMove);
-								updateBoard(gameBoard, aiMove, crowned);
-							}							
+							if(gameBoard.player == AI.getColor()){
+								 new Thread(new Runnable() {
+							         @Override
+							         public void run() {
+							        	 				         							        	 
+							             // do the long-running work here				        	 
+							        	 CheckerFrame.playerTurn.setIcon(new ImageIcon(getClass().getResource("hourglass.png")));							        	 
+							        	 Move aiMove = ai.getAIMove(gameBoard);																
+										 boolean crownedAi = gameBoard.movePiece(aiMove);								
+										 gameBoard.handleJump(aiMove);
+										 handleJump(aiMove);
+										 updateBoard(gameBoard, aiMove, crownedAi);										 										 																	
+										
+							             // at the end:
+							             SwingUtilities.invokeLater(new Runnable() {
+							                 @Override
+							                 public void run() {		                	 
+							                	 CheckerFrame.playerTurn.setIcon(new ImageIcon(getClass().getResource((playerColor == PieceColor.BLACK)? "blackturn.png" : "whiteturn.png")));
+							                 }
+							             });
+							          }
+							     }).start();								 							
+							}
 													
-						}else{				
+						}else{
 							
-							if( isAValidMoveAt(index) )		
-								markAsPath(index);															
-							else 
+							if( isAValidMoveAt(index) )								
+								markAsPath(index);													
+							else
 								clearBoard();
 						}										
-					}else if( isNormalPiece(currIndex) || isHumanKing(currIndex) ){	
-						
+					}else if( isNormalPiece(currIndex) || isHumanKing(currIndex) ){							
 
 						Pair<Integer, Integer> rowCol = getRowColAt(currIndex);						
-						if(rowCol.getFirst() >= 0 && rowCol.getFirst() < 8 && rowCol.getSecond() >= 0 && rowCol.getSecond() < 8){							
-							if(gameBoard.jumped){								
-								moves = gameBoard.getJumps(rowCol.getSecond(), rowCol.getFirst());								
-							} else {			
-								moves = gameBoard.getPossibleMovesForPlayer(rowCol.getFirst(), rowCol.getSecond());
-								System.out.println(moves);
-							}
+						if(rowCol.getFirst() >= 0 && rowCol.getFirst() < 8 && rowCol.getSecond() >= 0 && rowCol.getSecond() < 8){																					
+							moves = gameBoard.getPossibleMovesForPlayer(rowCol.getFirst(), rowCol.getSecond());									
 						}
 						
 						clearBoard();	
@@ -204,13 +268,8 @@ public class CheckerBoard extends JPanel{
 					if(isHumanKing(currIndex) || isNormalPiece(currIndex)){						
 						
 						Pair<Integer, Integer> rowCol = getRowColAt(currIndex);						
-						if(rowCol.getFirst() >= 0 && rowCol.getFirst() < 8 && rowCol.getSecond() >= 0 && rowCol.getSecond() < 8){							
-							if(gameBoard.jumped){								
-								moves = gameBoard.getJumps(rowCol.getSecond(), rowCol.getFirst());								
-							} else {			
-								moves = gameBoard.getPossibleMovesForPlayer(rowCol.getFirst(), rowCol.getSecond());
-								System.out.println(moves);
-							}
+						if(rowCol.getFirst() >= 0 && rowCol.getFirst() < 8 && rowCol.getSecond() >= 0 && rowCol.getSecond() < 8){																										
+							moves = gameBoard.getPossibleMovesForPlayer(rowCol.getFirst(), rowCol.getSecond());															
 						}
 						
 						storePath(currIndex);
@@ -219,9 +278,9 @@ public class CheckerBoard extends JPanel{
 						if(isNormalPiece(currIndex))					
 							newPieceClick(humanPlayerPiece, currIndex, index);																					
 						indexOfClickedPath.add(index);	
-						
-						//Checks For tie
+												
 						if(gameBoard.getAllPossibleMovesForColor(gameBoard.player).size() == 0){
+							
 							if(gameBoard.player == PieceColor.WHITE)
 								gameBoard.player = PieceColor.BLACK;
 							else
@@ -229,16 +288,44 @@ public class CheckerBoard extends JPanel{
 							
 							if(gameBoard.getAllPossibleMovesForColor(gameBoard.player).size() == 0){
 								tie = true;							
-							}								
+							}else{
+								if(gameBoard.player == PieceColor.BLACK){
+									CheckerFrame.gameOver(new GameOver(), gameBoard.getWhiteCount(), 0, blackMoves, whiteMoves, false);									
+								}else if(gameBoard.player == PieceColor.WHITE)
+									CheckerFrame.gameOver(new GameOver(), 0 , gameBoard.getWhiteCount(), blackMoves, whiteMoves, false);
+							}
 						}							
 					}					
 				}	
 				
-			}	
+			}
 			
 		}else clearBoard();		
 	}
 	
+
+	private ArrayList<Move> getJumps(ArrayList<Integer> indexOfClickedPath2) 
+	{		
+		ArrayList<Move> jumps = new ArrayList<Move>();		
+		for(int i = 0 ; i + 1 < indexOfClickedPath.size(); i++){						
+			//int var = (indexOfClickedPath.get(i+1) - indexOfClickedPath.get(i));									
+		
+			Move newMove = new Move(getRowColAt(indexOfGreenSquare.indexOf(indexOfClickedPath2.get(i))).getFirst(),
+					getRowColAt(indexOfGreenSquare.indexOf(indexOfClickedPath2.get(i))).getSecond(),
+					getRowColAt(indexOfGreenSquare.indexOf(indexOfClickedPath2.get(i+1))).getFirst(),
+					getRowColAt(indexOfGreenSquare.indexOf(indexOfClickedPath2.get(i+1))).getSecond()); 
+			
+			jumps.add(newMove);			
+		}
+		
+		Move newMove = new Move(getRowColAt(indexOfGreenSquare.indexOf(indexOfClickedPath2.get(0))).getFirst(),
+				getRowColAt(indexOfGreenSquare.indexOf(indexOfClickedPath2.get(0))).getSecond(),
+				getRowColAt(indexOfGreenSquare.indexOf(indexOfClickedPath2.get(indexOfClickedPath.size()-1))).getFirst(),
+				getRowColAt(indexOfGreenSquare.indexOf(indexOfClickedPath2.get(indexOfClickedPath.size()-1))).getSecond());
+		jumps.add(newMove);			
+		
+		return jumps;
+	}
 
 	private Board generateBoard()
     {
@@ -258,11 +345,9 @@ public class CheckerBoard extends JPanel{
 
                 if (greenSquares[index].getIcon() != null) {
                 	
-                    if (greenSquares[index].getIcon().toString().equals(humanPlayerPiece.toString())) {                    	
+                    if (getPieceAt(index) == PieceColor.WHITE) {                    	
                         whitePieces.put(newPoint, new Piece(PieceColor.WHITE, newPoint));
-                    } else if (greenSquares[index].getIcon().toString().equals(humanPlayerPieceKing.toString())) {                    	
-                        whitePieces.put(newPoint, new Piece(PieceColor.WHITE, newPoint, true));
-                    } else if (greenSquares[index].getIcon().toString().equals(aiPiece.toString())) {                       	                    	                    	
+                    }else if (getPieceAt(index) == PieceColor.BLACK) {                       	                    	                    	
                         blackPieces.put(newPoint, new Piece(PieceColor.BLACK, newPoint));
                     }
                 }
@@ -304,7 +389,24 @@ public class CheckerBoard extends JPanel{
         }    
         
         changeTurn();				
-		setAPieceWasChosen(false);			
+		setAPieceWasChosen(false);	
+		
+		if(gameBoard.getAllPossibleMovesForColor(gameBoard.player).size() == 0){
+			
+			if(gameBoard.player == PieceColor.WHITE)
+				gameBoard.player = PieceColor.BLACK;
+			else
+				gameBoard.player = PieceColor.WHITE;
+			
+			if(gameBoard.getAllPossibleMovesForColor(gameBoard.player).size() == 0){
+				tie = true;							
+			}else{
+				if(gameBoard.player == PieceColor.BLACK){
+					CheckerFrame.gameOver(new GameOver(), gameBoard.getWhiteCount(), 0, blackMoves, whiteMoves, false);									
+				}else if(gameBoard.player == PieceColor.WHITE)
+					CheckerFrame.gameOver(new GameOver(), 0 , gameBoard.getWhiteCount(), blackMoves, whiteMoves, false);
+			}
+		}			
         
 	}
 
@@ -333,7 +435,6 @@ public class CheckerBoard extends JPanel{
          * The first (zeroth, rather) square is the top leftmost green square, and the 32nd square is the
          * bottom rightmost green square.
          */		
-		//System.out.println("Placing piece to board");
 		resetBoardColor();
 		
         int newXPos = move.movCol;
@@ -382,6 +483,7 @@ public class CheckerBoard extends JPanel{
         removePieceAt(currPos);        
         indexOfClickedPath.removeAll(indexOfClickedPath);
 		indexOfPathTaken.removeAll(indexOfPathTaken);
+		repaint();
     }
 	
 	private int getIndexFromRowCol(int row, int col){
@@ -399,7 +501,7 @@ public class CheckerBoard extends JPanel{
 		
 		return index;		
 	}
-
+	
 	//Deletes the square skipped in jump
     private void handleJump(ArrayList<Integer> indexOfClickedPath2) {
 		
@@ -445,7 +547,7 @@ public class CheckerBoard extends JPanel{
     	Pair<Integer, Integer> squareSkipped = move.getSquareSkipped();
 		if(squareSkipped.getFirst() != move.currRow && squareSkipped.getFirst() != move.movRow &&
 				squareSkipped.getSecond() != move.currCol && squareSkipped.getSecond() != move.movCol){
-			
+						
 			PieceColor pieceSkipped = getPieceAt(indexOfGreenSquare.indexOf(getIndexFromRowCol(squareSkipped.getFirst(), squareSkipped.getSecond())));
 			
 			if(pieceSkipped == PieceColor.WHITE_KING){
@@ -500,7 +602,7 @@ public class CheckerBoard extends JPanel{
 			humanPlayerPieceKing = whiteKing;
 			aiPiece = blackChip;	
 			aiPieceKing = blackKing;
-						
+			turn = true;	
 		}else{
 			
 			playerColor = PieceColor.BLACK;			
@@ -510,6 +612,7 @@ public class CheckerBoard extends JPanel{
 			humanPlayerPieceKing = blackKing;
 			aiPiece = whiteChip;
 			aiPieceKing = whiteKing;
+			turn = false;	
 		}
 	}
 	
@@ -614,31 +717,40 @@ public class CheckerBoard extends JPanel{
 	}	
 	
 	private boolean isAValidMoveAt(int index){			
-		int indexOf = indexOfGreenSquare.indexOf(indexOfClickedPath.get(0));	
-		
+		int indexOf = indexOfGreenSquare.indexOf(indexOfClickedPath.get(0));		
 		if(isBlackKing(indexOf) || isWhiteKing(indexOf)){						
 			if(indexOfClickedPath.size() > 1){				
 				int nIndex1 = indexOfClickedPath.get(indexOfClickedPath.size()-1);									
 				return ((nIndex1%9 == index%9 && Math.abs(nIndex1-index) == 18) || 
-						(nIndex1%7 == index%7 && Math.abs(nIndex1-index) == 14));
-				
+						(nIndex1%7 == index%7 && Math.abs(nIndex1-index) == 14));				
 			}else if(indexOfClickedPath.size() == 1){												
 				int nIndex1 = indexOfClickedPath.get(0);								
 				return ((nIndex1%9 == index%9 && (Math.abs(nIndex1-index) == 9 || 
 						(Math.abs(nIndex1-index) == 18 && foodSquares.contains(index)))) 
 					|| (nIndex1%7 == index%7 && (Math.abs(nIndex1-index) == 7 || 
-						(Math.abs(nIndex1-index) == 14 && foodSquares.contains(index)))));															
+						(Math.abs(nIndex1-index) == 14 && foodSquares.contains(index)))));												
 			}			
-			
-		}else{			
-			
+		}else{														
 			if(indexOfClickedPath.size() > 1){								
 				int nIndex1 = indexOfClickedPath.get(indexOfClickedPath.size()-1);									
 				return ((nIndex1%9 == index%9 && Math.abs(nIndex1-index) == 18) || (nIndex1%7 == index%7 && 
 						Math.abs(nIndex1-index) == 14));				
 			}else if(indexOfClickedPath.size() == 1){												
-				int nIndex1 = indexOfClickedPath.get(0);					
+				int nIndex1 = indexOfClickedPath.get(0);
 				
+				if(gameBoard.player == aiColor){						
+					return ((nIndex1%9 == index%9 && ((index - nIndex1) == 9 || 
+							(Math.abs(nIndex1-index) == 18 && foodSquares.contains(index)))) 
+						|| (nIndex1%7 == index%7 && ((index - nIndex1) == 7 || 
+							(Math.abs(nIndex1-index) == 14 && foodSquares.contains(index)))));						
+				}					
+				if(gameBoard.player == playerColor){					
+					return ((nIndex1%9 == index%9 && ((nIndex1-index) == 9 || 
+							(Math.abs(nIndex1-index) == 18 && foodSquares.contains(index)))) 
+						|| (nIndex1%7 == index%7 && ((nIndex1-index) == 7 || 
+							(Math.abs(nIndex1-index) == 14 && foodSquares.contains(index)))));
+				}
+							
 				return ((nIndex1%9 == index%9 && ((nIndex1-index) == 9 || 
 						(Math.abs(nIndex1-index) == 18 && foodSquares.contains(index)))) 
 					|| (nIndex1%7 == index%7 && ((nIndex1-index) == 7 || 
@@ -661,7 +773,7 @@ public class CheckerBoard extends JPanel{
 			glowJump(index);
 		}else{			
 			pathGlow(index, chipColor);		
-			glowJump(index);						
+			glowJump(index);
 		}		
 		indexOfPathTaken.removeAll(indexOfPathTaken);		
 		prevChip = true;
@@ -714,7 +826,7 @@ public class CheckerBoard extends JPanel{
 				}
 			}
 		}
-	}
+	}	
 	
 	private boolean isAtEdges(int index){		
 		return (rightEdge.contains(index) || leftEdge.contains(index) || upperEdge.contains(index) || bottomEdge.contains(index));
@@ -784,22 +896,15 @@ public class CheckerBoard extends JPanel{
 		int[] startEdge = {-9, -7};
 		int[] rightStart = {-9};
 		int[] mid = null;
-		int[] array;									
-		int[] blackMid = {7, 9};
+		int[] array;											
 		int[] whiteMid = {-7, -9};
-		int[] blackRight = {7}, whiteRight = {-9};
-		int[] blackLeft =  {9}, whiteLeft = {-7};
+		int[] whiteRight = {-9};
+		int[] whiteLeft = {-7};
 		
-		if(playerColor == PieceColor.WHITE){
-			mid = whiteMid;
-			right = whiteRight;
-			left = whiteLeft;
-			
-		}else if(playerColor == PieceColor.BLACK){			
-			mid = blackMid;
-			right = blackRight;
-			left = blackLeft;
-		}						
+		
+		mid = whiteMid;
+		right = whiteRight;
+		left = whiteLeft;
 		
 		if(rightEdge.contains(index)){		
 			if(bottomEdge.contains(index))

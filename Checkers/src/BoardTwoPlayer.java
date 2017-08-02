@@ -421,13 +421,14 @@ public class BoardTwoPlayer extends JPanel{
 						if(isWhitesTurn())
 							blackCount--;													
 						else if(isBlacksTurn())
-							blackCount--;						
+							whiteCount--;						
 					}					
 					greenSquares[indexOfGreenSquare.indexOf(indexOfClickedPath.get(i) + 9)].setIcon(null);				
 				}				
 			}			
 			if(indexOfGreenSquare.get(targetIndex) == indexOfClickedPath.get(i+1)) break;
 		}						
+		
 		if(blackCount == 0 || whiteCount == 0){
 			CheckerFrame.gameOver(new GameOver(), blackCount, whiteCount, blackMoves, whiteMoves, true);
 		}		
